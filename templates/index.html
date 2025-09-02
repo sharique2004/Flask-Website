@@ -9,6 +9,7 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+  <div id="pageTop"></div>
   <div class="bg-container"></div>
 
   <!-- Cursor follower (desktop only) -->
@@ -37,31 +38,18 @@
 
   <!-- Main setup -->
   <div class="gaming-setup" id="gamingSetup">
-    <!-- Mobile Navigation (hidden on desktop, shown only on phones) -->
-    <div class="mobile-nav" id="mobileNav">
-      <div class="nav-header">
-        <h2>Portfolio OS</h2>
-        <div class="time-display" id="mobileTimeDisplay"></div>
-      </div>
-      <div class="nav-apps">
-        <div class="nav-app" onclick="openApp('ai')">
-          <div class="nav-icon">🤖</div>
-          <span>AI Chat</span>
-        </div>
-        <div class="nav-app" onclick="openApp('experience')">
-          <div class="nav-icon">💼</div>
-          <span>Experience</span>
-        </div>
-        <div class="nav-app" onclick="openApp('projects')">
-          <div class="nav-icon">🚀</div>
-          <span>Projects</span>
-        </div>
-        <div class="nav-app" onclick="openApp('education')">
-          <div class="nav-icon">🎓</div>
-          <span>Education</span>
-        </div>
-      </div>
-    </div>
+    <!-- Mobile Topbar + Single-Page Navigation (mobile only) -->
+    <header class="mobile-topbar" id="mobileTopbar">
+      <div class="brand">Sharique Khatri</div>
+      <nav class="mobile-navlinks">
+        <a href="#pageTop" class="navlink active">Home</a>
+        <a href="#ai-app" class="navlink">AI</a>
+        <a href="#experience-app" class="navlink">Experience</a>
+        <a href="#projects-app" class="navlink">Projects</a>
+        <a href="#education-app" class="navlink">Education</a>
+      </nav>
+      <div class="time-display" id="mobileTimeDisplay"></div>
+    </header>
 
     <!-- Desktop Gaming Setup (exactly like original) -->
     <div class="monitor">
@@ -98,10 +86,15 @@
         <div class="virtual-mouse" id="virtualMouse"></div>
       </div>
       <div class="pc-tower"><div class="pc-lights"></div></div>
-    </div>
 
-    <!-- App Windows (shared between desktop and mobile) -->
-    <div class="app-container">
+      <!-- Intro (mobile only) + App Windows (reuse as sections on mobile) -->
+      <div class="intro-section" id="intro">
+        <h1>Sharique Khatri</h1>
+        <p>Full‑Stack Developer and AI enthusiast at Penn State. I love building delightful, intelligent experiences — from interactive UIs to ML‑powered apps.</p>
+      <!-- Intro CTAs removed per request -->
+      </div>
+
+      <div class="app-container">
       <!-- AI App -->
       <div class="app-window" id="ai-app">
         <div class="window-header">
@@ -158,7 +151,7 @@
               <div class="timeline-container">
                 <div class="timeline-line"></div>
                 
-                <div class="timeline-item left">
+                <div class="timeline-item right">
                   <div class="timeline-dot"></div>
                   <div class="timeline-card">
                     <div class="card-header">
@@ -166,7 +159,7 @@
                       <span class="badge badge-active">Current</span>
                     </div>
                     <div class="card-company">Penn State ORIS</div>
-                    <div class="card-date">Aug 2025 – Present</div>
+                    <div class="card-date">June 2025 – Aug 2025</div>
                     <div class="card-description">
                       <p>Modernizing Research Accounting Navigator web application by migrating legacy Java-based components to .NET architecture, strengthening security posture and enhancing code quality through library integration.</p>
                       <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
@@ -179,30 +172,8 @@
                         <span class="tech-tag">Azure DevOps</span>
                         <span class="tech-tag">Agile/Scrum</span>
                         <span class="tech-tag">SQL</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item right">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Summer Intern</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">Penn State University</div>
-                    <div class="card-date">May 2025 – Aug 2025</div>
-                    <div class="card-description">
-                      <p>Contributed to migration of legacy Java-based web components to modern .NET architecture, improving system scalability and maintainability for university research systems.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Enhanced system performance through architectural improvements</li>
-                        <li>Collaborated with cross-functional teams on modernization initiatives</li>
-                      </ul>
-                      <div class="tech-stack">
                         <span class="tech-tag">.NET Framework</span>
                         <span class="tech-tag">.NET Core</span>
-                        <span class="tech-tag">SQL</span>
                         <span class="tech-tag">System Architecture</span>
                       </div>
                     </div>
@@ -243,7 +214,7 @@
                       <span class="badge badge-active">Current</span>
                     </div>
                     <div class="card-company">Penn State</div>
-                    <div class="card-date">Aug 2024 – Present</div>
+                    <div class="card-date">Aug 2024 – Jan 2025</div>
                     <div class="card-description">
                       <p>Grading homeworks and assignments for Computer Science students in CMPSC 360, ensuring academic integrity and providing detailed feedback on coding assignments.</p>
                       <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
