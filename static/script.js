@@ -4,6 +4,37 @@ let isStarted = false;
 let pressedKeys = new Set();
 let isMobile = window.innerWidth <= 768;
 
+// Fit the desktop gaming setup to current viewport by adjusting --setup-scale
+function fitSetupToViewport() {
+  try {
+    // Skip on mobile layout (we render a different UI there)
+    if (window.innerWidth <= 768) {
+      document.documentElement.style.setProperty('--setup-scale', '1');
+      return;
+    }
+
+    const root = document.documentElement;
+    const cs = getComputedStyle(root);
+    const px = (name) => parseFloat(cs.getPropertyValue(name)) || 0;
+
+    // Base scene dimensions from CSS variables (must match styles.css calc)
+    const baseWidth  = px('--monitor-w') + px('--mousepad-gap-x') + px('--mousepad-w') + 80;
+    const baseHeight = px('--monitor-h') + px('--periph-gap-y') + px('--keyboard-h') + 120;
+
+    // Leave a small margin so shadows/blur aren’t clipped
+    const availW = Math.max(0, window.innerWidth  - 24);
+    const availH = Math.max(0, window.innerHeight - 24);
+
+    const scaleX = availW / baseWidth;
+    const scaleY = availH / baseHeight;
+    const scale = Math.min(1, scaleX, scaleY);
+
+    root.style.setProperty('--setup-scale', scale.toFixed(3));
+  } catch (e) {
+    // No-op on any unexpected error; default scale is 1
+  }
+}
+
 // -------- Knowledge base (fallback for /ask) --------
 const knowledgeBase = {
   skills: "I'm proficient in Python, Java, C, C++, C#, SQL, JavaScript, HTML/CSS. I work with React, Node.js, .NET, Django, Flask, and have experience with Azure DevOps, Docker, Git, MongoDB, and PostgreSQL. In AI/ML, I use LangChain, OpenAI API, Cohere, and TensorFlow.",
@@ -33,6 +64,9 @@ function checkMobile() {
       }
     }, 100);
   }
+
+  // Always recompute scale on resize/orientation change
+  fitSetupToViewport();
 }
 
 window.addEventListener('resize', checkMobile);
@@ -40,12 +74,20 @@ window.addEventListener('orientationchange', () => {
   setTimeout(checkMobile, 100);
 });
 
+// Initial scale computation
+window.addEventListener('load', fitSetupToViewport);
+
 function startExperience() {
   isStarted = true;
   const startScreen = document.getElementById('startScreen');
   const gamingSetup = document.getElementById('gamingSetup');
 
-  startScreen.classList.add('hidden');
+  if (isMobile) {
+    if (startScreen) startScreen.style.display = 'none';
+    gamingSetup.classList.add('visible');
+  } else {
+    startScreen.classList.add('hidden');
+  }
   setTimeout(() => {
     gamingSetup.classList.add('visible');
     
@@ -53,12 +95,14 @@ function startExperience() {
     if (!isMobile) {
       initializeKeyboard();
       initMouseMapping();
+      // Ensure the setup fits after becoming visible (desktop only)
+      fitSetupToViewport();
     }
     
     // Initialize time display for both desktop and mobile
     updateTime();
     setInterval(updateTime, 1000);
-  }, 1000);
+  }, 400);
 }
 
 function initializeKeyboard() {
@@ -252,46 +296,50 @@ function updateTime() {
 
 // Enhanced app window management with mobile support
 function openApp(name) {
-  // Hide all app windows
-  document.querySelectorAll('.app-window').forEach(w => w.style.display = 'none');
-  
-  // Hide mobile nav if on mobile
+  // Mobile: sections are always visible; navigate via anchors
   if (isMobile) {
-    const mobileNav = document.getElementById('mobileNav');
-    if (mobileNav) mobileNav.style.display = 'none';
-  } else {
-    // Hide desktop app icons
-    const icons = document.querySelector('.app-icons');
-    if (icons) icons.style.display = 'none';
-    // Enable pointer events on the container now that a window is opening
-    const appContainer = document.querySelector('.app-container');
-    if (appContainer) appContainer.style.pointerEvents = 'auto';
+    const target = document.getElementById(`${name}-app`);
+    if (target && target.scrollIntoView) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    return;
   }
-  
-  // Show selected app
+
+  // Desktop window behavior
+  // Ensure app container lives inside the monitor screen
+  const appContainer = document.querySelector('.app-container');
+  const screenEl = document.getElementById('screen');
+  if (appContainer && screenEl && appContainer.parentElement !== screenEl) {
+    screenEl.appendChild(appContainer);
+    appContainer.style.position = 'absolute';
+    appContainer.style.inset = '0';
+    appContainer.style.zIndex = '2';
+  }
+
+  document.querySelectorAll('.app-window').forEach(w => w.style.display = 'none');
+  const icons = document.querySelector('.app-icons');
+  if (icons) icons.style.display = 'none';
+  if (appContainer) appContainer.style.pointerEvents = 'auto';
+
   const appWindow = document.getElementById(`${name}-app`);
   if (appWindow) {
     appWindow.style.display = 'flex';
-    
-    // Trigger entrance animation
     appWindow.classList.remove('window-enter');
     void appWindow.offsetWidth; // Force reflow
     appWindow.classList.add('window-enter');
-    
-    // Focus on input if it's the AI chat
     if (name === 'ai') {
       setTimeout(() => {
         const chatInput = document.getElementById('chatInput');
-        if (chatInput && !isMobile) {
-          chatInput.focus();
-        }
+        if (chatInput) chatInput.focus();
       }, 300);
     }
   }
 }
 
 function closeApp() {
-  // Close all app windows with animation
+  if (isMobile) return; // No-op in single-page mobile layout
+
+  // Desktop: close floating window
   document.querySelectorAll('.app-window').forEach(w => {
     w.style.animation = 'window-close .3s ease';
     setTimeout(() => {
@@ -299,26 +347,12 @@ function closeApp() {
       w.style.animation = '';
     }, 300);
   });
-  
-  // Show appropriate navigation based on device
-  if (isMobile) {
-    const mobileNav = document.getElementById('mobileNav');
-    if (mobileNav) {
-      setTimeout(() => {
-        mobileNav.style.display = 'block';
-      }, 300);
-    }
-  } else {
-    const icons = document.querySelector('.app-icons');
-    if (icons) {
-      setTimeout(() => {
-        icons.style.display = 'grid';
-      }, 300);
-    }
-    // Disable pointer events on the container again so icons can be clicked
-    const appContainer = document.querySelector('.app-container');
-    if (appContainer) appContainer.style.pointerEvents = 'none';
+  const icons = document.querySelector('.app-icons');
+  if (icons) {
+    setTimeout(() => { icons.style.display = 'grid'; }, 300);
   }
+  const appContainer = document.querySelector('.app-container');
+  if (appContainer) appContainer.style.pointerEvents = 'none';
 }
 
 // Close animation styles
@@ -521,7 +555,7 @@ function addMobileTouchSupport() {
   if (!isMobile) return;
   
   // Add touch feedback for interactive elements
-  const touchElements = document.querySelectorAll('.nav-app, .app-icon, .close-btn, .suggestion-chip, button');
+  const touchElements = document.querySelectorAll('.nav-app, .app-icon, .close-btn, .suggestion-chip, button, .mobile-topbar .navlink, .btn-primary, .btn-secondary');
   
   touchElements.forEach(element => {
     element.addEventListener('touchstart', function() {
@@ -603,6 +637,12 @@ document.addEventListener('DOMContentLoaded', () => {
     appContainer.style.inset = '0';
     appContainer.style.zIndex = '2';
     appContainer.style.pointerEvents = 'none';
+  } else if (isMobile && appContainer) {
+    // Mobile single-page: use normal flow and interactivity
+    appContainer.style.position = 'static';
+    appContainer.style.inset = '';
+    appContainer.style.zIndex = '';
+    appContainer.style.pointerEvents = 'auto';
   }
   
   // Add viewport height fix for mobile browsers
@@ -616,6 +656,28 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('orientationchange', () => {
     setTimeout(setVH, 100);
   });
+
+  // Auto-start on mobile (no overlay)
+  if (isMobile) startExperience();
+
+  // Mobile scroll spy for topbar links
+  if (isMobile) {
+    const links = Array.from(document.querySelectorAll('.mobile-navlinks .navlink'));
+    const sections = links.map(a => ({ id: a.getAttribute('href').slice(1), el: document.getElementById(a.getAttribute('href').slice(1)), link: a }));
+    const activate = (id) => links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
+    const onScroll = () => {
+      let current = sections[0]?.id;
+      const offset = 90;
+      for (const s of sections) {
+        if (!s.el) continue;
+        const rect = s.el.getBoundingClientRect();
+        if (rect.top <= offset) current = s.id;
+      }
+      if (current) activate(current);
+    };
+    document.addEventListener('scroll', onScroll, { passive: true });
+    onScroll();
+  }
 });
 
 // Service worker registration for mobile PWA capabilities (optional)
