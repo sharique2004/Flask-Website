@@ -94,4 +94,4 @@ def ask():
 
 if __name__ == "__main__":
     # Use 0.0.0.0 in dev to be reachable from local network if needed
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5000)), debug=True)
+    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5001)), debug=True)
