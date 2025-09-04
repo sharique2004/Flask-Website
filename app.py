@@ -48,7 +48,7 @@ def get_personal_info(query: str) -> str:
     template = PromptTemplate(
         template=(
             "You have the following context about Sharique Khatri. "
-            "Answer accurately and concisely. If it's not in the context, say you don't know.\n\n"
+            "Answer accurately and concisely. If it's not in the context, give the most accurate answer based on the context. If that is not possible then say I dont know.\n\n"
             "Context:\n{context}\n\nUser:\n{query}\n\nAnswer:"
         ),
         input_variables=["context", "query"],
