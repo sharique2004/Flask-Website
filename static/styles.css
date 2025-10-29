@@ -548,4 +548,64 @@ body.screen-hover .cursor-follower{display:block}
   .chat-input button:active {
     transform: scale(0.95);
   }
+  
 }
+/* === Global Zoom Toggle (Desktop + Mobile) === */
+/* === Zoom Toggle Button (top-left corner, monitor only) === */
+.zoom-toggle {
+  position: absolute;
+  top: 20px;          /* 👈 moves it to top */
+  left: 100px;         /* 👈 moves it to the left */
+  z-index: 10;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea, #764ba2);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 24px;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 20px rgba(102, 126, 234, 0.4);
+}
+
+/* Hover/active states */
+.zoom-toggle:hover {
+  transform: scale(1.05);
+  box-shadow: 0 6px 25px rgba(102, 126, 234, 0.6);
+}
+.zoom-toggle:active {
+  transform: scale(0.95);
+}
+
+/* Hide it completely during intro/start screen */
+.start-screen .zoom-toggle {
+  display: none;
+}
+
+
+/* Zoomed state — focus on monitor, hide peripherals */
+/* Zoomed state — focus on monitor, hide peripherals */
+body.zoomed-in .gaming-setup {
+  transform: translate(-50%, -28%)  /* 👈 lowered from -50% to -40% */
+             perspective(1500px)
+             rotateX(0deg)
+             scale(calc(var(--setup-scale) * 1.6)) !important; /* 👈 reduced zoom */
+  transition: transform 0.6s cubic-bezier(0.78, -0.55, 0.265, 1.55);
+}
+
+body.zoomed-in .keyboard,
+body.zoomed-in .mouse-pad,
+body.zoomed-in .pc-tower,
+body.zoomed-in .monitor-stand,
+body.zoomed-in .monitor-base {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s ease;
+}
+body.zoomed-in .monitor {
+  filter: brightness(1.15);
+}
+
