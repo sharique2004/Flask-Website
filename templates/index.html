@@ -50,7 +50,9 @@
       </nav>
       <div class="time-display" id="mobileTimeDisplay"></div>
     </header>
-
+    <button id="zoom-toggle" class="zoom-toggle" aria-label="Toggle monitor zoom">
+      <span class="zoom-icon">🔍</span>
+    </button>
     <!-- Desktop Gaming Setup (exactly like original) -->
     <div class="monitor">
         <div class="screen" id="screen">
@@ -662,6 +664,7 @@
   </div>
 
   <!-- Load the main JavaScript from the correct relative path -->
-  <script src="static/script.js"></script>
+  <script src="{{ url_for('static', filename='script.js') }}"></script>
+
 </body>
 </html>
