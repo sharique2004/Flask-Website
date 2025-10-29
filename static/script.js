@@ -696,3 +696,28 @@ if (isMobile) {
   // Add class to body for mobile-specific optimizations
   document.body.classList.add('mobile-device');
 }
+
+// ===== Zoom Toggle (desktop & mobile) =====
+window.addEventListener('DOMContentLoaded', () => {
+  const zoomToggle = document.getElementById('zoom-toggle');
+  if (!zoomToggle) return;
+
+  let isZoomed = false;
+
+  function setZoom(state) {
+    isZoomed = state;
+    document.body.classList.toggle('zoomed-in', isZoomed);
+    const icon = zoomToggle.querySelector('.zoom-icon');
+    if (icon) icon.textContent = isZoomed ? '🔍-' : '🔍';
+    if ('vibrate' in navigator) navigator.vibrate(30);
+  }
+
+  zoomToggle.addEventListener('click', () => setZoom(!isZoomed));
+
+  // Keyboard shortcut: Z (only when experience has started)
+  document.addEventListener('keydown', (e) => {
+    if (e.key.toLowerCase() === 'z' && !e.ctrlKey && !e.metaKey && isStarted) {
+      setZoom(!isZoomed);
+    }
+  });
+});
