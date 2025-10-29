@@ -26,7 +26,7 @@ def get_personal_info(query: str) -> str:
                 "Add COHERE_API_KEY and ATLAS_CONNECTION_STRING, then install deps "
                 "(langchain-cohere, langchain-mongodb, pymongo).")
 
-    llm = ChatCohere(model="command-r-plus", temperature=0.4)
+    llm = ChatCohere(model="command-a-03-2025", temperature=0.4)
     embeddings = CohereEmbeddings(
         cohere_api_key=os.getenv("COHERE_API_KEY"),
         model="embed-english-v3.0",
