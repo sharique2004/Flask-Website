@@ -61,12 +61,38 @@ function checkMobile() {
       if (!isMobile) {
         initializeKeyboard();
         initMouseMapping();
+        // Reset timeline accordion when switching to desktop
+        resetMobileTimelineAccordion();
+      } else {
+        // Initialize timeline accordion when switching to mobile
+        initMobileTimelineAccordion();
       }
     }, 100);
   }
 
   // Always recompute scale on resize/orientation change
   fitSetupToViewport();
+}
+
+// Reset timeline accordion for desktop view
+function resetMobileTimelineAccordion() {
+  const timelineContainer = document.querySelector('.timeline-container');
+  if (!timelineContainer) return;
+  
+  // Remove accordion class
+  timelineContainer.classList.remove('mobile-accordion');
+  
+  // Show all timeline items
+  const timelineItems = timelineContainer.querySelectorAll('.timeline-item');
+  timelineItems.forEach(item => {
+    item.classList.remove('mobile-visible');
+  });
+  
+  // Remove toggle button if it exists
+  const toggleButton = timelineContainer.querySelector('.mobile-timeline-toggle');
+  if (toggleButton) {
+    toggleButton.remove();
+  }
 }
 
 window.addEventListener('resize', checkMobile);
@@ -179,17 +205,29 @@ function initMouseMapping() {
 
   const clamp = (v, min, max) => Math.max(min, Math.min(max, v));
 
-  let target = { x: 10, y: 10 };
-  let current = { x: 10, y: 10 };
+  // Virtual mouse position (for the mousepad)
+  let vMouseTarget = { x: 10, y: 10 };
+  let vMouseCurrent = { x: 10, y: 10 };
+  
+  // Cursor follower position (on screen)
+  let followerTarget = { x: 0, y: 0 };
+  let followerCurrent = { x: 0, y: 0 };
 
-  // Animation loop
+  // Animation loop - smooth interpolation for both cursors
   function animate() {
-    current.x += (target.x - current.x) * 0.25;
-    current.y += (target.y - current.y) * 0.25;
+    // Smooth virtual mouse movement (higher factor = more responsive)
+    vMouseCurrent.x += (vMouseTarget.x - vMouseCurrent.x) * 0.4;
+    vMouseCurrent.y += (vMouseTarget.y - vMouseCurrent.y) * 0.4;
 
     // Preserve 3D lift so it doesn't "pop" under other elements
     vMouse.style.transform = 
-      `translate(${current.x}px, ${current.y}px) translateZ(calc(var(--scene-z-lift) + 1px))`;
+      `translate(${vMouseCurrent.x}px, ${vMouseCurrent.y}px) translateZ(calc(var(--scene-z-lift) + 1px))`;
+    
+    // Smooth cursor follower movement (very responsive)
+    followerCurrent.x += (followerTarget.x - followerCurrent.x) * 0.5;
+    followerCurrent.y += (followerTarget.y - followerCurrent.y) * 0.5;
+    
+    follower.style.transform = `translate(${followerCurrent.x}px, ${followerCurrent.y}px)`;
     
     requestAnimationFrame(animate);
   }
@@ -198,9 +236,9 @@ function initMouseMapping() {
   screen.addEventListener('pointermove', (e) => {
     if (isMobile) return; // Skip on mobile
     
-    // Move the screen follower
-    follower.style.left = (e.clientX - 15) + 'px';
-    follower.style.top = (e.clientY - 15) + 'px';
+    // Update cursor follower target (using transform for smoothness)
+    followerTarget.x = e.clientX - 15;
+    followerTarget.y = e.clientY - 15;
 
     // Normalize cursor inside the monitor screen
     const s = screen.getBoundingClientRect();
@@ -224,8 +262,8 @@ function initMouseMapping() {
     const minY = padT;
     const maxY = h - padB - vmH;
 
-    target.x = clamp(minX + nx * (maxX - minX), minX, maxX);
-    target.y = clamp(minY + ny * (maxY - minY), minY, maxY);
+    vMouseTarget.x = clamp(minX + nx * (maxX - minX), minX, maxX);
+    vMouseTarget.y = clamp(minY + ny * (maxY - minY), minY, maxY);
   });
 
   screen.addEventListener('pointerdown', () => {
@@ -624,6 +662,11 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initialize mobile support
   checkMobile();
   addMobileTouchSupport();
+  
+  // Initialize mobile timeline accordion
+  if (isMobile) {
+    initMobileTimelineAccordion();
+  }
 
   // Move the app container into the monitor screen on desktop so windows don't
   // overlay the entire page. Disable pointer events by default so clicks
@@ -680,6 +723,72 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Mobile Timeline Accordion functionality
+function initMobileTimelineAccordion() {
+  const timelineContainer = document.querySelector('.timeline-container');
+  if (!timelineContainer) return;
+  
+  // Check if already initialized
+  if (timelineContainer.classList.contains('mobile-accordion')) return;
+  
+  const timelineItems = timelineContainer.querySelectorAll('.timeline-item');
+  if (timelineItems.length === 0) return;
+  
+  // Add accordion class to container
+  timelineContainer.classList.add('mobile-accordion');
+  
+  // Show only the first (most recent) item initially
+  timelineItems.forEach((item, index) => {
+    if (index === 0) {
+      item.classList.add('mobile-visible');
+    } else {
+      item.classList.remove('mobile-visible');
+    }
+  });
+  
+  // Check if toggle button already exists
+  let toggleButton = timelineContainer.querySelector('.mobile-timeline-toggle');
+  if (!toggleButton) {
+    // Create and add the "Show More" button
+    toggleButton = document.createElement('button');
+    toggleButton.className = 'mobile-timeline-toggle';
+    toggleButton.innerHTML = '<span>Show More Experience</span><span class="toggle-icon">▼</span>';
+    toggleButton.setAttribute('aria-expanded', 'false');
+    
+    // Track expansion state
+    let isExpanded = false;
+    
+    toggleButton.addEventListener('click', () => {
+      isExpanded = !isExpanded;
+      
+      if (isExpanded) {
+        // Show all timeline items
+        timelineItems.forEach(item => {
+          item.classList.add('mobile-visible');
+        });
+        toggleButton.innerHTML = '<span>Show Less</span><span class="toggle-icon">▼</span>';
+        toggleButton.classList.add('expanded');
+        toggleButton.setAttribute('aria-expanded', 'true');
+      } else {
+        // Show only the first item
+        timelineItems.forEach((item, index) => {
+          if (index === 0) {
+            item.classList.add('mobile-visible');
+          } else {
+            item.classList.remove('mobile-visible');
+          }
+        });
+        toggleButton.innerHTML = '<span>Show More Experience</span><span class="toggle-icon">▼</span>';
+        toggleButton.classList.remove('expanded');
+        toggleButton.setAttribute('aria-expanded', 'false');
+      }
+    });
+    
+    // Append button after the timeline items
+    timelineContainer.appendChild(toggleButton);
+  }
+}
+
 // Service worker registration for mobile PWA capabilities (optional)
 if ('serviceWorker' in navigator && isMobile) {
   window.addEventListener('load', () => {
@@ -697,14 +806,29 @@ if (isMobile) {
   document.body.classList.add('mobile-device');
 }
 
-// ===== Zoom Toggle (desktop & mobile) =====
+// ===== Zoom Toggle (desktop only - hidden on mobile) =====
 window.addEventListener('DOMContentLoaded', () => {
   const zoomToggle = document.getElementById('zoom-toggle');
   if (!zoomToggle) return;
 
+  // Hide zoom toggle on mobile
+  function updateZoomToggleVisibility() {
+    if (window.innerWidth <= 768) {
+      zoomToggle.style.display = 'none';
+    } else {
+      zoomToggle.style.display = 'flex';
+    }
+  }
+  
+  updateZoomToggleVisibility();
+  window.addEventListener('resize', updateZoomToggleVisibility);
+
   let isZoomed = false;
 
   function setZoom(state) {
+    // Don't allow zoom on mobile
+    if (window.innerWidth <= 768) return;
+    
     isZoomed = state;
     document.body.classList.toggle('zoomed-in', isZoomed);
     const icon = zoomToggle.querySelector('.zoom-icon');
@@ -714,9 +838,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
   zoomToggle.addEventListener('click', () => setZoom(!isZoomed));
 
-  // Keyboard shortcut: Z (only when experience has started)
+  // Keyboard shortcut: Z (only when experience has started and not on mobile)
   document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'z' && !e.ctrlKey && !e.metaKey && isStarted) {
+    if (e.key.toLowerCase() === 'z' && !e.ctrlKey && !e.metaKey && isStarted && window.innerWidth > 768) {
       setZoom(!isZoomed);
     }
   });
