@@ -4,6 +4,7 @@ from dotenv import load_dotenv
 
 # Optional RAG stack (won't crash if not installed)
 RAG_OK = True
+RAG_IMPORT_ERROR = None
 try:
     from pymongo import MongoClient
     from langchain_cohere import ChatCohere
@@ -11,8 +12,9 @@ try:
     from langchain_mongodb import MongoDBAtlasVectorSearch
     from langchain.prompts import PromptTemplate
     from langchain_core.output_parsers import StrOutputParser
-except Exception:
+except ImportError as e:
     RAG_OK = False
+    RAG_IMPORT_ERROR = repr(e)
 
 load_dotenv()
 
@@ -22,10 +24,12 @@ def get_personal_info(query: str) -> str:
     """Answer questions about you from MongoDB Atlas + Cohere.
        If the stack isn't available, return a helpful message."""
     if not RAG_OK:
-        return ("Q&A backend isn’t configured on this machine yet. "
-                "Add COHERE_API_KEY and ATLAS_CONNECTION_STRING, then install deps "
-                "(langchain-cohere, langchain-mongodb, pymongo).")
+        return f"RAG imports missing: {RAG_IMPORT_ERROR}"
+    cohere_key = os.getenv("COHERE_API_KEY")
+    atlas_uri = os.getenv("ATLAS_CONNECTION_STRING")
 
+    if not cohere_key or not atlas_uri:
+        return f"Missing env vars: COHERE_API_KEY={bool(cohere_key)} ATLAS_CONNECTION_STRING={bool(atlas_uri)}"
     llm = ChatCohere(model="command-a-03-2025", temperature=0.4)
     embeddings = CohereEmbeddings(
         cohere_api_key=os.getenv("COHERE_API_KEY"),
