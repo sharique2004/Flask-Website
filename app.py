@@ -10,7 +10,7 @@ try:
     from langchain_cohere import ChatCohere
     from langchain_cohere.embeddings import CohereEmbeddings
     from langchain_mongodb import MongoDBAtlasVectorSearch
-    from langchain.prompts import PromptTemplate
+    from langchain_core.prompts import PromptTemplate
     from langchain_core.output_parsers import StrOutputParser
 except ImportError as e:
     RAG_OK = False
