@@ -38,8 +38,8 @@ function fitSetupToViewport() {
 // -------- Knowledge base (fallback for /ask) --------
 const knowledgeBase = {
   skills: "I'm proficient in Python, Java, C, C++, C#, SQL, JavaScript, HTML/CSS. I work with React, Node.js, .NET, Django, Flask, and have experience with Azure DevOps, Docker, Git, MongoDB, and PostgreSQL. In AI/ML, I use LangChain, OpenAI API, Cohere, and TensorFlow.",
-  experience: "I'm currently a DevOps Intern at Penn State ORIS, modernizing systems with C# .NET. Previously, I was a Data Science Intern at Forth Square working with Azure and AI APIs. I also grade CS assignments at Penn State and led teams at Starbucks.",
-  education: "I'm pursuing a B.S. in Computer Science with a Cybersecurity minor at Penn State (graduating May 2026). I maintain a 3.5 GPA and have been on the Dean's List multiple times. I graduated from high school in Dubai with a 3.8 GPA.",
+  experience: "I'm currently a Software Engineering Intern at WellX AI, modernizing systems with Python and SQL. Previously, I was a Data Science Intern at Forth Square working with Azure and AI APIs. I also grade CS assignments at Penn State and led teams at Starbucks.",
+  education: "I'm pursuing a B.S. in Computer Science with a Cybersecurity minor at Penn State (graduating May 2026). I maintain a 3.6 GPA and have been on the Dean's List multiple times. I graduated from high school in Dubai with a 3.8 GPA.",
   projects: "Key projects: AI-Powered Travel Planner (React + LangChain), Smart Recipe Generator (ChatGPT API), YouTube Transcriber, custom compiler components (lexer/parser), and this interactive portfolio.",
   internships: "Penn State ORIS (DevOps, current) with C# .NET and Azure DevOps; Forth Square (Data Science) with cloud and AI app development.",
   achievements: "Runner-up for Most Innovative Idea at EXPO 2020 Dubai; multiple Dean's List awards; bilingual in English and Hindi; Azure Fundamentals (in progress).",
@@ -651,6 +651,31 @@ document.addEventListener('touchend', function(e) {
 // Initialize everything when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
   // Set up start button
+  const startScreen = document.getElementById('startScreen');
+  // Click anywhere on the overlay to enter
+  if (startScreen) {
+    startScreen.addEventListener('click', (e) => {
+      if (e.target && e.target.id === 'startBtn') return;
+      startExperience();
+    });
+
+    startScreen.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter', 'Return') startExperience();
+    });
+  }
+  // Click anywhere on the overlay to enter
+  if (startScreen) {
+    startScreen.addEventListener('click', (e) => {
+      // avoid double-trigger if they click the button itself
+      if (e.target && e.target.id === 'startBtn') return;
+      startExperience();
+    });
+
+    // Press Enter to enter (since we set tabindex in HTML)
+    startScreen.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') startExperience();
+    });
+  }
   const startBtn = document.getElementById('startBtn');
   if (startBtn) {
     startBtn.addEventListener('click', (e) => {
