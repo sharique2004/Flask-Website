@@ -6,5 +6,4 @@ dnspython
 langchain-cohere
 langchain-mongodb
 langchain
-langchain-core
-
+langchain_core
