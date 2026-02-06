@@ -547,7 +547,7 @@ async function sendMessage() {
     aiMessage.innerHTML = `
       <div class="message-avatar">🤖</div>
       <div class="message-content">
-        <strong>AI Assistant:</strong> ${escapeHtml(reply)}
+        <strong>AI Assistant:</strong> ${formatAIResponse(reply)}
       </div>
     `;
     chatMessages.appendChild(aiMessage);
@@ -578,6 +578,32 @@ function escapeHtml(text) {
   const div = document.createElement('div');
   div.textContent = text;
   return div.innerHTML;
+}
+
+// Function to format AI response (convert markdown to HTML)
+function formatAIResponse(text) {
+  // First escape HTML
+  let formatted = escapeHtml(text);
+  
+  // Convert **bold** to <strong>
+  formatted = formatted.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+  
+  // Convert *italic* to <em>
+  formatted = formatted.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  
+  // Convert numbered lists (1. 2. etc) to line breaks
+  formatted = formatted.replace(/(\d+\.\s)/g, '<br>$1');
+  
+  // Convert bullet points (- or •) to line breaks
+  formatted = formatted.replace(/(\n|^)([-•]\s)/g, '<br>$2');
+  
+  // Remove leading <br> if present
+  formatted = formatted.replace(/^<br>/, '');
+  
+  // Convert newlines to <br>
+  formatted = formatted.replace(/\n/g, '<br>');
+  
+  return formatted;
 }
 
 // Enhanced chat input handling
@@ -728,12 +754,15 @@ document.addEventListener('DOMContentLoaded', () => {
   // Auto-start on mobile (no overlay)
   if (isMobile) startExperience();
 
-  // Mobile scroll spy for topbar links
+  // Mobile scroll spy for topbar links + scroll progress indicator
   if (isMobile) {
     const links = Array.from(document.querySelectorAll('.mobile-navlinks .navlink'));
     const sections = links.map(a => ({ id: a.getAttribute('href').slice(1), el: document.getElementById(a.getAttribute('href').slice(1)), link: a }));
     const activate = (id) => links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === `#${id}`));
+    const scrollProgress = document.getElementById('scrollProgress');
+    
     const onScroll = () => {
+      // Scroll spy
       let current = sections[0]?.id;
       const offset = 90;
       for (const s of sections) {
@@ -742,6 +771,14 @@ document.addEventListener('DOMContentLoaded', () => {
         if (rect.top <= offset) current = s.id;
       }
       if (current) activate(current);
+      
+      // Scroll progress indicator
+      if (scrollProgress) {
+        const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+        const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+        const scrollPercent = docHeight > 0 ? (scrollTop / docHeight) * 100 : 0;
+        scrollProgress.style.width = scrollPercent + '%';
+      }
     };
     document.addEventListener('scroll', onScroll, { passive: true });
     onScroll();
@@ -831,7 +868,7 @@ if (isMobile) {
   document.body.classList.add('mobile-device');
 }
 
-// ===== Zoom Toggle (desktop only - hidden on mobile) =====
+// ===== Fullscreen Toggle (desktop only - hidden on mobile) =====
 window.addEventListener('DOMContentLoaded', () => {
   const zoomToggle = document.getElementById('zoom-toggle');
   if (!zoomToggle) return;
@@ -848,25 +885,41 @@ window.addEventListener('DOMContentLoaded', () => {
   updateZoomToggleVisibility();
   window.addEventListener('resize', updateZoomToggleVisibility);
 
-  let isZoomed = false;
+  let isFullscreen = false;
 
-  function setZoom(state) {
-    // Don't allow zoom on mobile
+  function setFullscreen(state) {
+    // Don't allow fullscreen on mobile
     if (window.innerWidth <= 768) return;
     
-    isZoomed = state;
-    document.body.classList.toggle('zoomed-in', isZoomed);
+    isFullscreen = state;
+    
+    // Add/remove class with a slight delay for smoother transition
+    if (isFullscreen) {
+      document.body.classList.add('zoomed-in');
+      // Disable body scroll when in fullscreen
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.classList.remove('zoomed-in');
+      document.body.style.overflow = '';
+    }
+    
     const icon = zoomToggle.querySelector('.zoom-icon');
-    if (icon) icon.textContent = isZoomed ? '🔍-' : '🔍';
+    if (icon) icon.textContent = isFullscreen ? '⊟' : '⊞';
+    
     if ('vibrate' in navigator) navigator.vibrate(30);
   }
 
-  zoomToggle.addEventListener('click', () => setZoom(!isZoomed));
+  zoomToggle.addEventListener('click', () => setFullscreen(!isFullscreen));
 
-  // Keyboard shortcut: Z (only when experience has started and not on mobile)
+  // Keyboard shortcut: F or Escape
   document.addEventListener('keydown', (e) => {
-    if (e.key.toLowerCase() === 'z' && !e.ctrlKey && !e.metaKey && isStarted && window.innerWidth > 768) {
-      setZoom(!isZoomed);
+    if (e.key === 'Escape' && isFullscreen && window.innerWidth > 768) {
+      setFullscreen(false);
+    } else if (e.key.toLowerCase() === 'f' && !e.ctrlKey && !e.metaKey && isStarted && window.innerWidth > 768) {
+      // Only toggle if not typing in an input
+      if (document.activeElement.tagName !== 'INPUT' && document.activeElement.tagName !== 'TEXTAREA') {
+        setFullscreen(!isFullscreen);
+      }
     }
   });
 });

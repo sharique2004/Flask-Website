@@ -6,9 +6,14 @@
   <title>Sharique's Interactive Gaming Setup</title>
   <!-- Load the main stylesheet from the correct relative path -->
   <link rel="stylesheet" href="static/styles.css">
+  <!-- Premium Mobile Experience -->
+  <link rel="stylesheet" href="static/mobile.css">
   <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
 </head>
 <body>
+  <!-- Scroll Progress Indicator (Mobile) -->
+  <div class="scroll-progress" id="scrollProgress"></div>
+  
   <div id="pageTop"></div>
   <div class="bg-container"></div>
 
@@ -27,18 +32,28 @@
   <div class="particle" style="width:5px;height:5px;left:90%;animation-delay:16s;"></div> -->
 
   <!-- Start overlay -->
-  <!-- Start overlay -->
   <div class="start-screen" id="startScreen" role="button" tabindex="0" aria-label="Enter portfolio">
     <div class="start-card">
-      <div class="eyebrow">Portfolio</div>
+      <div class="controller-icon">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <rect x="2" y="6" width="20" height="12" rx="4" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="8" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
+          <circle cx="16" cy="10" r="1" fill="currentColor"/>
+          <circle cx="16" cy="14" r="1" fill="currentColor"/>
+          <circle cx="14" cy="12" r="1" fill="currentColor"/>
+          <circle cx="18" cy="12" r="1" fill="currentColor"/>
+        </svg>
+      </div>
+      <div class="eyebrow">PORTFOLIO</div>
       <h1 class="hero-title">Sharique Khatri</h1>
       <p class="hero-subtitle">
         Full-Stack Developer • AI • Penn State CS
       </p>
 
       <div class="start-actions">
-        <button class="start-button" id="startBtn">Enter</button>
+        <button class="start-button" id="startBtn">Enter Experience</button>
       </div>
+      <p class="start-hint">Click anywhere or press Enter to continue</p>
     </div>
   </div>
 
@@ -56,8 +71,8 @@
       </nav>
       <div class="time-display" id="mobileTimeDisplay"></div>
     </header>
-    <button id="zoom-toggle" class="zoom-toggle" aria-label="Toggle monitor zoom">
-      <span class="zoom-icon">🔍</span>
+    <button id="zoom-toggle" class="zoom-toggle" aria-label="Toggle fullscreen mode">
+      <span class="zoom-icon">⊞</span>
     </button>
     <!-- Desktop Gaming Setup (exactly like original) -->
     <div class="monitor">
@@ -455,137 +470,147 @@
             </div>
             <div class="window-content">
               <div class="projects-grid">
-                <div class="project-card">
+                <a href="https://github.com/sharique2004/AITravelPlannar" target="_blank" class="project-card">
                   <div class="project-icon">✈️</div>
                   <h3>AI Travel Planner</h3>
-                  <p class="project-desc">Full-stack intelligent itinerary generator using Skyscanner and Weather APIs to identify optimal travel periods and locations with personalized recommendations</p>
+                  <p class="project-desc">Full-stack intelligent itinerary generator using Skyscanner and Weather APIs to identify optimal travel periods and locations with personalized AI recommendations</p>
                   <div class="project-tech">
-                    <span class="tech-badge">React</span>
-                    <span class="tech-badge">Node.js</span>
+                    <span class="tech-badge">Python</span>
                     <span class="tech-badge">LangChain</span>
-                    <span class="tech-badge">MongoDB</span>
                     <span class="tech-badge">APIs</span>
+                    <span class="tech-badge">AI</span>
                   </div>
-                  <div class="project-stats">
-                    <div class="stat">
-                      <span class="stat-value">5K+</span>
-                      <span class="stat-label">Lines of Code</span>
-                    </div>
-                    <div class="stat">
-                      <span class="stat-value">AI</span>
-                      <span class="stat-label">Powered</span>
-                    </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
                   </div>
-                </div>
+                </a>
 
-                <div class="project-card">
-                  <div class="project-icon">🍳</div>
-                  <h3>Smart Recipe Generator</h3>
-                  <p class="project-desc">AI-powered recipe generator leveraging ChatGPT APIs with vector-backed personalized meal ideas and dietary preferences using embedded databases</p>
+                <a href="https://github.com/sharique2004/GreenTrackExpo" target="_blank" class="project-card">
+                  <div class="project-icon">🌱</div>
+                  <h3>GreenTrack Expo</h3>
+                  <p class="project-desc">Environmental sustainability tracking mobile application built with React Native and Expo to help users monitor and reduce their carbon footprint</p>
                   <div class="project-tech">
-                    <span class="tech-badge">ChatGPT API</span>
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">Vector DB</span>
-                    <span class="tech-badge">RAG</span>
+                    <span class="tech-badge">JavaScript</span>
+                    <span class="tech-badge">React Native</span>
+                    <span class="tech-badge">Expo</span>
+                    <span class="tech-badge">Mobile</span>
                   </div>
-                  <div class="project-stats">
-                    <div class="stat">
-                      <span class="stat-value">100+</span>
-                      <span class="stat-label">Recipes</span>
-                    </div>
-                    <div class="stat">
-                      <span class="stat-value">ML</span>
-                      <span class="stat-label">Enhanced</span>
-                    </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
                   </div>
-                </div>
+                </a>
 
-                <div class="project-card">
-                  <div class="project-icon">📹</div>
-                  <h3>YouTube Transcriber</h3>
-                  <p class="project-desc">Intelligent AI application that processes any YouTube video link to create accurate automated transcripts with advanced speech recognition</p>
+                <a href="https://github.com/sharique2004/vaultcache" target="_blank" class="project-card">
+                  <div class="project-icon">🔐</div>
+                  <h3>VaultCache</h3>
+                  <p class="project-desc">Secure caching solution with encrypted storage capabilities, providing fast data access while maintaining security and privacy standards</p>
                   <div class="project-tech">
-                    <span class="tech-badge">AI/ML</span>
-                    <span class="tech-badge">YouTube API</span>
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">NLP</span>
+                    <span class="tech-badge">Security</span>
+                    <span class="tech-badge">Caching</span>
+                    <span class="tech-badge">Encryption</span>
                   </div>
-                  <div class="project-stats">
-                    <div class="stat">
-                      <span class="stat-value">95%</span>
-                      <span class="stat-label">Accuracy</span>
-                    </div>
-                    <div class="stat">
-                      <span class="stat-value">Fast</span>
-                      <span class="stat-label">Processing</span>
-                    </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
                   </div>
-                </div>
+                </a>
 
-                <div class="project-card">
-                  <div class="project-icon">⚙️</div>
-                  <h3>Custom Lexer & Parser</h3>
-                  <p class="project-desc">Designed comprehensive lexer and parser for programming language with advanced tokenization, syntax validation, scoping, and type checking capabilities</p>
+                <a href="https://github.com/sharique2004/personal-work-tracker" target="_blank" class="project-card">
+                  <div class="project-icon">📊</div>
+                  <h3>Personal Work Tracker</h3>
+                  <p class="project-desc">Productivity application to track personal tasks, work progress, and time management with intuitive dashboard and analytics</p>
                   <div class="project-tech">
-                    <span class="tech-badge">C++</span>
-                    <span class="tech-badge">Compiler Design</span>
-                    <span class="tech-badge">Parsing</span>
-                    <span class="tech-badge">Tokenization</span>
+                    <span class="tech-badge">JavaScript</span>
+                    <span class="tech-badge">Full-Stack</span>
+                    <span class="tech-badge">Dashboard</span>
                   </div>
-                  <div class="project-stats">
-                    <div class="stat">
-                      <span class="stat-value">3</span>
-                      <span class="stat-label">Components</span>
-                    </div>
-                    <div class="stat">
-                      <span class="stat-value">Low</span>
-                      <span class="stat-label">Level</span>
-                    </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
                   </div>
-                </div>
+                </a>
 
-                <div class="project-card">
+                <a href="https://github.com/sharique2004/Multi-Level-Cache-System-with-MRU-LRU-Eviction-Policies" target="_blank" class="project-card">
                   <div class="project-icon">💾</div>
-                  <h3>Block Cache Storage System</h3>
-                  <p class="project-desc">Optimized storage system with LRU-based block cache implementation, significantly improving access speed and reducing disk operations for better performance</p>
+                  <h3>Multi-Level Cache System</h3>
+                  <p class="project-desc">Advanced caching system implementing MRU and LRU eviction policies with multi-level hierarchy for optimized memory management</p>
                   <div class="project-tech">
-                    <span class="tech-badge">C++</span>
+                    <span class="tech-badge">Python</span>
                     <span class="tech-badge">Data Structures</span>
-                    <span class="tech-badge">LRU Cache</span>
                     <span class="tech-badge">Algorithms</span>
                   </div>
-                  <div class="project-stats">
-                    <div class="stat">
-                      <span class="stat-value">40%</span>
-                      <span class="stat-label">Speed Boost</span>
-                    </div>
-                    <div class="stat">
-                      <span class="stat-value">Efficient</span>
-                      <span class="stat-label">Memory</span>
-                    </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
                   </div>
-                </div>
+                </a>
 
-                <div class="project-card">
-                  <div class="project-icon">🏆</div>
-                  <h3>EXPO 2020 Innovation</h3>
-                  <p class="project-desc">Runners-up at EXPO 2020 summit for most innovative idea, showcasing creative problem-solving and technical excellence in competitive environment</p>
+                <a href="https://github.com/sharique2004/Pipelined-MIPS-Processor-Datapath-Implementation" target="_blank" class="project-card">
+                  <div class="project-icon">🔧</div>
+                  <h3>Pipelined MIPS Processor</h3>
+                  <p class="project-desc">Hardware implementation of a 5-stage pipelined MIPS processor datapath with hazard detection and forwarding units</p>
                   <div class="project-tech">
-                    <span class="tech-badge">Innovation</span>
-                    <span class="tech-badge">Design Thinking</span>
-                    <span class="tech-badge">Presentation</span>
+                    <span class="tech-badge">Verilog</span>
+                    <span class="tech-badge">Computer Architecture</span>
+                    <span class="tech-badge">HDL</span>
                   </div>
-                  <div class="project-stats">
-                    <div class="stat">
-                      <span class="stat-value">2nd</span>
-                      <span class="stat-label">Place</span>
-                    </div>
-                    <div class="stat">
-                      <span class="stat-value">Global</span>
-                      <span class="stat-label">Competition</span>
-                    </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
                   </div>
-                </div>
+                </a>
+
+                <a href="https://github.com/sharique2004/Manual-RSA-Cryptosystem-A-From-Scratch-Implementation-Without-External-Libraries" target="_blank" class="project-card">
+                  <div class="project-icon">🔑</div>
+                  <h3>RSA Cryptosystem</h3>
+                  <p class="project-desc">Complete RSA encryption implementation from scratch without external libraries, featuring key generation, encryption and decryption</p>
+                  <div class="project-tech">
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">Cryptography</span>
+                    <span class="tech-badge">Mathematics</span>
+                  </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
+                  </div>
+                </a>
+
+                <a href="https://github.com/sharique2004/ScheduleBuilder" target="_blank" class="project-card">
+                  <div class="project-icon">📅</div>
+                  <h3>Schedule Builder</h3>
+                  <p class="project-desc">Intelligent course scheduling application that helps students plan their academic schedule with conflict detection and optimization</p>
+                  <div class="project-tech">
+                    <span class="tech-badge">Java</span>
+                    <span class="tech-badge">Algorithms</span>
+                    <span class="tech-badge">UI/UX</span>
+                  </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
+                  </div>
+                </a>
+
+                <a href="https://github.com/sharique2004/Parser" target="_blank" class="project-card">
+                  <div class="project-icon">⚙️</div>
+                  <h3>Custom Parser</h3>
+                  <p class="project-desc">Comprehensive lexer and parser for programming language with tokenization, syntax validation, scoping, and type checking</p>
+                  <div class="project-tech">
+                    <span class="tech-badge">Python</span>
+                    <span class="tech-badge">Compiler Design</span>
+                    <span class="tech-badge">Parsing</span>
+                  </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
+                  </div>
+                </a>
+
+                <a href="https://github.com/sharique2004/Disk-Read-Write" target="_blank" class="project-card">
+                  <div class="project-icon">💽</div>
+                  <h3>Disk Read/Write</h3>
+                  <p class="project-desc">Low-level disk I/O operations implementation in C for efficient file system interactions and block-level data management</p>
+                  <div class="project-tech">
+                    <span class="tech-badge">C</span>
+                    <span class="tech-badge">Systems Programming</span>
+                    <span class="tech-badge">I/O</span>
+                  </div>
+                  <div class="project-footer">
+                    <span class="github-link">View on GitHub →</span>
+                  </div>
+                </a>
               </div>
             </div>
           </div>

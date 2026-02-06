@@ -44,7 +44,7 @@ def get_personal_info(query: str) -> str:
         index_name="bio_index",
     )
 
-    results = vectorstore.similarity_search(query=query, k=6)
+    results = vectorstore.similarity_search(query=query, k=12)
     context = ""
     for i, doc in enumerate(results, 1):
         context += f"Source {i}:\n{doc.page_content}\n\n"
