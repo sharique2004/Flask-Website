@@ -1,732 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"/>
-  <title>Sharique's Interactive Gaming Setup</title>
-  <!-- Load the main stylesheet from the correct relative path -->
-  <link rel="stylesheet" href="static/styles.css">
-  <!-- Premium Mobile Experience -->
-  <link rel="stylesheet" href="static/mobile.css">
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Sharique Khatri — sk/os</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
+
 <body>
-  <!-- Scroll Progress Indicator (Mobile) -->
-  <div class="scroll-progress" id="scrollProgress"></div>
-  
-  <div id="pageTop"></div>
-  <div class="bg-container"></div>
 
-  <!-- Cursor follower (desktop only) -->
-  <div class="cursor-follower"></div>
+<!-- Fullscreen toggle (always visible) -->
+<button class="fs-toggle" id="fs-toggle" aria-label="Toggle fullscreen">
+  <svg class="fs-icon-expand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+    <path d="M2 5V2h3M14 5V2h-3M2 11v3h3M14 11v3h-3" stroke-linecap="square"/>
+  </svg>
+  <svg class="fs-icon-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+    <path d="M5 2v3H2M11 2v3h3M5 14v-3H2M11 14v-3h3" stroke-linecap="square"/>
+  </svg>
+</button>
 
-  <!-- Particles -->
-  <!-- <div class="particle" style="width:6px;height:6px;left:10%;animation-delay:0s;"></div>
-  <div class="particle" style="width:4px;height:4px;left:20%;animation-delay:2s;"></div>
-  <div class="particle" style="width:8px;height:8px;left:30%;animation-delay:4s;"></div>
-  <div class="particle" style="width:5px;height:5px;left:40%;animation-delay:6s;"></div>
-  <div class="particle" style="width:7px;height:7px;left:50%;animation-delay:8s;"></div>
-  <div class="particle" style="width:4px;height:4px;left:60%;animation-delay:10s;"></div>
-  <div class="particle" style="width:6px;height:6px;left:70%;animation-delay:12s;"></div>
-  <div class="particle" style="width:8px;height:8px;left:80%;animation-delay:14s;"></div>
-  <div class="particle" style="width:5px;height:5px;left:90%;animation-delay:16s;"></div> -->
+<!-- ============================================================
+     SCENE — Monitor + Keyboard + Mouse
+============================================================ -->
+<div class="scene" id="scene">
 
-  <!-- Start overlay -->
-  <div class="start-screen" id="startScreen" role="button" tabindex="0" aria-label="Enter portfolio">
-    <div class="start-card">
-      <div class="controller-icon">
-        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <rect x="2" y="6" width="20" height="12" rx="4" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="8" cy="12" r="2" stroke="currentColor" stroke-width="1.5"/>
-          <circle cx="16" cy="10" r="1" fill="currentColor"/>
-          <circle cx="16" cy="14" r="1" fill="currentColor"/>
-          <circle cx="14" cy="12" r="1" fill="currentColor"/>
-          <circle cx="18" cy="12" r="1" fill="currentColor"/>
-        </svg>
+  <!-- ─────────── MONITOR ─────────── -->
+  <div class="monitor">
+    <div class="screen" id="screen">
+
+      <!-- ─── OS MENU BAR ─── -->
+      <div class="menubar">
+        <div class="menubar-left">
+          <span class="mb-logo">◐</span>
+          <span class="mb-app">sk/os</span>
+          <span class="mb-item">File</span>
+          <span class="mb-item">View</span>
+          <span class="mb-item">Window</span>
+          <span class="mb-item">Help</span>
+        </div>
+        <div class="menubar-right">
+          <span class="mb-stat">⌘ K</span>
+          <span class="mb-stat" id="mb-clock">--:--:--</span>
+          <span class="mb-stat">v2026</span>
+        </div>
       </div>
-      <div class="eyebrow">PORTFOLIO</div>
-      <h1 class="hero-title">Sharique Khatri</h1>
-      <p class="hero-subtitle">
-        Full-Stack Developer • AI • Penn State CS
-      </p>
 
-      <div class="start-actions">
-        <button class="start-button" id="startBtn">Enter Experience</button>
+      <!-- ─── DESKTOP ─── -->
+      <div class="desktop" id="desktop">
+
+        <!-- Background ambient terminal -->
+        <div class="motd">
+          <div class="motd-line"><span class="g">$</span> whoami</div>
+          <div class="motd-line"><span class="d">sharique.khatri</span></div>
+          <div class="motd-line"><span class="g">$</span> cat readme.md</div>
+          <div class="motd-line"><span class="d">SK — CS senior @ Penn State '26.</span></div>
+          <div class="motd-line"><span class="d">Builds backend systems, AI tooling,</span></div>
+          <div class="motd-line"><span class="d">and the occasional security lab.</span></div>
+          <div class="motd-line"><span class="d">Open to summer '26 + new grad.</span></div>
+          <div class="motd-line"><span class="g">$</span> ls -la apps/</div>
+          <div class="motd-line"><span class="m">drwx</span> ask &nbsp; work &nbsp; projects &nbsp; research &nbsp; profile</div>
+          <div class="motd-line"><span class="g">$</span> <span class="caret">▮</span></div>
+        </div>
+
+        <!-- App tiles -->
+        <div class="apps" id="apps">
+          <button class="app-tile" data-app="ask">
+            <div class="app-glyph">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                <path d="M2 3h12v8H8l-3 3v-3H2V3z" stroke-linejoin="miter"/>
+                <circle cx="6" cy="7" r=".6" fill="currentColor"/>
+                <circle cx="8" cy="7" r=".6" fill="currentColor"/>
+                <circle cx="10" cy="7" r=".6" fill="currentColor"/>
+              </svg>
+            </div>
+            <div class="app-meta">
+              <div class="app-name">Assistant</div>
+            </div>
+            <div class="app-hint">1</div>
+          </button>
+
+          <button class="app-tile" data-app="work">
+            <div class="app-glyph">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                <rect x="2" y="4" width="12" height="9" stroke-linejoin="miter"/>
+                <path d="M6 4V2.5h4V4M2 7h12" stroke-linejoin="miter"/>
+              </svg>
+            </div>
+            <div class="app-meta">
+              <div class="app-name">Experience</div>
+            </div>
+            <div class="app-hint">2</div>
+          </button>
+
+          <button class="app-tile" data-app="projects">
+            <div class="app-glyph">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                <path d="M2 4h4l1.5 1.5H14V13H2V4z" stroke-linejoin="miter"/>
+              </svg>
+            </div>
+            <div class="app-meta">
+              <div class="app-name">Projects</div>
+            </div>
+            <div class="app-hint">3</div>
+          </button>
+
+          <button class="app-tile" data-app="research">
+            <div class="app-glyph">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                <path d="M3 2h7l3 3v9H3V2z" stroke-linejoin="miter"/>
+                <path d="M10 2v3h3M5 8h6M5 10h6M5 12h4" stroke-linejoin="miter"/>
+              </svg>
+            </div>
+            <div class="app-meta">
+              <div class="app-name">Research</div>
+            </div>
+            <div class="app-hint">4</div>
+          </button>
+
+          <button class="app-tile" data-app="profile">
+            <div class="app-glyph">
+              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
+                <circle cx="8" cy="6" r="2.5"/>
+                <path d="M3 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/>
+              </svg>
+            </div>
+            <div class="app-meta">
+              <div class="app-name">Profile</div>
+            </div>
+            <div class="app-hint">5</div>
+          </button>
+        </div>
+
+        <!-- Floating status card top-right of desktop -->
+        <div class="status-card">
+          <div class="sc-row"><span class="sc-k">name</span><span class="sc-dots"></span><span class="sc-v">Sharique Khatri</span></div>
+          <div class="sc-row"><span class="sc-k">school</span><span class="sc-dots"></span><span class="sc-v">Penn State '26</span></div>
+          <div class="sc-row"><span class="sc-k">major</span><span class="sc-dots"></span><span class="sc-v">CS · cybersec minor</span></div>
+          <div class="sc-row"><span class="sc-k">based in</span><span class="sc-dots"></span><span class="sc-v">PA · USA</span></div>
+        </div>
       </div>
-      <p class="start-hint">Click anywhere or press Enter to continue</p>
+
+      <!-- ─── WINDOW LAYER (apps render here) ─── -->
+      <div class="windows" id="windows"></div>
+
+      <!-- ─── DOCK ─── -->
+      <div class="dock">
+        <div class="dock-left">
+          <span class="dock-pwd">Sharique Khatri — Portfolio</span>
+        </div>
+        <div class="dock-right">
+          <a class="dock-link" href="https://github.com/sharique2004" target="_blank">github</a>
+          <span class="dock-sep">·</span>
+          <a class="dock-link" href="https://www.linkedin.com/in/sharique-khatri/" target="_blank">linkedin</a>
+          <span class="dock-sep">·</span>
+          <a class="dock-link" href="mailto:sharique@psu.edu">mail</a>
+        </div>
+      </div>
+
+    </div><!-- /screen -->
+
+    <div class="monitor-stand"></div>
+    <div class="monitor-base"></div>
+  </div>
+
+  <!-- ─────────── KEYBOARD ─────────── -->
+  <div class="keyboard" id="keyboard"></div>
+
+  <!-- ─────────── MOUSEPAD ─────────── -->
+  <div class="mousepad" id="mousepad">
+    <div class="mousepad-label">SK · 30×24</div>
+    <div class="vmouse" id="vmouse">
+      <div class="vmouse-wheel"></div>
     </div>
   </div>
 
-  <!-- Main setup -->
-  <div class="gaming-setup" id="gamingSetup">
-    <!-- Mobile Topbar + Single-Page Navigation (mobile only) -->
-    <header class="mobile-topbar" id="mobileTopbar">
-      <div class="brand">Sharique Khatri</div>
-      <nav class="mobile-navlinks">
-        <a href="#pageTop" class="navlink active">Home</a>
-        <a href="#ai-app" class="navlink">AI</a>
-        <a href="#experience-app" class="navlink">Experience</a>
-        <a href="#projects-app" class="navlink">Projects</a>
-        <a href="#education-app" class="navlink">Education</a>
-      </nav>
-      <div class="time-display" id="mobileTimeDisplay"></div>
-    </header>
-    <button id="zoom-toggle" class="zoom-toggle" aria-label="Toggle fullscreen mode">
-      <span class="zoom-icon">⊞</span>
-    </button>
-    <!-- Desktop Gaming Setup (exactly like original) -->
-    <div class="monitor">
-        <div class="screen" id="screen">
-          <div class="desktop" id="desktop">
-            <div class="app-icons">
-              <div class="app-icon" onclick="openApp('ai')">
-                <div class="icon">🤖</div><div class="label">AI Chat</div>
-              </div>
-              <div class="app-icon" onclick="openApp('experience')">
-                <div class="icon">💼</div><div class="label">Experience</div>
-              </div>
-              <div class="app-icon" onclick="openApp('projects')">
-                <div class="icon">🚀</div><div class="label">Projects</div>
-              </div>
-              <div class="app-icon" onclick="openApp('education')">
-                <div class="icon">🎓</div><div class="label">Education</div>
-              </div>
-            </div>
+</div><!-- /scene -->
 
-            <div class="taskbar">
-              <span style="color:#888;font-size:12px;">PORTFOLIO OS v2.0</span>
-              <div class="time-display" id="timeDisplay"></div>
-            </div>
-          </div>
-        </div>
-        <div class="monitor-stand"></div>
-        <div class="monitor-base"></div>
-      </div>
 
-      <!-- Peripherals (desktop only) -->
-      <div class="keyboard" id="keyboard"></div>
-      <div class="mouse-pad" id="mousepad">
-        <div class="virtual-mouse" id="virtualMouse"></div>
-      </div>
-      <div class="pc-tower"><div class="pc-lights"></div></div>
-
-      <!-- Intro (mobile only) + App Windows (reuse as sections on mobile) -->
-      <div class="intro-section" id="intro">
-        <h1>Sharique Khatri</h1>
-        <p>Hi, I’m Sharique Khatri. I’m a computer science student at Penn State with experience in software engineering, AI systems, and cloud based applications. I’ve worked on production code in internships across health tech, AI, and enterprise systems, and I enjoy building clean, reliable software that solves real problems.</p>
-      <!-- Intro CTAs removed per request -->
-      </div>
-
-      <div class="app-container">
-      <!-- AI App -->
-      <div class="app-window" id="ai-app">
-        <div class="window-header">
-          <div class="window-title">
-            <span class="app-icon-header">🤖</span>
-            <span class="title-text">AI Assistant</span>
-          </div>
-          <div class="close-btn" onclick="closeApp()">×</div>
-        </div>
-        <div class="window-content">
-          <div class="ai-chat">
-            <div class="chat-header">
-              <div class="ai-status">
-                <span class="status-dot"></span>
-                <span>AI Online</span>
-              </div>
-              <div class="chat-suggestions">
-                <span class="suggestion-chip" onclick="document.getElementById('chatInput').value='Tell me about your skills'; sendMessage();">Skills</span>
-                <span class="suggestion-chip" onclick="document.getElementById('chatInput').value='What projects have you built?'; sendMessage();">Projects</span>
-                <span class="suggestion-chip" onclick="document.getElementById('chatInput').value='Tell me about your experience'; sendMessage();">Experience</span>
-              </div>
-            </div>
-            <div class="chat-messages" id="chatMessages">
-              <div class="message ai-message">
-                <div class="message-avatar">🤖</div>
-                <div class="message-content">
-                  <strong>AI Assistant:</strong> Welcome! I can tell you about Sharique's skills, experience, projects, and education. What would you like to know?
-                </div>
-              </div>
-            </div>
-            <div class="chat-input">
-              <input id="chatInput" placeholder="Ask anything about Sharique..." onkeypress="handleChatEnter(event)">
-              <button onclick="sendMessage()">
-                <span>Send</span>
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 2L11 13M22 2L15 22L11 13L2 9L22 2Z"/>
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-       <!-- Experience -->
-          <div class="app-window" id="experience-app">
-            <div class="window-header">
-              <div class="window-title">
-                <span class="app-icon-header">💼</span>
-                Professional Experience Timeline
-              </div>
-              <div class="close-btn" onclick="closeApp()">×</div>
-            </div>
-            <div class="window-content">
-              <div class="timeline-container">
-                <div class="timeline-line"></div>
-
-              
-
-                <div class="timeline-item left">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Software Engineering Intern</h3>
-                      <span class="badge badge-active">Current</span>
-                    </div>
-                    <div class="card-company">WellX AI</div>
-                    <div class="card-date">December 2025 – March 2026</div>
-                    <div class="card-description">
-                      <p>At WellX AI, I build backend systems for a digital health platform integrating real-time data from wearable devices including Fitbit, Apple Watch, and WHOOP. I develop ingestion pipelines and backend logic for user challenges and incentive workflows, ensuring accurate data processing and scalable reward distribution for 10,000+ users. This role has given me hands-on experience building production backend services in a fast-paced startup environment.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Engineered real-time ingestion pipelines integrating Fitbit, Apple Watch, and WHOOP data</li>
-                        <li>Designed activity verification and reward allocation workflows for user challenges</li>
-                        <li>Optimized backend services for reliability, scalability, and data integrity at scale</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">LookerLM</span>
-                        <span class="tech-tag">SQL</span>
-                        <span class="tech-tag">Agile/Scrum</span>
-                        <span class="tech-tag">C</span>
-                        <span class="tech-tag">Ruby</span>
-                        <span class="tech-tag">System Architecture</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item right">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>DevOps Intern</h3>
-                      
-                    </div>
-                    <div class="card-company">Penn State ORIS</div>
-                    <div class="card-date">June 2025 – Aug 2025</div>
-                    <div class="card-description">
-                      <p>Modernizing Research Accounting Navigator web application by migrating legacy Java-based components to .NET architecture, strengthening security posture and enhancing code quality through library integration.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Executed 11+ user stories through complete Scrum framework lifecycle</li>
-                        <li>Eliminated inline query vulnerabilities for improved security</li>
-                        <li>Managed comprehensive sprint planning using Azure DevOps</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">C# .NET</span>
-                        <span class="tech-tag">Azure DevOps</span>
-                        <span class="tech-tag">Agile/Scrum</span>
-                        <span class="tech-tag">SQL</span>
-                        <span class="tech-tag">.NET Framework</span>
-                        <span class="tech-tag">.NET Core</span>
-                        <span class="tech-tag">System Architecture</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item left">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Data Science Intern</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">FourthSquare</div>
-                    <div class="card-date">Jun 2024 – Aug 2024</div>
-                    <div class="card-description">
-                      <p>Developed multiple AI-powered applications including Recipe Generator and YouTube Transcriber using advanced LLM technologies and cloud computing platforms.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Built RAG-powered recipe application with context understanding</li>
-                        <li>Integrated LangChain with Azure cloud services</li>
-                        <li>Created full-fledged applications using recipe books as context</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">LangChain</span>
-                        <span class="tech-tag">Cohere</span>
-                        <span class="tech-tag">ChatGPT API</span>
-                        <span class="tech-tag">Microsoft Azure</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item right">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Computer Science Grader</h3>
-                      
-                    </div>
-                    <div class="card-company">Penn State</div>
-                    <div class="card-date">Aug 2024 – Jan 2025</div>
-                    <div class="card-description">
-                      <p>Grading homeworks and assignments for Computer Science students in CMPSC 360, ensuring academic integrity and providing detailed feedback on coding assignments.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Evaluated 20-100 student assignments weekly with focus on accuracy</li>
-                        <li>Proctored exams including midterms and finals</li>
-                        <li>Partnered with faculty to design grading rubrics</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Computer Science Education</span>
-                        <span class="tech-tag">Code Review</span>
-                        <span class="tech-tag">Mentoring</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item left">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Math Proctor</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">Penn State</div>
-                    <div class="card-date">Jan 2025 – May 2025</div>
-                    <div class="card-description">
-                      <p>Supervised in-person mathematics examinations for 20-100 students, ensuring adherence to academic integrity protocols and institutional policies.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Maintained exam security and academic integrity standards</li>
-                        <li>Provided student support during examination periods</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Communication</span>
-                        <span class="tech-tag">Mathematics</span>
-                        <span class="tech-tag">Academic Integrity</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item right">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Student Scheduler</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">Starbucks</div>
-                    <div class="card-date">Mar 2024 – May 2024</div>
-                    <div class="card-description">
-                      <p>Managed scheduling operations and workforce planning for university location, optimizing staff allocation during peak academic periods.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Coordinated schedules for 15+ student employees</li>
-                        <li>Balanced academic schedules with operational needs</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Workforce Planning</span>
-                        <span class="tech-tag">Operations Management</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item left">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Barista Trainer</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">Starbucks</div>
-                    <div class="card-date">Oct 2023 – Mar 2024</div>
-                    <div class="card-description">
-                      <p>Led team of 4-5 students in shaping the future of the shop, transforming eager newbies into caffeinated masters through comprehensive training programs.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Developed training curricula for new hire onboarding</li>
-                        <li>Mentored team members in coffee preparation techniques</li>
-                        <li>Improved team efficiency and customer satisfaction scores</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Leadership</span>
-                        <span class="tech-tag">Training & Development</span>
-                        <span class="tech-tag">Team Management</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item right">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Barista</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">Starbucks</div>
-                    <div class="card-date">Jul 2023 – Oct 2023</div>
-                    <div class="card-description">
-                      <p>Delivered exceptional customer service while managing high-volume coffee and food orders, maintaining quality standards during peak university hours.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Prepared specialty coffee drinks and food items</li>
-                        <li>Maintained clean, organized workspace standards</li>
-                        <li>Built strong customer relationships in university setting</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Customer Service</span>
-                        <span class="tech-tag">Food Safety</span>
-                        <span class="tech-tag">Quality Control</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item left">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Volunteer</h3>
-                      <span class="badge" style="background:linear-gradient(135deg,#48bb78,#38a169);">Community Service</span>
-                    </div>
-                    <div class="card-company">Be My Eyes</div>
-                    <div class="card-date">Jul 2021 – Jun 2023</div>
-                    <div class="card-description">
-                      <p>Helped people with lower eyesight and color blindness by taking phone calls to identify objects and situations, providing crucial assistance for daily activities.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Provided real-time visual assistance via mobile app</li>
-                        <li>Supported individuals with visual impairments globally</li>
-                        <li>Contributed to accessibility and inclusion initiatives</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Charity Work</span>
-                        <span class="tech-tag">Community Service</span>
-                        <span class="tech-tag">Accessibility Support</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item right">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Student Volunteer</h3>
-                      <span class="badge" style="background:linear-gradient(135deg,#48bb78,#38a169);">Community Service</span>
-                    </div>
-                    <div class="card-company">Shavers Creek Valley Community</div>
-                    <div class="card-date">Feb 2023 – Mar 2023</div>
-                    <div class="card-description">
-                      <p>Participated in environmental conservation efforts including wood cutting for campfire, fertilizer application, and wooden gate construction for community improvement.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Organized Mapel harvesting festival events</li>
-                        <li>Contributed to sustainable community practices</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">Woodworking</span>
-                        <span class="tech-tag">Event Planning</span>
-                        <span class="tech-tag">Environmental Conservation</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                <div class="timeline-item left">
-                  <div class="timeline-dot"></div>
-                  <div class="timeline-card">
-                    <div class="card-header">
-                      <h3>Front-End Web Development Intern</h3>
-                      <span class="badge">Completed</span>
-                    </div>
-                    <div class="card-company">Seera Travel Group</div>
-                    <div class="card-date">Oct 2022 – Dec 2022</div>
-                    <div class="card-description">
-                      <p>Built and styled interactive web pages using modern web technologies to enhance user interface and user experience for travel booking platform.</p>
-                      <ul style="color:rgba(255,255,255,.7);margin:10px 0;padding-left:20px;">
-                        <li>Developed responsive UI components with HTML, CSS, JavaScript</li>
-                        <li>Collaborated on component logic design and prototyping</li>
-                        <li>Enhanced UI/UX for travel booking workflows</li>
-                      </ul>
-                      <div class="tech-stack">
-                        <span class="tech-tag">HTML</span>
-                        <span class="tech-tag">CSS</span>
-                        <span class="tech-tag">JavaScript</span>
-                        <span class="tech-tag">UI/UX Design</span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          <!-- Projects -->
-          <div class="app-window" id="projects-app">
-            <div class="window-header">
-              <div class="window-title">
-                <span class="app-icon-header">🚀</span>
-                Featured Projects Showcase
-              </div>
-              <div class="close-btn" onclick="closeApp()">×</div>
-            </div>
-            <div class="window-content">
-              <div class="projects-grid">
-                <a href="https://github.com/sharique2004/AITravelPlannar" target="_blank" class="project-card">
-                  <div class="project-icon">✈️</div>
-                  <h3>AI Travel Planner</h3>
-                  <p class="project-desc">Full-stack intelligent itinerary generator using Skyscanner and Weather APIs to identify optimal travel periods and locations with personalized AI recommendations</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">LangChain</span>
-                    <span class="tech-badge">APIs</span>
-                    <span class="tech-badge">AI</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/GreenTrackExpo" target="_blank" class="project-card">
-                  <div class="project-icon">🌱</div>
-                  <h3>GreenTrack Expo</h3>
-                  <p class="project-desc">Environmental sustainability tracking mobile application built with React Native and Expo to help users monitor and reduce their carbon footprint</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">JavaScript</span>
-                    <span class="tech-badge">React Native</span>
-                    <span class="tech-badge">Expo</span>
-                    <span class="tech-badge">Mobile</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/vaultcache" target="_blank" class="project-card">
-                  <div class="project-icon">🔐</div>
-                  <h3>VaultCache</h3>
-                  <p class="project-desc">Secure caching solution with encrypted storage capabilities, providing fast data access while maintaining security and privacy standards</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Security</span>
-                    <span class="tech-badge">Caching</span>
-                    <span class="tech-badge">Encryption</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/personal-work-tracker" target="_blank" class="project-card">
-                  <div class="project-icon">📊</div>
-                  <h3>Personal Work Tracker</h3>
-                  <p class="project-desc">Productivity application to track personal tasks, work progress, and time management with intuitive dashboard and analytics</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">JavaScript</span>
-                    <span class="tech-badge">Full-Stack</span>
-                    <span class="tech-badge">Dashboard</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/Multi-Level-Cache-System-with-MRU-LRU-Eviction-Policies" target="_blank" class="project-card">
-                  <div class="project-icon">💾</div>
-                  <h3>Multi-Level Cache System</h3>
-                  <p class="project-desc">Advanced caching system implementing MRU and LRU eviction policies with multi-level hierarchy for optimized memory management</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">Data Structures</span>
-                    <span class="tech-badge">Algorithms</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/Pipelined-MIPS-Processor-Datapath-Implementation" target="_blank" class="project-card">
-                  <div class="project-icon">🔧</div>
-                  <h3>Pipelined MIPS Processor</h3>
-                  <p class="project-desc">Hardware implementation of a 5-stage pipelined MIPS processor datapath with hazard detection and forwarding units</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Verilog</span>
-                    <span class="tech-badge">Computer Architecture</span>
-                    <span class="tech-badge">HDL</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/Manual-RSA-Cryptosystem-A-From-Scratch-Implementation-Without-External-Libraries" target="_blank" class="project-card">
-                  <div class="project-icon">🔑</div>
-                  <h3>RSA Cryptosystem</h3>
-                  <p class="project-desc">Complete RSA encryption implementation from scratch without external libraries, featuring key generation, encryption and decryption</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">Cryptography</span>
-                    <span class="tech-badge">Mathematics</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/ScheduleBuilder" target="_blank" class="project-card">
-                  <div class="project-icon">📅</div>
-                  <h3>Schedule Builder</h3>
-                  <p class="project-desc">Intelligent course scheduling application that helps students plan their academic schedule with conflict detection and optimization</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Java</span>
-                    <span class="tech-badge">Algorithms</span>
-                    <span class="tech-badge">UI/UX</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/Parser" target="_blank" class="project-card">
-                  <div class="project-icon">⚙️</div>
-                  <h3>Custom Parser</h3>
-                  <p class="project-desc">Comprehensive lexer and parser for programming language with tokenization, syntax validation, scoping, and type checking</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">Python</span>
-                    <span class="tech-badge">Compiler Design</span>
-                    <span class="tech-badge">Parsing</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-
-                <a href="https://github.com/sharique2004/Disk-Read-Write" target="_blank" class="project-card">
-                  <div class="project-icon">💽</div>
-                  <h3>Disk Read/Write</h3>
-                  <p class="project-desc">Low-level disk I/O operations implementation in C for efficient file system interactions and block-level data management</p>
-                  <div class="project-tech">
-                    <span class="tech-badge">C</span>
-                    <span class="tech-badge">Systems Programming</span>
-                    <span class="tech-badge">I/O</span>
-                  </div>
-                  <div class="project-footer">
-                    <span class="github-link">View on GitHub →</span>
-                  </div>
-                </a>
-              </div>
-            </div>
-          </div>
-
-      <!-- Education -->
-      <div class="app-window" id="education-app">
-        <div class="window-header">
-          <div class="window-title">
-            <span class="app-icon-header">🎓</span>
-            <span class="title-text">Education</span>
-          </div>
-          <div class="close-btn" onclick="closeApp()">×</div>
-        </div>
-        <div class="window-content">
-          <div class="education-dashboard">
-            <div class="education-section">
-              <div class="edu-card">
-                <div class="edu-header">
-                  <div class="edu-logo">🎓</div>
-                  <div>
-                    <h3>B.S. Computer Science</h3>
-                    <p class="edu-institution">Pennsylvania State University</p>
-                  </div>
-                </div>
-                <div class="edu-details">
-                  <div class="detail-row">
-                    <span class="detail-label">Graduation:</span>
-                    <span class="detail-value">May 2026</span>
-                  </div>
-                  <div class="detail-row">
-                    <span class="detail-label">GPA:</span>
-                    <span class="detail-value">3.6 / 4.0</span>
-                  </div>
-                  <div class="detail-row">
-                    <span class="detail-label">Minor:</span>
-                    <span class="detail-value">Cybersecurity</span>
-                  </div>
-                  <div class="achievements">
-                    <span class="achievement-badge">🏆 Dean's List F23</span>
-                    <span class="achievement-badge">🏆 Dean's List S24</span>
-                    <span class="achievement-badge">🏆 Dean's List F24</span>
-                    <span class="achievement-badge">🏆 Dean's List S25</span>
-                    <span class="achievement-badge">🏆 Dean's List F25</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div class="skills-section">
-              <h3>Technical Skills</h3>
-              
-              <div class="skill-category">
-                <h4>Programming Languages</h4>
-                <div class="skill-bars">
-                  <div class="skill-item">
-                    <div class="skill-header">
-                      <span>Python</span>
-                      <span>Expert</span>
-                    </div>
-                    <div class="skill-bar">
-                      <div class="skill-progress" style="width: 95%"></div>
-                    </div>
-                  </div>
-                  <div class="skill-item">
-                    <div class="skill-header">
-                      <span>JavaScript/TypeScript</span>
-                      <span>Advanced</span>
-                    </div>
-                    <div class="skill-bar">
-                      <div class="skill-progress" style="width: 90%"></div>
-                    </div>
-                  </div>
-                  <div class="skill-item">
-                    <div class="skill-header">
-                      <span>C/C++/C#</span>
-                      <span>Advanced</span>
-                    </div>
-                    <div class="skill-bar">
-                      <div class="skill-progress" style="width: 85%"></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div class="skill-category">
-                <h4>Frameworks & Tools</h4>
-                <div class="tech-grid">
-                  <span class="tech-item">React</span>
-                  <span class="tech-item">.NET</span>
-                  <span class="tech-item">Django</span>
-                  <span class="tech-item">Flask</span>
-                  <span class="tech-item">Azure DevOps</span>
-                  <span class="tech-item">Docker</span>
-                  <span class="tech-item">Git</span>
-                  <span class="tech-item">MongoDB</span>
-                </div>
-              </div>
-
-              <div class="skill-category">
-                <h4>AI/ML Technologies</h4>
-                <div class="tech-grid">
-                  <span class="tech-item ai">LangChain</span>
-                  <span class="tech-item ai">OpenAI API</span>
-                  <span class="tech-item ai">Cohere</span>
-                  <span class="tech-item ai">TensorFlow</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+<!-- ============================================================
+     RESIZE WARN (small viewports)
+============================================================ -->
+<div class="too-small">
+  <div class="ts-card">
+    <div class="ts-glyph">◐</div>
+    <h2>sk/os requires a desk.</h2>
+    <p>This is a desktop workstation experience — open on a screen with a bit more room. Quick links in the meantime:</p>
+    <div class="ts-links">
+      <a href="https://github.com/sharique2004" target="_blank">github · sharique2004</a>
+      <a href="mailto:sharique@psu.edu">sharique@psu.edu</a>
     </div>
   </div>
+</div>
 
-  <!-- Load the main JavaScript from the correct relative path -->
-  <script src="{{ url_for('static', filename='script.js') }}"></script>
+<!-- ============================================================
+     SCRIPTS
+============================================================ -->
+<script src="{{ url_for('static', filename='portfolio-data.js') }}"></script>
+<script src="{{ url_for('static', filename='portfolio-apps.js') }}"></script>
+<script src="{{ url_for('static', filename='script.js') }}"></script>
 
 </body>
 </html>
