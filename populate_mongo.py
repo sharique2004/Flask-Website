@@ -1,7 +1,14 @@
 """
-Script to populate MongoDB Atlas with project and experience context for RAG.
-Run this once to add all documents to the vector store.
+Populate MongoDB Atlas with bio + experience + project context for the
+RAG assistant on Sharique's portfolio.
+
+Usage:
+    python populate_mongo.py            # append docs to bio_index
+    python populate_mongo.py --reset    # drop bio_index docs first, then add
+
+Requires: COHERE_API_KEY, ATLAS_CONNECTION_STRING in .env
 """
+import argparse
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -11,241 +18,620 @@ from langchain_core.documents import Document
 
 load_dotenv()
 
-# Documents to add to the knowledge base
+
+# ============================================================
+# KNOWLEDGE BASE
+# Each doc is a focused chunk so vector search returns precise hits.
+# Keep chunks ~150-400 tokens and topical (one subject per doc).
+# ============================================================
+
 DOCUMENTS = [
-    # ===== WellX AI Experience =====
+    # ─────────── IDENTITY / PROFILE ───────────
     Document(
-        page_content="""Sharique Khatri's Software Engineering Internship at WellX AI (December 2025 – March 2026):
-
-At WellX AI, Sharique builds backend systems for a digital health platform integrating real-time data from wearable devices including Fitbit, Apple Watch, and WHOOP. He develops ingestion pipelines and backend logic for user challenges and incentive workflows, ensuring accurate data processing and scalable reward distribution for 10,000+ users. This role has given him hands-on experience building production backend services in a fast-paced startup environment.
-
-Key Responsibilities and Achievements:
-- Engineered real-time ingestion pipelines integrating Fitbit, Apple Watch, and WHOOP wearable device data
-- Designed activity verification and reward allocation workflows for user challenges
-- Optimized backend services for reliability, scalability, and data integrity at scale for over 10,000 users
-- Built production-ready backend systems in a startup environment
-
-Technologies Used: LookerLM, SQL, Agile/Scrum, C, Ruby, System Architecture
-
-This is Sharique's current position as of 2025-2026.""",
-        metadata={"category": "experience", "company": "WellX AI", "role": "Software Engineering Intern"}
+        page_content=(
+            "Sharique Khatri is a senior Computer Science student at the Pennsylvania "
+            "State University (University Park), graduating in May 2026. He is "
+            "pursuing a Cybersecurity minor alongside his CS degree, and carries a "
+            "3.6 / 4.0 GPA. He was born and raised in Dubai, UAE, and now lives in "
+            "University Park, Pennsylvania. He goes by 'Sharique' (pronounced "
+            "Sha-reek), and his handle online is @sharique2004."
+        ),
+        metadata={"category": "profile", "topic": "identity"},
     ),
-    
-    # ===== Projects =====
     Document(
-        page_content="""AI Travel Planner Project by Sharique Khatri:
-
-A full-stack intelligent itinerary generator that uses Skyscanner and Weather APIs to identify optimal travel periods and locations with personalized AI recommendations.
-
-Technologies: Python, LangChain, APIs, AI
-GitHub: https://github.com/sharique2004/AITravelPlannar
-
-Features:
-- Integrates Skyscanner API for flight and travel data
-- Uses Weather APIs to recommend optimal travel times
-- Generates personalized AI-powered travel itineraries
-- Full-stack application with modern web technologies""",
-        metadata={"category": "project", "name": "AI Travel Planner", "technologies": ["Python", "LangChain", "APIs", "AI"]}
+        page_content=(
+            "Sharique builds backend systems, AI tooling, and the occasional "
+            "security lab. He is most fluent in Python and JavaScript, and likes "
+            "working at the intersection of distributed systems, retrieval / RAG, "
+            "and pragmatic full-stack apps. His track record spans health-tech, "
+            "enterprise modernization, applied AI consulting, education, and "
+            "front-end engineering — four internships across three countries "
+            "before his senior year."
+        ),
+        metadata={"category": "profile", "topic": "self-summary"},
     ),
-    
     Document(
-        page_content="""GreenTrack Expo Project by Sharique Khatri:
-
-An environmental sustainability tracking mobile application built with React Native and Expo to help users monitor and reduce their carbon footprint.
-
-Technologies: JavaScript, React Native, Expo, Mobile Development
-GitHub: https://github.com/sharique2004/GreenTrackExpo
-
-Features:
-- Mobile app for tracking environmental impact
-- Carbon footprint monitoring and reduction tips
-- Built with React Native for cross-platform support
-- Uses Expo framework for rapid development""",
-        metadata={"category": "project", "name": "GreenTrack Expo", "technologies": ["JavaScript", "React Native", "Expo"]}
+        page_content=(
+            "Sharique is actively looking for Summer 2026 internships and "
+            "new-graduate Software Engineer roles starting after his May 2026 "
+            "graduation. He is open to backend, AI / ML platform, infrastructure, "
+            "developer tools, and security-adjacent roles. Strong interest in "
+            "companies doing real LLM tooling, agent systems, or systems-level "
+            "infrastructure. Currently available to relocate. Best way to reach "
+            "him is sharique@psu.edu."
+        ),
+        metadata={"category": "availability", "topic": "looking-for"},
     ),
-    
     Document(
-        page_content="""VaultCache Project by Sharique Khatri:
-
-A secure caching solution with encrypted storage capabilities, providing fast data access while maintaining security and privacy standards.
-
-Technologies: Security, Caching, Encryption
-GitHub: https://github.com/sharique2004/vaultcache
-
-Features:
-- Encrypted storage for sensitive cached data
-- Fast data access with security focus
-- Privacy-first design principles
-- Secure caching mechanisms""",
-        metadata={"category": "project", "name": "VaultCache", "technologies": ["Security", "Caching", "Encryption"]}
+        page_content=(
+            "Sharique's approach to building: he favours clean APIs, idempotent "
+            "operations, observability from day one, and writing code that he or "
+            "the next engineer can come back to in six months without dread. He's "
+            "comfortable as the most junior person in a room of senior engineers "
+            "and as the senior voice on a student team. He has shipped code in "
+            "production environments touching 10,000+ end users (WellX AI) and "
+            "graded peers' code in CMPSC 360 — so he has been on both sides of the "
+            "code review."
+        ),
+        metadata={"category": "profile", "topic": "approach"},
     ),
-    
+
+    # ─────────── EXPERIENCE — WellX AI ───────────
     Document(
-        page_content="""Personal Work Tracker Project by Sharique Khatri:
-
-A productivity application to track personal tasks, work progress, and time management with intuitive dashboard and analytics.
-
-Technologies: JavaScript, Full-Stack Development, Dashboard
-GitHub: https://github.com/sharique2004/personal-work-tracker
-
-Features:
-- Task tracking and management
-- Work progress monitoring
-- Time management features
-- Intuitive dashboard with analytics
-- Full-stack web application""",
-        metadata={"category": "project", "name": "Personal Work Tracker", "technologies": ["JavaScript", "Full-Stack"]}
+        page_content=(
+            "Software Engineering Intern at WellX AI (December 2025 – March 2026, "
+            "Remote). WellX is a digital health platform integrating real-time "
+            "data from wearable devices including Fitbit, Apple Watch, and WHOOP. "
+            "Sharique built backend ingestion pipelines for wearable data and "
+            "shipped idempotent challenge and reward logic for over 10,000 users — "
+            "specifically designed to eliminate race-condition risk under "
+            "concurrent writes. He also contributed to data contracts and feature "
+            "flag experiments for health goal definitions. Tech stack: Python, "
+            "FastAPI, PostgreSQL, REST APIs, data pipelines. This was his most "
+            "recent role before senior spring."
+        ),
+        metadata={"category": "experience", "company": "WellX AI", "role": "SWE Intern", "year": "2025-2026"},
     ),
-    
+
+    # ─────────── EXPERIENCE — Penn State ORIS ───────────
     Document(
-        page_content="""Multi-Level Cache System Project by Sharique Khatri:
-
-An advanced caching system implementing MRU (Most Recently Used) and LRU (Least Recently Used) eviction policies with multi-level hierarchy for optimized memory management.
-
-Technologies: Python, Data Structures, Algorithms
-GitHub: https://github.com/sharique2004/Multi-Level-Cache-System-with-MRU-LRU-Eviction-Policies
-
-Features:
-- Multi-level cache hierarchy
-- MRU eviction policy implementation
-- LRU eviction policy implementation
-- Optimized memory management
-- Advanced data structures knowledge""",
-        metadata={"category": "project", "name": "Multi-Level Cache System", "technologies": ["Python", "Data Structures", "Algorithms"]}
+        page_content=(
+            "DevOps Intern at Penn State Office of Research Information Systems "
+            "(ORIS), June – August 2025, University Park, PA. Sharique helped "
+            "modernize the Research Accounting Navigator into a C# / .NET "
+            "architecture. He delivered 11 user stories across 4 Scrum sprints, "
+            "replaced inline SQL with parameterized queries (closing injection "
+            "vectors), and contributed to CI/CD improvements on Azure DevOps that "
+            "cut deploy time by approximately 40%. Tech stack: C#, .NET, Azure "
+            "DevOps, SQL Server, Scrum / Agile."
+        ),
+        metadata={"category": "experience", "company": "Penn State ORIS", "role": "DevOps Intern", "year": "2025"},
     ),
-    
+
+    # ─────────── EXPERIENCE — Fourth Square ───────────
     Document(
-        page_content="""Pipelined MIPS Processor Project by Sharique Khatri:
-
-A hardware implementation of a 5-stage pipelined MIPS processor datapath with hazard detection and forwarding units.
-
-Technologies: Verilog, Computer Architecture, HDL (Hardware Description Language)
-GitHub: https://github.com/sharique2004/Pipelined-MIPS-Processor-Datapath-Implementation
-
-Features:
-- 5-stage pipeline implementation (IF, ID, EX, MEM, WB)
-- Hazard detection unit
-- Forwarding unit for data hazards
-- Complete MIPS datapath
-- Hardware description in Verilog""",
-        metadata={"category": "project", "name": "Pipelined MIPS Processor", "technologies": ["Verilog", "Computer Architecture", "HDL"]}
+        page_content=(
+            "Data Science Intern at Fourth Square (June – August 2024, Texas, "
+            "USA). Fourth Square is an AI consultancy. Sharique built cloud-backed "
+            "AI applications on Microsoft Azure — RAG flows, prompt chaining, and "
+            "document QA systems. He stood up retrieval pipelines using "
+            "LangChain, Cohere, and OpenAI across more than 1,000 document "
+            "queries. He also supported 5 production services with autoscaling "
+            "and basic monitoring. This is where his hands-on RAG and LangChain "
+            "experience began."
+        ),
+        metadata={"category": "experience", "company": "Fourth Square", "role": "Data Science Intern", "year": "2024"},
     ),
-    
+
+    # ─────────── EXPERIENCE — CMPSC 360 Grader ───────────
     Document(
-        page_content="""RSA Cryptosystem Project by Sharique Khatri:
-
-A complete RSA encryption implementation from scratch without external libraries, featuring key generation, encryption and decryption.
-
-Technologies: Python, Cryptography, Mathematics
-GitHub: https://github.com/sharique2004/Manual-RSA-Cryptosystem-A-From-Scratch-Implementation-Without-External-Libraries
-
-Features:
-- RSA key generation from scratch
-- Encryption implementation
-- Decryption implementation
-- No external cryptography libraries used
-- Mathematical foundations of RSA""",
-        metadata={"category": "project", "name": "RSA Cryptosystem", "technologies": ["Python", "Cryptography", "Mathematics"]}
+        page_content=(
+            "Computer Science Grader at Penn State, CMPSC 360 (Discrete Math for "
+            "CS), August 2024 – January 2025. Sharique graded between 20 and 100 "
+            "student assignments weekly, co-authored rubrics with faculty, "
+            "proctored midterms and finals, and provided detailed code-review "
+            "feedback. The role sharpened his ability to read unfamiliar code "
+            "quickly and give actionable, kind feedback."
+        ),
+        metadata={"category": "experience", "company": "Penn State", "role": "CS Grader", "year": "2024-2025"},
     ),
-    
+
+    # ─────────── EXPERIENCE — Starbucks ───────────
     Document(
-        page_content="""Schedule Builder Project by Sharique Khatri:
-
-An intelligent course scheduling application that helps students plan their academic schedule with conflict detection and optimization.
-
-Technologies: Java, Algorithms, UI/UX
-GitHub: https://github.com/sharique2004/ScheduleBuilder
-
-Features:
-- Course schedule planning
-- Conflict detection between courses
-- Schedule optimization algorithms
-- User-friendly interface
-- Academic planning tool for students""",
-        metadata={"category": "project", "name": "Schedule Builder", "technologies": ["Java", "Algorithms", "UI/UX"]}
+        page_content=(
+            "Student Lead and Scheduler at Starbucks, Penn State campus, June "
+            "2023 – May 2024. Sharique coordinated schedules for 15+ student "
+            "staff against academic calendars, trained new hires from first shift "
+            "to floor-ready, and led a 4–5 person team during peak hours. Not a "
+            "tech role, but a real test of ops, comms, and leading peers — useful "
+            "context for understanding how he handles team responsibility."
+        ),
+        metadata={"category": "experience", "company": "Starbucks", "role": "Student Lead", "year": "2023-2024"},
     ),
-    
+
+    # ─────────── EXPERIENCE — Seera Travel Group ───────────
     Document(
-        page_content="""Custom Parser Project by Sharique Khatri:
-
-A comprehensive lexer and parser for a programming language with tokenization, syntax validation, scoping, and type checking.
-
-Technologies: Python, Compiler Design, Parsing
-GitHub: https://github.com/sharique2004/Parser
-
-Features:
-- Lexical analysis (tokenization)
-- Syntax validation
-- Scoping rules implementation
-- Type checking
-- Full parser implementation for programming language
-- Compiler design principles""",
-        metadata={"category": "project", "name": "Custom Parser", "technologies": ["Python", "Compiler Design", "Parsing"]}
+        page_content=(
+            "Front-End Engineering Intern at Seera Travel Group, October – "
+            "December 2022, Dubai, UAE. Seera is one of the largest travel "
+            "conglomerates in the Middle East. Sharique shipped 15+ responsive "
+            "pages for the travel booking flow, applied WCAG accessibility "
+            "patterns, and reduced integration handoff time to the back-end team "
+            "by roughly 30%. Tech: HTML, CSS, JavaScript, accessibility. This was "
+            "his first professional engineering role."
+        ),
+        metadata={"category": "experience", "company": "Seera Travel Group", "role": "Frontend Intern", "year": "2022"},
     ),
-    
+
+    # ─────────── PROJECTS — SkyPath ───────────
     Document(
-        page_content="""Disk Read/Write Project by Sharique Khatri:
+        page_content=(
+            "SkyPath (April 2026) — Sharique's flight connection search engine. "
+            "Computes direct, one-stop, and two-stop itineraries across roughly "
+            "260 flights and 25 airports, with UTC-normalized layover handling. "
+            "Stack: React frontend, Flask backend, Python algorithms, Docker "
+            "Compose for orchestration. Repo: github.com/sharique2004/skypath."
+        ),
+        metadata={"category": "project", "name": "SkyPath", "year": "2026"},
+    ),
 
-Low-level disk I/O operations implementation in C for efficient file system interactions and block-level data management.
+    # ─────────── PROJECTS — Taazify ───────────
+    Document(
+        page_content=(
+            "Taazify (February 2026) — SwiftUI pantry and grocery assistant for "
+            "iOS. Uses Apple Vision OCR on receipts to populate pantry inventory, "
+            "estimates shelf life, and suggests recipes from what's on hand. "
+            "Native tabbed iOS app paired with a local Python OCR service. Stack: "
+            "Swift, SwiftUI, Apple Vision OCR, Python. "
+            "Repo: github.com/sharique2004/Taazify."
+        ),
+        metadata={"category": "project", "name": "Taazify", "year": "2026"},
+    ),
 
-Technologies: C, Systems Programming, I/O
-GitHub: https://github.com/sharique2004/Disk-Read-Write
+    # ─────────── PROJECTS — AI Travel Planner ───────────
+    Document(
+        page_content=(
+            "AI Travel Planner (February 2026) — full-stack travel assistant that "
+            "pulls Skyscanner and weather data to generate personalized "
+            "itineraries across 50+ destinations. Uses retrieval to ground "
+            "recommendations. Stack: LangChain, React, Node.js, MongoDB, RAG. "
+            "Repo: github.com/sharique2004/AITravelPlannar."
+        ),
+        metadata={"category": "project", "name": "AI Travel Planner", "year": "2026"},
+    ),
 
-Features:
-- Low-level disk I/O operations
-- Block-level data management
-- Efficient file system interactions
-- Systems programming in C
-- Direct disk access and manipulation""",
-        metadata={"category": "project", "name": "Disk Read/Write", "technologies": ["C", "Systems Programming", "I/O"]}
+    # ─────────── PROJECTS — VaultCache ───────────
+    Document(
+        page_content=(
+            "VaultCache (January 2026) — encrypted filesystem-style storage "
+            "engine written in C from the ground up. Implements AES-256 "
+            "encryption, SHA-256 integrity hashing, PBKDF2 key derivation, an "
+            "LRU cache layer, write-ahead journaling, and exposes Python bindings "
+            "for higher-level use. A real systems project: shows comfort with "
+            "memory management, cryptography primitives, and FFI. "
+            "Repo: github.com/sharique2004/vaultcache."
+        ),
+        metadata={"category": "project", "name": "VaultCache", "year": "2026"},
+    ),
+
+    # ─────────── PROJECTS — GreenTrack Expo ───────────
+    Document(
+        page_content=(
+            "GreenTrack Expo (January 2026) — sustainability dashboard mobile "
+            "app. Tracks personal carbon footprint, runs weekly challenges, and "
+            "shows leaderboards. Uses EPA-style emission factors for accuracy "
+            "and gamification mechanics to drive engagement. Stack: React "
+            "Native, Firebase, D3.js for data visualization. "
+            "Repo: github.com/sharique2004/GreenTrackExpo."
+        ),
+        metadata={"category": "project", "name": "GreenTrack Expo", "year": "2026"},
+    ),
+
+    # ─────────── PROJECTS — Personal Work Tracker ───────────
+    Document(
+        page_content=(
+            "Personal Work Tracker (January 2026) — projects, issues, and habit "
+            "tracker. Vite + React frontend, Express + Prisma backend over "
+            "SQLite. Supports streaks, priorities, due dates, and epics-style "
+            "grouping. Built for Sharique's own daily use. "
+            "Repo: github.com/sharique2004/personal-work-tracker."
+        ),
+        metadata={"category": "project", "name": "Personal Work Tracker", "year": "2026"},
+    ),
+
+    # ─────────── PROJECTS — AmanUAE ───────────
+    Document(
+        page_content=(
+            "AmanUAE (2025) — real-time UAE safety alert platform Sharique built "
+            "during a period of regional drone and debris activity. Curates "
+            "verified safety updates, optimized for fast WhatsApp sharing during "
+            "live events. Deployed at dubai-news-tracker.vercel.app. Stack: "
+            "React, Vercel. Built as a public service for his home community."
+        ),
+        metadata={"category": "project", "name": "AmanUAE", "year": "2025"},
+    ),
+
+    # ─────────── PROJECTS — Gmail Recruitment Pipeline ───────────
+    Document(
+        page_content=(
+            "Gmail Recruitment Pipeline (2025) — an automated Gmail classifier "
+            "that buckets recruiter mail into rejection / interview / follow-up "
+            "categories across 50+ active applications. Useful for staying on "
+            "top of the recruiting funnel during heavy outreach seasons. Stack: "
+            "Gmail API, Python, lightweight NLP."
+        ),
+        metadata={"category": "project", "name": "Gmail Recruitment Pipeline", "year": "2025"},
+    ),
+
+    # ─────────── PROJECTS — Bibi ───────────
+    Document(
+        page_content=(
+            "Bibi (May 2026) — fully-local voice AI for Windows 11. This is "
+            "Sharique's most ambitious recent project. Uses Whisper for "
+            "speech-to-text and Ollama (Mistral + Qwen-Coder) for intent parsing "
+            "and code generation — 100% offline at runtime, no API calls. Opens "
+            "apps, generates mini-apps from a natural-language description, and "
+            "reports live system state (CPU, memory, active window). Three-agent "
+            "architecture with Claude (Flask/React layer), ChatGPT (voice + "
+            "intent), and Gemini (Windows execution layer), coordinated through "
+            "a shared API_CONTRACT.md. Refuses paths outside ALLOWED_PATHS and "
+            "never deletes anything. Runs on RTX 4080 SUPER hardware. "
+            "Repo: github.com/sharique2004/pc-assistant."
+        ),
+        metadata={"category": "project", "name": "Bibi", "year": "2026"},
+    ),
+
+    # ─────────── PROJECTS — Interactive Portfolio ───────────
+    Document(
+        page_content=(
+            "Interactive Portfolio + AI (May 2026) — the workstation-style "
+            "interactive portfolio site you're currently using. Flask backend, "
+            "MongoDB Atlas vector search for this very RAG assistant, hand-built "
+            "sk/os UI with a virtual monitor, keyboard, and mousepad. Graceful "
+            "local fallback if the AI is unreachable. "
+            "Repo: github.com/sharique2004/Flask-Website."
+        ),
+        metadata={"category": "project", "name": "Interactive Portfolio", "year": "2026"},
+    ),
+
+    # ─────────── RESEARCH — OmniSch ───────────
+    Document(
+        page_content=(
+            "OmniSch — Multimodal PCB Schematic Benchmark. Sharique is a "
+            "co-author on an arXiv paper (cs.CV) introducing a structured-diagram "
+            "benchmark for vision-language model reasoning over engineering "
+            "schematics. He contributed to dataset construction and the "
+            "evaluation framework. Citation: arXiv:2604.00270. Tags: multimodal "
+            "AI, VLMs, computer vision, benchmarking."
+        ),
+        metadata={"category": "research", "name": "OmniSch", "venue": "arXiv"},
+    ),
+
+    # ─────────── RESEARCH — Digital Twin HVAC ───────────
+    Document(
+        page_content=(
+            "Digital Twin HVAC Simulation — Sharique's Penn State Learning "
+            "Factory capstone project with industry sponsor Automated Logic "
+            "(Carrier). Integrates BACnet into a Python-based HVAC simulation "
+            "with real-time analog reads and writes plus historical weather "
+            "playback. React dashboard for visualization. Tags: BACnet, Python, "
+            "React, real-time systems, industrial IoT. (PSU Learning Factory, "
+            "2026.)"
+        ),
+        metadata={"category": "research", "name": "Digital Twin HVAC", "venue": "PSU Capstone"},
+    ),
+
+    # ─────────── RESEARCH — Pipelined MIPS ───────────
+    Document(
+        page_content=(
+            "Pipelined MIPS Processor (CMPSC 311). Verilog implementation of a "
+            "five-stage pipelined MIPS datapath — IF, ID, EX, MEM, WB — with "
+            "hazard detection and forwarding units. Demonstrates Sharique's "
+            "comfort with hardware description and computer architecture "
+            "fundamentals. Repo: github.com/sharique2004/Pipelined-MIPS-Processor-"
+            "Datapath-Implementation."
+        ),
+        metadata={"category": "research", "name": "Pipelined MIPS", "venue": "CMPSC 311"},
+    ),
+
+    # ─────────── RESEARCH — Multi-Level Cache Sim ───────────
+    Document(
+        page_content=(
+            "Multi-Level Cache Simulator (CMPSC 472). Configurable L1/L2/L3 "
+            "cache hierarchy simulator written in Python — supports varying "
+            "associativity, replacement policies (LRU vs MRU), and write "
+            "strategies (write-through vs write-back). Used to study performance "
+            "tradeoffs across memory hierarchies. Repo on GitHub under sharique2004."
+        ),
+        metadata={"category": "research", "name": "Multi-Level Cache Simulator", "venue": "CMPSC 472"},
+    ),
+
+    # ─────────── RESEARCH — Manual RSA ───────────
+    Document(
+        page_content=(
+            "Manual RSA Cryptosystem (CMPSC 443). RSA built from scratch — key "
+            "generation, modular exponentiation, prime selection, encrypt and "
+            "decrypt — with zero external cryptography libraries. Pure number "
+            "theory and Python. Demonstrates fundamentals understanding rather "
+            "than just library-wiring. Repo on GitHub under sharique2004."
+        ),
+        metadata={"category": "research", "name": "Manual RSA", "venue": "CMPSC 443"},
+    ),
+
+    # ─────────── RESEARCH — Security Lab ───────────
+    Document(
+        page_content=(
+            "CMPSC 443 Security Lab. Hands-on offense and defense work for SQL "
+            "injection, XSS, CSRF — plus lower-level material on buffer "
+            "overflows, return-to-libc, ROP chains, and adversarial ML. This is "
+            "where Sharique's practical web security and exploit awareness comes "
+            "from."
+        ),
+        metadata={"category": "research", "name": "Security Lab", "venue": "CMPSC 443"},
+    ),
+
+    # ─────────── RESEARCH — Custom Compiler Frontend ───────────
+    Document(
+        page_content=(
+            "Custom Compiler Frontend (CMPSC 461). Lexical analysis, "
+            "recursive-descent parser, AST construction, scope handling, and "
+            "type-checking for a small custom language. Covers the front half of "
+            "a compiler end-to-end. Repo: github.com/sharique2004/Parser."
+        ),
+        metadata={"category": "research", "name": "Compiler Frontend", "venue": "CMPSC 461"},
+    ),
+
+    # ─────────── EDUCATION — Penn State ───────────
+    Document(
+        page_content=(
+            "Sharique's undergraduate education: The Pennsylvania State "
+            "University, University Park campus. Bachelor of Science in Computer "
+            "Science with a Cybersecurity minor. Expected graduation May 2026. "
+            "GPA: 3.6 / 4.0. Dean's List for five semesters — Fall 2023, Spring "
+            "2024, Fall 2024, Spring 2025, Fall 2025. Relevant coursework "
+            "includes Computer Architecture (CMPSC 311), Operating Systems / "
+            "Systems Programming (CMPSC 472), Security (CMPSC 443), Programming "
+            "Languages and Compilers (CMPSC 461), Discrete Math (CMPSC 360)."
+        ),
+        metadata={"category": "education", "school": "Penn State"},
+    ),
+
+    # ─────────── EDUCATION — High School ───────────
+    Document(
+        page_content=(
+            "Sharique's high school: GEMS New Millennium School in Dubai, UAE. "
+            "Graduated May 2022 with a 3.8 / 4.0 GPA. Was Red House Captain, "
+            "Head of Communications, and completed Harvard's CS50 AI track "
+            "while still in high school. This is where his early CS exposure "
+            "and leadership track started."
+        ),
+        metadata={"category": "education", "school": "GEMS New Millennium"},
+    ),
+
+    # ─────────── SKILLS — Languages ───────────
+    Document(
+        page_content=(
+            "Sharique's programming languages. Daily drivers: Python, "
+            "JavaScript, SQL, HTML / CSS. Fluent: TypeScript, C, C#, Java. "
+            "Coursework / occasional use: Swift (used in Taazify). Strongest in "
+            "Python for backend, ML tooling, and data work; in JavaScript / "
+            "TypeScript for full-stack web and React Native; in C for systems "
+            "(VaultCache, disk I/O, OS coursework); in C# / .NET for the Penn "
+            "State ORIS modernization work."
+        ),
+        metadata={"category": "skills", "topic": "languages"},
+    ),
+
+    # ─────────── SKILLS — AI / ML ───────────
+    Document(
+        page_content=(
+            "Sharique's AI / ML stack. Daily: LangChain, RAG patterns, OpenAI "
+            "API, vector retrieval. Fluent: Gemini API, Cohere, Ollama, Whisper "
+            "(speech-to-text), running local LLMs on consumer hardware (RTX "
+            "4080 SUPER). Research-level work: VLM benchmarking from the OmniSch "
+            "arXiv paper. Coursework: TensorFlow. He has built RAG systems in "
+            "production at Fourth Square, locally with Bibi, and on this very "
+            "portfolio."
+        ),
+        metadata={"category": "skills", "topic": "ai-ml"},
+    ),
+
+    # ─────────── SKILLS — Backend ───────────
+    Document(
+        page_content=(
+            "Sharique's backend and API skills. Daily: FastAPI, REST API design, "
+            "request/response contracts. Fluent: Flask (used in this portfolio "
+            "and Bibi), Node.js with Express, WebSockets. Research-level work: "
+            "BACnet protocol (industrial controls capstone). Strong understanding "
+            "of idempotency, race conditions, and concurrent write safety from "
+            "his WellX AI work shipping reward logic to 10,000+ users."
+        ),
+        metadata={"category": "skills", "topic": "backend"},
+    ),
+
+    # ─────────── SKILLS — Frontend ───────────
+    Document(
+        page_content=(
+            "Sharique's frontend skills. Daily: React, Vite. Fluent: Next.js, "
+            "React Native (used in GreenTrack Expo), D3.js for data viz, "
+            "Three.js for 3D scenes, WCAG accessibility patterns from his Seera "
+            "Travel Group internship. Comfortable hand-rolling CSS systems "
+            "(the sk/os interface on this portfolio is custom CSS, no framework)."
+        ),
+        metadata={"category": "skills", "topic": "frontend"},
+    ),
+
+    # ─────────── SKILLS — Cloud / DevOps ───────────
+    Document(
+        page_content=(
+            "Sharique's cloud and DevOps skills. Daily: Docker, CI/CD pipelines, "
+            "Vercel deploys. Fluent: Azure (Fourth Square AI consulting and ORIS "
+            "modernization), AWS, GCP, Kubernetes. Real experience with Azure "
+            "DevOps Boards and Azure Pipelines from the Penn State ORIS "
+            "internship, where his CI/CD work cut deploy time by about 40%."
+        ),
+        metadata={"category": "skills", "topic": "cloud-devops"},
+    ),
+
+    # ─────────── SKILLS — Data ───────────
+    Document(
+        page_content=(
+            "Sharique's data and storage skills. Fluent: PostgreSQL (production "
+            "WellX AI work), MongoDB (this portfolio's RAG store, AI Travel "
+            "Planner), Firebase (GreenTrack Expo), Prisma ORM (Personal Work "
+            "Tracker). Daily: vector search and embeddings (MongoDB Atlas Vector "
+            "Search, pgvector-style patterns). Coursework: Looker for BI."
+        ),
+        metadata={"category": "skills", "topic": "data-storage"},
+    ),
+
+    # ─────────── SKILLS — Security / Systems ───────────
+    Document(
+        page_content=(
+            "Sharique's security and systems skills. Fluent: AES-256, SHA-256, "
+            "PBKDF2 (all built into VaultCache by hand), RSA from scratch, "
+            "common web attack surfaces (SQL injection, XSS, CSRF). Coursework "
+            "depth on ROP chains, return-to-libc, memory hierarchy, and "
+            "journaling. He has both the systems engineering chops (C, "
+            "low-level I/O, processor pipelines in Verilog) and the cybersecurity "
+            "minor coursework — a relatively uncommon combination."
+        ),
+        metadata={"category": "skills", "topic": "security-systems"},
+    ),
+
+    # ─────────── ACHIEVEMENTS ───────────
+    Document(
+        page_content=(
+            "Sharique's notable achievements. Dean's List for five semesters at "
+            "Penn State (Fall 2023, Spring 2024, Fall 2024, Spring 2025, Fall "
+            "2025). Co-author on an arXiv paper in computer vision (OmniSch, "
+            "cs.CV, arXiv:2604.00270). Runners-up at the EXPO 2020 Dubai Summit "
+            "in the Most Innovative Idea category. Completed Harvard's CS50 AI "
+            "applications track. Has shipped backend code to a production "
+            "system serving over 10,000 end users (WellX AI)."
+        ),
+        metadata={"category": "achievements"},
+    ),
+
+    # ─────────── INTERESTS / SIGNAL ───────────
+    Document(
+        page_content=(
+            "Why someone might hire Sharique. He combines three things that "
+            "rarely show up together at the intern level: real production "
+            "backend experience (idempotent reward logic for 10k+ users at "
+            "WellX), real applied AI / RAG experience (Fourth Square, "
+            "AI Travel Planner, this portfolio, Bibi), and real low-level "
+            "systems chops (VaultCache in C with AES/PBKDF2 from scratch, "
+            "pipelined MIPS in Verilog, manual RSA, security lab work). He's "
+            "shipped end-to-end products solo and contributed inside Scrum teams. "
+            "Strong written communicator from his CS-grader role and arXiv "
+            "co-author work."
+        ),
+        metadata={"category": "profile", "topic": "value-prop"},
+    ),
+
+    # ─────────── INTERESTS — outside tech ───────────
+    Document(
+        page_content=(
+            "Outside engineering, Sharique is rooted in his Dubai background and "
+            "stays close to that community — AmanUAE was built specifically to "
+            "help his home community share verified safety updates fast during "
+            "regional incidents. He has worked across Dubai, Texas, "
+            "Pennsylvania, and remote roles — comfortable across time zones and "
+            "cultural contexts. Speaks English natively."
+        ),
+        metadata={"category": "profile", "topic": "background"},
+    ),
+
+    # ─────────── CONTACT ───────────
+    Document(
+        page_content=(
+            "How to contact Sharique. Email: sharique@psu.edu (best). "
+            "GitHub: github.com/sharique2004. "
+            "LinkedIn: linkedin.com/in/sharique-khatri. "
+            "He's based in University Park, Pennsylvania and graduates May 2026, "
+            "open to relocation for Summer 2026 internships and new-grad SWE "
+            "roles. Resume is available on the portfolio site."
+        ),
+        metadata={"category": "contact"},
     ),
 ]
 
 
+def reset_collection(collection):
+    """Drop all documents from the bio collection. Used by --reset."""
+    count_before = collection.count_documents({})
+    collection.delete_many({})
+    print(f"  Cleared {count_before} existing documents from collection.")
+
+
 def main():
-    """Main function to populate MongoDB with documents."""
+    parser = argparse.ArgumentParser(description="Populate bio_index in MongoDB Atlas.")
+    parser.add_argument(
+        "--reset",
+        action="store_true",
+        help="Drop all existing docs in mywebsite.mybio before inserting new ones.",
+    )
+    args = parser.parse_args()
+
     cohere_key = os.getenv("COHERE_API_KEY")
     atlas_uri = os.getenv("ATLAS_CONNECTION_STRING")
-    
+
     if not cohere_key:
-        print("ERROR: COHERE_API_KEY not found in environment variables")
+        print("ERROR: COHERE_API_KEY not set in environment.")
         return
     if not atlas_uri:
-        print("ERROR: ATLAS_CONNECTION_STRING not found in environment variables")
+        print("ERROR: ATLAS_CONNECTION_STRING not set in environment.")
         return
-    
+
     print("Connecting to MongoDB Atlas...")
     mongo_client = MongoClient(host=atlas_uri)
     mywebsite_db = mongo_client["mywebsite"]
     mybio_collection = mywebsite_db["mybio"]
-    
+
+    if args.reset:
+        print("--reset flag set: dropping existing documents...")
+        reset_collection(mybio_collection)
+    else:
+        existing = mybio_collection.count_documents({})
+        if existing:
+            print(
+                f"NOTE: collection already has {existing} documents. "
+                "Re-running without --reset will create duplicates. "
+                "Pass --reset to wipe first."
+            )
+
     print("Initializing Cohere embeddings...")
     embeddings = CohereEmbeddings(
         cohere_api_key=cohere_key,
         model="embed-english-v3.0",
     )
-    
+
     print("Setting up vector store...")
     vectorstore = MongoDBAtlasVectorSearch(
         collection=mybio_collection,
         embedding=embeddings,
         index_name="bio_index",
     )
-    
+
     print(f"\nAdding {len(DOCUMENTS)} documents to MongoDB...")
-    
-    # Add documents one by one with progress
     for i, doc in enumerate(DOCUMENTS, 1):
         try:
             vectorstore.add_documents([doc])
-            category = doc.metadata.get("category", "unknown")
-            name = doc.metadata.get("name") or doc.metadata.get("company") or "N/A"
-            print(f"  [{i}/{len(DOCUMENTS)}] Added: {category} - {name}")
+            cat = doc.metadata.get("category", "?")
+            tag = (
+                doc.metadata.get("name")
+                or doc.metadata.get("company")
+                or doc.metadata.get("school")
+                or doc.metadata.get("topic")
+                or "general"
+            )
+            print(f"  [{i:>2}/{len(DOCUMENTS)}] {cat:<12} — {tag}")
         except Exception as e:
-            print(f"  [{i}/{len(DOCUMENTS)}] ERROR adding document: {e}")
-    
-    print("\n✅ Done! All documents have been added to MongoDB Atlas.")
-    print("You can now ask the AI about your WellX AI experience and projects.")
+            print(f"  [{i:>2}/{len(DOCUMENTS)}] ERROR: {e}")
+
+    final = mybio_collection.count_documents({})
+    print(f"\nDone. Collection now holds {final} documents.")
 
 
 if __name__ == "__main__":
