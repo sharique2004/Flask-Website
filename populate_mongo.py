@@ -714,21 +714,35 @@ def main():
         index_name="bio_index",
     )
 
-    print(f"\nAdding {len(DOCUMENTS)} documents to MongoDB...")
+    # Batch insert — Cohere embed accepts up to 96 texts per call, so all
+    # 40+ docs go through in one API call. (Previously this was one call per
+    # doc, which hit the Cohere trial key's 40/min limit at exactly doc 40.)
+    print(f"\nAdding {len(DOCUMENTS)} documents to MongoDB (batched)...")
     for i, doc in enumerate(DOCUMENTS, 1):
-        try:
-            vectorstore.add_documents([doc])
-            cat = doc.metadata.get("category", "?")
-            tag = (
-                doc.metadata.get("name")
-                or doc.metadata.get("company")
-                or doc.metadata.get("school")
-                or doc.metadata.get("topic")
-                or "general"
-            )
-            print(f"  [{i:>2}/{len(DOCUMENTS)}] {cat:<12} — {tag}")
-        except Exception as e:
-            print(f"  [{i:>2}/{len(DOCUMENTS)}] ERROR: {e}")
+        cat = doc.metadata.get("category", "?")
+        tag = (
+            doc.metadata.get("name")
+            or doc.metadata.get("company")
+            or doc.metadata.get("school")
+            or doc.metadata.get("topic")
+            or "general"
+        )
+        print(f"  [{i:>2}/{len(DOCUMENTS)}] {cat:<12} — {tag}")
+
+    try:
+        vectorstore.add_documents(DOCUMENTS)
+        print(f"\nEmbedded and inserted all {len(DOCUMENTS)} documents in one batch.")
+    except Exception as e:
+        print(f"\nERROR during batch insert: {e}")
+        print("Falling back to single-doc inserts with 2s spacing...")
+        import time
+        for i, doc in enumerate(DOCUMENTS, 1):
+            try:
+                vectorstore.add_documents([doc])
+                print(f"  [{i:>2}/{len(DOCUMENTS)}] inserted")
+                time.sleep(2)  # 30/min, well under any trial limit
+            except Exception as inner:
+                print(f"  [{i:>2}/{len(DOCUMENTS)}] ERROR: {inner}")
 
     final = mybio_collection.count_documents({})
     print(f"\nDone. Collection now holds {final} documents.")
