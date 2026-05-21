@@ -36,7 +36,7 @@
         <div class="ask-header">
           <div class="ascii">${esc("> ask.sh — sk's bio, but queryable")}</div>
           <div class="meta">
-            <span>model: <b>gemini</b></span>
+            <span>model: <b>gemini</b> · <span style="color:var(--ink-faint)">cohere fallback</span></span>
             <span>ctx: <b>MongoDB Atlas RAG</b></span>
             <span>mode: <b>vector retrieval</b></span>
           </div>
@@ -99,11 +99,16 @@
         });
         const data = await res.json();
         const answer = (data && data.answer) ? data.answer : "(no response)";
+        const provider = (data && data.provider) ? data.provider : "unknown";
+        // Color-code so cohere fallback is visually obvious
+        const providerColor = provider === "gemini" ? "var(--indigo)"
+          : provider === "cohere (fallback)" ? "var(--amber)"
+          : "var(--ink-faint)";
         const pending = root.querySelector("#ask-pending");
         if (pending) {
           pending.querySelector(".text").innerHTML =
             esc(answer.trim()) +
-            '<div class="src">retrieved · MongoDB Atlas · bio_index</div>';
+            `<div class="src">retrieved · MongoDB Atlas · bio_index · <span style="color:${providerColor}">${esc(provider)}</span></div>`;
           pending.id = "";
         }
       } catch (e) {

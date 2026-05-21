@@ -16,23 +16,38 @@ except ImportError as e:
     RAG_OK = False
     RAG_IMPORT_ERROR = repr(e)
 
+# Gemini (primary LLM). If not installed or unkeyed, /ask falls back to Cohere.
+GEMINI_OK = True
+GEMINI_IMPORT_ERROR = None
+try:
+    from langchain_google_genai import ChatGoogleGenerativeAI
+except ImportError as e:
+    GEMINI_OK = False
+    GEMINI_IMPORT_ERROR = repr(e)
+
 load_dotenv()
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
-def get_personal_info(query: str) -> str:
-    """Answer questions about you from MongoDB Atlas + Cohere.
-       If the stack isn't available, return a helpful message."""
+def get_personal_info(query: str):
+    """Answer questions using Gemini (primary) with Cohere fallback.
+
+    Embeddings stay on Cohere (matches the MongoDB Atlas vector index).
+    Returns a tuple (answer_text, provider_label) where provider_label is
+    one of: 'gemini', 'cohere (fallback)', or 'error'."""
     if not RAG_OK:
-        return f"RAG imports missing: {RAG_IMPORT_ERROR}"
+        return f"RAG imports missing: {RAG_IMPORT_ERROR}", "error"
     cohere_key = os.getenv("COHERE_API_KEY")
     atlas_uri = os.getenv("ATLAS_CONNECTION_STRING")
+    google_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 
     if not cohere_key or not atlas_uri:
-        return f"Missing env vars: COHERE_API_KEY={bool(cohere_key)} ATLAS_CONNECTION_STRING={bool(atlas_uri)}"
-    llm = ChatCohere(model="command-a-03-2025", temperature=0.4)
+        return (
+            f"Missing env vars: COHERE_API_KEY={bool(cohere_key)} "
+            f"ATLAS_CONNECTION_STRING={bool(atlas_uri)}"
+        ), "error"
     embeddings = CohereEmbeddings(
-        cohere_api_key=os.getenv("COHERE_API_KEY"),
+        cohere_api_key=cohere_key,
         model="embed-english-v3.0",
     )
     mongo_client = MongoClient(host=os.getenv("ATLAS_CONNECTION_STRING"))
@@ -130,8 +145,29 @@ def get_personal_info(query: str) -> str:
         ),
         input_variables=["context", "query"],
     )
-    chain = template | llm | StrOutputParser()
-    return chain.invoke({"context": context, "query": query})
+    # ----- Try Gemini first (primary) -----
+    if GEMINI_OK and google_key:
+        try:
+            llm = ChatGoogleGenerativeAI(
+                model="gemini-2.5-flash",
+                temperature=0.4,
+                google_api_key=google_key,
+            )
+            chain = template | llm | StrOutputParser()
+            return chain.invoke({"context": context, "query": query}), "gemini"
+        except Exception as e:
+            app.logger.warning(f"Gemini failed, falling back to Cohere: {e}")
+
+    # ----- Fallback to Cohere -----
+    try:
+        llm = ChatCohere(model="command-a-03-2025", temperature=0.4)
+        chain = template | llm | StrOutputParser()
+        return chain.invoke({"context": context, "query": query}), "cohere (fallback)"
+    except Exception as e:
+        return (
+            f"Both Gemini and Cohere failed. Last error: {type(e).__name__}: {e}",
+            "error",
+        )
 
 @app.route("/")
 def home():
@@ -162,12 +198,13 @@ def ask():
     data = request.get_json() or {}
     q = (data.get("query") or "").strip()
     if not q:
-        return jsonify({"answer": "Please enter a question."}), 400
+        return jsonify({"answer": "Please enter a question.", "provider": "error"}), 400
     try:
-        answer = get_personal_info(q)
+        answer, provider = get_personal_info(q)
     except Exception as e:
         answer = f"Backend error: {type(e).__name__}: {e}"
-    return jsonify({"answer": answer})
+        provider = "error"
+    return jsonify({"answer": answer, "provider": provider})
 
 if __name__ == "__main__":
     # Use 0.0.0.0 in dev to be reachable from local network if needed
