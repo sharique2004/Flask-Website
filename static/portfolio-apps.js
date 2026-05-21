@@ -36,7 +36,7 @@
         <div class="ask-header">
           <div class="ascii">${esc("> ask.sh — sk's bio, but queryable")}</div>
           <div class="meta">
-            <span>model: <b>cohere · command-a</b></span>
+            <span>model: <b>gemini</b></span>
             <span>ctx: <b>MongoDB Atlas RAG</b></span>
             <span>mode: <b>vector retrieval</b></span>
           </div>
@@ -68,7 +68,7 @@
       app: "ask.sh",
       title: "RAG console",
       statusLeft: `<span>portfolio bio</span><span>· UTF-8</span>`,
-      statusRight: `<span>cohere · flask</span>`,
+      statusRight: `<span>gemini · flask</span>`,
       body,
       actions: "",
     });
