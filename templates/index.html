@@ -10,6 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 
 <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+<link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
 </head>
 
 <body>
@@ -183,18 +184,91 @@
 
 
 <!-- ============================================================
-     RESIZE WARN (small viewports)
+     MOBILE sk/os — single-page CLI-aesthetic experience
 ============================================================ -->
-<div class="too-small">
-  <div class="ts-card">
-    <div class="ts-glyph">◐</div>
-    <h2>sk/os requires a desk.</h2>
-    <p>This is a desktop workstation experience — open on a screen with a bit more room. Quick links in the meantime:</p>
-    <div class="ts-links">
-      <a href="https://github.com/sharique2004" target="_blank">github · sharique2004</a>
-      <a href="mailto:sharique@psu.edu">sharique@psu.edu</a>
+<div class="mobile-os" id="mobileOs">
+
+  <!-- Top bar -->
+  <header class="mob-bar">
+    <div class="mob-bar-left">
+      <span class="mob-bar-logo">◐</span>
+      <span class="mob-bar-app">sk/os</span>
     </div>
-  </div>
+    <div class="mob-bar-right">
+      <span class="dot-net"></span>
+      <span class="mob-bar-clock" id="mobClock">--:--</span>
+    </div>
+  </header>
+
+  <main class="mob-content">
+
+    <!-- Hero -->
+    <section class="mob-hero">
+      <div class="mob-hero-line"><span class="mob-mono-prompt">$</span> whoami</div>
+      <h1 class="mob-hero-name">Sharique <em>Khatri</em></h1>
+      <p class="mob-hero-tag">CS senior @ Penn State '26. Backend systems, AI tooling, security labs.</p>
+      <div class="mob-hero-status">
+        <span class="mob-status-dot"></span>
+        open to summer '26 / new grad
+      </div>
+    </section>
+
+    <!-- Ask -->
+    <section class="mob-section" id="mobAsk">
+      <h2 class="mob-section-title"><span class="mob-hash">#</span> ask</h2>
+      <p class="mob-section-sub">Ask anything — grounded in his bio via MongoDB Atlas RAG.</p>
+      <div class="mob-ask-chips" id="mobAskChips">
+        <button class="mob-chip" data-q="What's Sharique's strongest technical area?">strongest skill</button>
+        <button class="mob-chip" data-q="Tell me about the WellX AI internship.">wellx ai</button>
+        <button class="mob-chip" data-q="What is Bibi?">what is bibi</button>
+        <button class="mob-chip" data-q="Why should I hire him?">why hire him</button>
+      </div>
+      <div class="mob-ask-feed" id="mobAskFeed"></div>
+      <form class="mob-ask-input" id="mobAskForm">
+        <span class="mob-mono-prompt">$</span>
+        <input id="mobAskInput" type="text" autocomplete="off" placeholder="ask anything..." />
+        <button type="submit" class="mob-ask-send" aria-label="Send">→</button>
+      </form>
+    </section>
+
+    <!-- Work -->
+    <section class="mob-section">
+      <h2 class="mob-section-title"><span class="mob-hash">#</span> work</h2>
+      <div class="mob-list" id="mobWork"></div>
+    </section>
+
+    <!-- Projects -->
+    <section class="mob-section">
+      <h2 class="mob-section-title"><span class="mob-hash">#</span> projects</h2>
+      <div class="mob-tabs" id="mobProjTabs"></div>
+      <div class="mob-list" id="mobProj"></div>
+    </section>
+
+    <!-- Research -->
+    <section class="mob-section">
+      <h2 class="mob-section-title"><span class="mob-hash">#</span> research</h2>
+      <div class="mob-list" id="mobResearch"></div>
+    </section>
+
+    <!-- Profile -->
+    <section class="mob-section">
+      <h2 class="mob-section-title"><span class="mob-hash">#</span> profile</h2>
+      <div id="mobProfile"></div>
+    </section>
+
+  </main>
+
+  <footer class="mob-foot">
+    <div class="mob-foot-links">
+      <a href="https://github.com/sharique2004" target="_blank">github</a>
+      <span class="mob-foot-sep">·</span>
+      <a href="https://www.linkedin.com/in/sharique-khatri/" target="_blank">linkedin</a>
+      <span class="mob-foot-sep">·</span>
+      <a href="mailto:sharique@psu.edu">mail</a>
+    </div>
+    <div class="mob-foot-mark">// sk/os · v2026</div>
+  </footer>
+
 </div>
 
 <!-- ============================================================
@@ -203,6 +277,7 @@
 <script src="{{ url_for('static', filename='portfolio-data.js') }}"></script>
 <script src="{{ url_for('static', filename='portfolio-apps.js') }}"></script>
 <script src="{{ url_for('static', filename='script.js') }}"></script>
+<script src="{{ url_for('static', filename='mobile.js') }}"></script>
 
 </body>
 </html>

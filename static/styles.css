@@ -1370,7 +1370,5 @@ body.fs-on .screen::after { opacity: 0.5; }
   border-bottom: 1px dashed var(--line-2);
   padding-bottom: 6px;
 }
-@media (max-width: 640px), (max-height: 420px) {
-  .scene { display: none; }
-  .too-small { display: flex; }
-}
+/* Mobile UI takeover is handled entirely by mobile.css
+   (max-width: 768px). The .too-small warning is no longer used. */
