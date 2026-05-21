@@ -543,6 +543,106 @@ DOCUMENTS = [
         metadata={"category": "profile", "topic": "background"},
     ),
 
+    # ─────────── COURSEWORK — CS B.S. core ───────────
+    Document(
+        page_content=(
+            "Penn State Computer Science B.S. (College of Engineering) "
+            "prescribed core curriculum — what Sharique's degree requires. "
+            "Programming and data: CMPSC 150N (Computing and Society), "
+            "CMPSC 221 (Object-Oriented Programming with Web Applications), "
+            "CMPSC 222 (Advanced Data Structures and Algorithms in C), "
+            "CMPSC 465 (Data Structures and Algorithms). "
+            "Systems: CMPSC 315 (Computer Systems I), CMPSC 316 (Computer "
+            "Systems II). "
+            "Theory and languages: CMPSC 360 (Discrete Mathematics for "
+            "Computer Science), CMPSC 461 (Programming Language Concepts). "
+            "Software engineering and writing: CMPSC 320 (Software Engineering "
+            "Principles), CMPSC 483W (Software Design Methods — the senior "
+            "capstone), ENGL 202C (Technical Writing). "
+            "Physics: PHYS 211 (Mechanics), PHYS 212 (Electricity and "
+            "Magnetism). "
+            "Plus 18 credits of approved CS / Computer Engineering electives. "
+            "Grade of C or better required in all prescribed courses. Total "
+            "degree: 127+ credits."
+        ),
+        metadata={"category": "coursework", "topic": "cs-bs-core"},
+    ),
+
+    # ─────────── COURSEWORK — Math, stats, science ───────────
+    Document(
+        page_content=(
+            "Mathematics, statistics, and science required for the Penn State "
+            "CS B.S. degree. "
+            "Math: MATH 140 (Calculus with Analytic Geometry I), MATH 141 "
+            "(Calculus II), MATH 220 (Matrices / Linear Algebra), MATH 230 "
+            "(Calculus and Vector Analysis — or the 231/232 sequence). "
+            "Probability and statistics: one course from STAT/MATH 318, 414, "
+            "or 418, plus one from STAT/MATH 319 or 415. "
+            "Science: additional PHYS (213 or 214), more natural science "
+            "credits, and approved-department credits. Grade of C or better "
+            "required in all math courses. This is the quantitative spine "
+            "behind Sharique's comfort with algorithms, systems work, and "
+            "AI / ML."
+        ),
+        metadata={"category": "coursework", "topic": "math-science"},
+    ),
+
+    # ─────────── COURSEWORK — Cybersecurity minor ───────────
+    Document(
+        page_content=(
+            "Sharique's Cybersecurity Computational Foundations minor at "
+            "Penn State (College of Engineering). 18 credits total, minimum "
+            "grade C in every course. "
+            "Entry prerequisites: CMPSC 121/131 + 122/132 (intro programming), "
+            "CMPSC 221, CMPSC 311, CMPSC 360, CMPEN 270 or 271, CMPEN 331, "
+            "and a stats course (STAT 318 / 414 / 418). "
+            "Prescribed core (9 credits): CMPEN/EE 362 (Communication "
+            "Networks), CMPSC 443 (Introduction to Computer and Network "
+            "Security — the course where Sharique did the Manual RSA project "
+            "and the SQLi / XSS / CSRF / ROP security lab), CMPSC 473 "
+            "(Operating Systems Design and Construction). "
+            "Additional courses (3–6 credits): CMPEN 462 (Wireless "
+            "Communications Systems and Security) or CMPSC 447 (Software "
+            "Security). "
+            "Supporting courses (3–6 credits): CMPEN 431 (Computer "
+            "Architecture), CMPSC 431W (Database Management Systems), "
+            "CMPSC 461 (Programming Languages), CMPSC 464 (Theory of "
+            "Computation), or CMPSC 475 (Applications Programming)."
+        ),
+        metadata={"category": "coursework", "topic": "cybersecurity-minor"},
+    ),
+
+    # ─────────── COURSEWORK — Sharique's notable courses + outputs ───────────
+    Document(
+        page_content=(
+            "Specific Penn State courses Sharique has completed, mapped to "
+            "the artifacts he built in each — useful for grounding what he "
+            "actually learned vs. what's on the official curriculum list. "
+            "CMPSC 360 (Discrete Math for CS) — later returned as a grader "
+            "for this exact course (Aug 2024 – Jan 2025). "
+            "CMPSC 311 (Systems Programming) — built a 5-stage pipelined "
+            "MIPS processor in Verilog with hazard detection and forwarding "
+            "(IF/ID/EX/MEM/WB). "
+            "CMPSC 461 (Programming Language Concepts) — built a custom "
+            "compiler frontend: lexer, recursive-descent parser, AST "
+            "construction, scope handling, type checking. "
+            "CMPSC 472 (Operating Systems) — built a multi-level L1/L2/L3 "
+            "cache simulator with configurable associativity and LRU/MRU "
+            "replacement policies. "
+            "CMPSC 443 (Computer and Network Security) — implemented RSA "
+            "from scratch (no crypto libraries), and did the security lab "
+            "covering SQL injection, XSS, CSRF, buffer overflows, "
+            "return-to-libc, ROP chains, and adversarial ML. "
+            "Senior Capstone (Penn State Learning Factory) — Digital Twin "
+            "HVAC Simulation with Automated Logic (Carrier) as industry "
+            "sponsor, integrating BACnet into a Python simulation with a "
+            "React dashboard. "
+            "Plus the full CS B.S. math sequence through MATH 230 and "
+            "Linear Algebra (MATH 220)."
+        ),
+        metadata={"category": "coursework", "topic": "completed-courses"},
+    ),
+
     # ─────────── CONTACT ───────────
     Document(
         page_content=(
