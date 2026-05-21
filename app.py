@@ -29,12 +29,17 @@ load_dotenv()
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
-def get_personal_info(query: str):
+def get_personal_info(query: str, request_meta: dict | None = None):
     """Answer questions using Gemini (primary) with Cohere fallback.
 
     Embeddings stay on Cohere (matches the MongoDB Atlas vector index).
     Returns a tuple (answer_text, provider_label) where provider_label is
-    one of: 'gemini', 'cohere (fallback)', or 'error'."""
+    one of: 'gemini', 'cohere (fallback)', or 'error'.
+
+    request_meta is an optional dict of Flask request info (ip, ua,
+    referrer) — attached to LangSmith traces so you can see who's
+    actually asking questions on the portfolio."""
+    request_meta = request_meta or {}
     if not RAG_OK:
         return f"RAG imports missing: {RAG_IMPORT_ERROR}", "error"
     cohere_key = os.getenv("COHERE_API_KEY")
@@ -153,6 +158,20 @@ def get_personal_info(query: str):
         ),
         input_variables=["context", "query"],
     )
+    def _run_config(provider_tag: str):
+        """LangSmith config — tags + metadata so traces are filterable
+        by provider and you can spot recruiter traffic vs your own
+        testing in the LangSmith UI."""
+        return {
+            "run_name": "portfolio-ask",
+            "tags": ["portfolio", f"provider:{provider_tag}"],
+            "metadata": {
+                "provider": provider_tag,
+                "query_preview": query[:80],
+                **request_meta,
+            },
+        }
+
     # ----- Try Gemini first (primary) -----
     if GEMINI_OK and google_key:
         try:
@@ -162,7 +181,11 @@ def get_personal_info(query: str):
                 google_api_key=google_key,
             )
             chain = template | llm | StrOutputParser()
-            return chain.invoke({"context": context, "query": query}), "gemini"
+            answer = chain.invoke(
+                {"context": context, "query": query},
+                config=_run_config("gemini"),
+            )
+            return answer, "gemini"
         except Exception as e:
             app.logger.warning(f"Gemini failed, falling back to Cohere: {e}")
 
@@ -170,7 +193,11 @@ def get_personal_info(query: str):
     try:
         llm = ChatCohere(model="command-a-03-2025", temperature=0.4)
         chain = template | llm | StrOutputParser()
-        return chain.invoke({"context": context, "query": query}), "cohere (fallback)"
+        answer = chain.invoke(
+            {"context": context, "query": query},
+            config=_run_config("cohere-fallback"),
+        )
+        return answer, "cohere (fallback)"
     except Exception as e:
         return (
             f"Both Gemini and Cohere failed. Last error: {type(e).__name__}: {e}",
@@ -201,14 +228,33 @@ def projects():
 def assistant():
     return render_template("assistant.html")
 
+def _client_ip():
+    """Best-effort client IP. Behind Heroku / a CDN, X-Forwarded-For has
+    the real IP as the first comma-separated value."""
+    xff = request.headers.get("X-Forwarded-For", "")
+    if xff:
+        return xff.split(",")[0].strip()
+    return request.remote_addr or "unknown"
+
+
 @app.route("/ask", methods=["POST"])
 def ask():
     data = request.get_json() or {}
     q = (data.get("query") or "").strip()
     if not q:
         return jsonify({"answer": "Please enter a question.", "provider": "error"}), 400
+
+    # Build metadata for LangSmith traces — lets you see WHO is asking
+    # what on the portfolio (IP, browser, where they came from).
+    request_meta = {
+        "client_ip": _client_ip(),
+        "user_agent": request.headers.get("User-Agent", "")[:200],
+        "referrer": request.referrer or "(direct)",
+        "host": request.host,
+    }
+
     try:
-        answer, provider = get_personal_info(q)
+        answer, provider = get_personal_info(q, request_meta=request_meta)
     except Exception as e:
         answer = f"Backend error: {type(e).__name__}: {e}"
         provider = "error"
