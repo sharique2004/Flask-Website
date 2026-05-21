@@ -40,13 +40,14 @@ DOCUMENTS = [
     ),
     Document(
         page_content=(
-            "Sharique builds backend systems, AI tooling, and the occasional "
-            "security lab. He is most fluent in Python and JavaScript, and likes "
-            "working at the intersection of distributed systems, retrieval / RAG, "
-            "and pragmatic full-stack apps. His track record spans health-tech, "
-            "enterprise modernization, applied AI consulting, education, and "
-            "front-end engineering — four internships across three countries "
-            "before his senior year."
+            "What Sharique mostly works on: backend stuff — APIs, ingestion "
+            "pipelines, sometimes AI tools that need a server behind them. "
+            "Python and JavaScript are his go-to languages. He's also done a "
+            "fair bit in C from systems and security coursework. Internships "
+            "have been in health-tech (WellX AI), university IT modernization "
+            "(Penn State ORIS), an AI consulting shop (Fourth Square), and "
+            "front-end work in Dubai before college (Seera). So a pretty "
+            "mixed sample of company types."
         ),
         metadata={"category": "profile", "topic": "self-summary"},
     ),
@@ -64,14 +65,14 @@ DOCUMENTS = [
     ),
     Document(
         page_content=(
-            "Sharique's approach to building: he favours clean APIs, idempotent "
-            "operations, observability from day one, and writing code that he or "
-            "the next engineer can come back to in six months without dread. He's "
-            "comfortable as the most junior person in a room of senior engineers "
-            "and as the senior voice on a student team. He has shipped code in "
-            "production environments touching 10,000+ end users (WellX AI) and "
-            "graded peers' code in CMPSC 360 — so he has been on both sides of the "
-            "code review."
+            "How Sharique approaches engineering: he cares a lot about "
+            "idempotency and not writing code that breaks under retries. Came "
+            "out of his WellX AI work where the reward logic had to be safe "
+            "under concurrent writes. He's not religious about test coverage "
+            "or any particular methodology. He's also been on both sides of "
+            "code review — graded assignments for CMPSC 360, also gotten "
+            "his own code reviewed in Scrum at Penn State ORIS. Decent at "
+            "reading unfamiliar code from doing both."
         ),
         metadata={"category": "profile", "topic": "approach"},
     ),
@@ -79,16 +80,16 @@ DOCUMENTS = [
     # ─────────── EXPERIENCE — WellX AI ───────────
     Document(
         page_content=(
-            "Software Engineering Intern at WellX AI (December 2025 – March 2026, "
-            "Remote). WellX is a digital health platform integrating real-time "
-            "data from wearable devices including Fitbit, Apple Watch, and WHOOP. "
-            "Sharique built backend ingestion pipelines for wearable data and "
-            "shipped idempotent challenge and reward logic for over 10,000 users — "
-            "specifically designed to eliminate race-condition risk under "
-            "concurrent writes. He also contributed to data contracts and feature "
-            "flag experiments for health goal definitions. Tech stack: Python, "
-            "FastAPI, PostgreSQL, REST APIs, data pipelines. This was his most "
-            "recent role before senior spring."
+            "WellX AI — Software Engineering Intern from December 2025 to "
+            "March 2026, remote. WellX is a digital health platform that "
+            "pulls data from wearables (Fitbit, Apple Watch, WHOOP) for "
+            "challenges and rewards. Sharique mostly worked on two things: "
+            "the wearable data ingestion side, and the reward / challenge "
+            "logic. The reward stuff was the harder part — had to be safe "
+            "under concurrent writes since users could hit endpoints "
+            "multiple times. He also helped with feature flagging for "
+            "different goal definitions. Stack was Python and FastAPI on "
+            "top of Postgres."
         ),
         metadata={"category": "experience", "company": "WellX AI", "role": "SWE Intern", "year": "2025-2026"},
     ),
@@ -166,11 +167,14 @@ DOCUMENTS = [
     # ─────────── PROJECTS — SkyPath ───────────
     Document(
         page_content=(
-            "SkyPath (April 2026) — Sharique's flight connection search engine. "
-            "Computes direct, one-stop, and two-stop itineraries across roughly "
-            "260 flights and 25 airports, with UTC-normalized layover handling. "
-            "Stack: React frontend, Flask backend, Python algorithms, Docker "
-            "Compose for orchestration. Repo: github.com/sharique2004/skypath."
+            "SkyPath, built around April. It's a flight connection search "
+            "engine — give it an origin and destination, it figures out "
+            "direct flights, one-stops, and two-stops. The tricky part was "
+            "the layover math, which has to normalize everything to UTC "
+            "because flight times are local. Around 260 flights and 25 "
+            "airports in the dataset. React frontend, Flask backend, "
+            "Docker Compose to run them together. "
+            "Repo: github.com/sharique2004/skypath."
         ),
         metadata={"category": "project", "name": "SkyPath", "year": "2026"},
     ),
@@ -191,10 +195,12 @@ DOCUMENTS = [
     # ─────────── PROJECTS — AI Travel Planner ───────────
     Document(
         page_content=(
-            "AI Travel Planner (February 2026) — full-stack travel assistant that "
-            "pulls Skyscanner and weather data to generate personalized "
-            "itineraries across 50+ destinations. Uses retrieval to ground "
-            "recommendations. Stack: LangChain, React, Node.js, MongoDB, RAG. "
+            "AI Travel Planner from February. It pulls flight data from "
+            "Skyscanner and weather forecasts, then uses an LLM with "
+            "retrieval to suggest when and where to actually go. The point "
+            "was that the LLM should be grounded in real flight prices and "
+            "weather conditions, not just hallucinating destinations. Stack "
+            "is LangChain, React, Node, MongoDB. "
             "Repo: github.com/sharique2004/AITravelPlannar."
         ),
         metadata={"category": "project", "name": "AI Travel Planner", "year": "2026"},
@@ -203,13 +209,15 @@ DOCUMENTS = [
     # ─────────── PROJECTS — VaultCache ───────────
     Document(
         page_content=(
-            "VaultCache (January 2026) — encrypted filesystem-style storage "
-            "engine written in C from the ground up. Implements AES-256 "
-            "encryption, SHA-256 integrity hashing, PBKDF2 key derivation, an "
-            "LRU cache layer, write-ahead journaling, and exposes Python bindings "
-            "for higher-level use. A real systems project: shows comfort with "
-            "memory management, cryptography primitives, and FFI. "
-            "Repo: github.com/sharique2004/vaultcache."
+            "VaultCache — wrote this in C back in January. It's an "
+            "encrypted file-storage thing. AES-256 for encryption, SHA-256 "
+            "for integrity, PBKDF2 to derive keys from a passphrase. There's "
+            "an LRU cache in front of it, and write-ahead journaling so it "
+            "doesn't corrupt on a bad shutdown. Also has Python bindings if "
+            "you want to use it from Python instead of linking against C. "
+            "He built it mostly to actually understand crypto primitives "
+            "instead of just calling a library. Repo is "
+            "github.com/sharique2004/vaultcache."
         ),
         metadata={"category": "project", "name": "VaultCache", "year": "2026"},
     ),
@@ -266,16 +274,17 @@ DOCUMENTS = [
     # ─────────── PROJECTS — Bibi ───────────
     Document(
         page_content=(
-            "Bibi (May 2026) — fully-local voice AI for Windows 11. This is "
-            "Sharique's most ambitious recent project. Uses Whisper for "
-            "speech-to-text and Ollama (Mistral + Qwen-Coder) for intent parsing "
-            "and code generation — 100% offline at runtime, no API calls. Opens "
-            "apps, generates mini-apps from a natural-language description, and "
-            "reports live system state (CPU, memory, active window). Three-agent "
-            "architecture with Claude (Flask/React layer), ChatGPT (voice + "
-            "intent), and Gemini (Windows execution layer), coordinated through "
-            "a shared API_CONTRACT.md. Refuses paths outside ALLOWED_PATHS and "
-            "never deletes anything. Runs on RTX 4080 SUPER hardware. "
+            "Bibi is the voice AI he's been building for Windows 11. The "
+            "whole thing runs offline once it's set up — Whisper handles "
+            "speech-to-text, and Ollama runs Mistral and Qwen-Coder for "
+            "intent parsing and code generation. No API calls at runtime. "
+            "It can open apps, spin up small apps from a description, and "
+            "report what's happening on the system (CPU, memory, active "
+            "window). There were three Claude / ChatGPT / Gemini agents "
+            "involved in building it, coordinated through a shared "
+            "API_CONTRACT.md so they could hand off cleanly. He set hard "
+            "limits in code — it won't touch paths outside an allowlist "
+            "and won't delete anything. Runs on his RTX 4080 SUPER. "
             "Repo: github.com/sharique2004/pc-assistant."
         ),
         metadata={"category": "project", "name": "Bibi", "year": "2026"},
@@ -516,16 +525,15 @@ DOCUMENTS = [
     # ─────────── INTERESTS / SIGNAL ───────────
     Document(
         page_content=(
-            "Why someone might hire Sharique. He combines three things that "
-            "rarely show up together at the intern level: real production "
-            "backend experience (idempotent reward logic for 10k+ users at "
-            "WellX), real applied AI / RAG experience (Fourth Square, "
-            "AI Travel Planner, this portfolio, Bibi), and real low-level "
-            "systems chops (VaultCache in C with AES/PBKDF2 from scratch, "
-            "pipelined MIPS in Verilog, manual RSA, security lab work). He's "
-            "shipped end-to-end products solo and contributed inside Scrum teams. "
-            "Strong written communicator from his CS-grader role and arXiv "
-            "co-author work."
+            "Why someone might want to hire him. He's done actual production "
+            "backend work at WellX AI (not just a CRUD app — reward and "
+            "challenge logic for tens of thousands of users). He's also "
+            "built a bunch of AI / RAG things — at Fourth Square as an "
+            "intern, in his AI Travel Planner side project, in Bibi which "
+            "is fully local. And he has the lower-level stuff too: wrote "
+            "RSA from scratch in CMPSC 443, built VaultCache in C with "
+            "AES-256, did a Verilog MIPS pipeline. So the mix of backend, "
+            "AI, and systems-level work in one person is the unusual part."
         ),
         metadata={"category": "profile", "topic": "value-prop"},
     ),

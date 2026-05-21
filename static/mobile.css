@@ -109,16 +109,16 @@
     font-size: 10px;
     color: var(--ink-dim);
     letter-spacing: 0.04em;
-    background: rgba(109, 190, 123, 0.05);
-    border: 1px solid rgba(109, 190, 123, 0.25);
+    background: rgba(124, 140, 240, 0.05);
+    border: 1px solid rgba(124, 140, 240, 0.22);
     border-radius: 3px;
     padding: 5px 10px;
   }
   .mob-status-dot {
-    width: 6px; height: 6px;
+    width: 5px; height: 5px;
     border-radius: 50%;
-    background: var(--green);
-    box-shadow: 0 0 6px rgba(109, 190, 123, 0.6);
+    background: var(--indigo);
+    opacity: 0.85;
   }
 
   /* ----- Section ----- */
