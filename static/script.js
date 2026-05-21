@@ -43,11 +43,13 @@
     const sy = (window.innerHeight * 0.92) / h;
     const s = Math.min(sx, sy, 1.05);
 
+    // Round to 2 decimals — sub-pixel scaling factors cause text blur
+    const sr = Math.round(s * 100) / 100;
     if (supportsZoom) {
-      scene.style.zoom = s.toFixed(3);
+      scene.style.zoom = sr.toFixed(2);
       scene.style.transform = "translate(-50%, -50%)";
     } else {
-      scene.style.transform = `translate(-50%, -50%) scale(${s.toFixed(3)})`;
+      scene.style.transform = `translate(-50%, -50%) scale(${sr.toFixed(2)})`;
     }
   }
   fitScene();
