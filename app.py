@@ -1,5 +1,5 @@
 import os
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, send_from_directory
 from dotenv import load_dotenv
 
 # Optional RAG stack (won't crash if not installed)
@@ -207,6 +207,12 @@ def get_personal_info(query: str, request_meta: dict | None = None):
 @app.route("/")
 def home():
     return render_template("index.html")
+
+
+@app.route("/llms.txt")
+def llms_txt():
+    """Served at root so LLM crawlers and agents can find it (per llmstxt.org)."""
+    return send_from_directory(app.root_path, "llms.txt", mimetype="text/plain")
 
 @app.route("/achievements")
 def achievements():
