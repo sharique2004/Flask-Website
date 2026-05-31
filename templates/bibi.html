@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Bibi — a voice co-pilot that flies your PC</title>
+<meta name="description" content="Bibi is a local-first, voice-controlled co-pilot for Windows. Say its name and it opens apps, moves the real mouse, clicks what it sees on screen, and answers out loud. Open source, MIT." />
+
+<!-- OpenGraph -->
+<meta property="og:type" content="website" />
+<meta property="og:url" content="https://shariquekhatri.com/bibi" />
+<meta property="og:title" content="Bibi — a voice co-pilot that flies your PC" />
+<meta property="og:description" content="A little droid for your desktop. Say 'Bibi' and it takes the controls: opens apps, moves the real mouse, reads the screen, answers out loud. Local-first. Open source." />
+<meta name="theme-color" content="#0a0a0e" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta property="og:image" content="https://shariquekhatri.com/static/bibi-og.png" />
+<meta name="twitter:image" content="https://shariquekhatri.com/static/bibi-og.png" />
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='bibi-favicon.png') }}" />
+
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+<style>
+  :root{
+    --bg:#09090d;
+    --bg-2:#0c0c12;
+    --panel:#0f0f16;
+    --panel-2:#12121b;
+    --line:rgba(255,255,255,0.09);
+    --line-soft:rgba(255,255,255,0.055);
+    --ink:#e9e9ee;
+    --ink-2:#a4a4b0;
+    --ink-3:#6c6c79;
+    --ink-4:#4a4a56;
+    --orange:#ff6a1a;
+    --orange-soft:rgba(255,106,26,0.14);
+    --orange-line:rgba(255,106,26,0.34);
+    --indigo:#7b78f0;
+    --indigo-dim:#5552b8;
+    --serif:"Instrument Serif",Georgia,"Times New Roman",serif;
+    --sans:"Inter",system-ui,-apple-system,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,"SF Mono",Menlo,monospace;
+    --maxw:1120px;
+  }
+
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{
+    margin:0;
+    background:var(--bg);
+    color:var(--ink);
+    font-family:var(--sans);
+    font-size:17px;
+    line-height:1.6;
+    -webkit-font-smoothing:antialiased;
+    text-rendering:optimizeLegibility;
+    overflow-x:hidden;
+  }
+  /* faint grid texture, like a console backdrop */
+  body::before{
+    content:"";
+    position:fixed;
+    inset:0;
+    pointer-events:none;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.018) 1px,transparent 1px),
+      linear-gradient(90deg,rgba(255,255,255,0.018) 1px,transparent 1px);
+    background-size:64px 64px;
+    mask-image:radial-gradient(ellipse 120% 80% at 50% 0%,#000 30%,transparent 78%);
+    -webkit-mask-image:radial-gradient(ellipse 120% 80% at 50% 0%,#000 30%,transparent 78%);
+    z-index:0;
+  }
+
+  a{color:inherit;text-decoration:none}
+  ::selection{background:var(--orange-soft);color:#fff}
+
+  .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:1}
+
+  .mono{font-family:var(--mono)}
+  .kicker{
+    font-family:var(--mono);
+    font-size:12.5px;
+    letter-spacing:0.14em;
+    text-transform:uppercase;
+    color:var(--ink-3);
+  }
+  .kicker .dot{color:var(--orange)}
+
+  /* ---------- top bar ---------- */
+  header.nav{
+    position:sticky;top:0;z-index:40;
+    backdrop-filter:saturate(140%) blur(10px);
+    background:rgba(9,9,13,0.72);
+    border-bottom:1px solid var(--line-soft);
+  }
+  .nav-inner{
+    max-width:var(--maxw);margin:0 auto;padding:14px 28px;
+    display:flex;align-items:center;justify-content:space-between;gap:18px;
+  }
+  .brand{display:flex;align-items:center;gap:11px;font-family:var(--mono);font-weight:600;letter-spacing:0.02em}
+  .sigil{
+    width:26px;height:26px;flex:none;position:relative;border-radius:50%;
+    background:radial-gradient(circle at 50% 34%,#1b1b24 0 40%,#0c0c12 64% 100%);
+    border:1px solid var(--line);
+    box-shadow:inset 0 0 0 3px #0b0b10;
+  }
+  .sigil::after{
+    content:"";position:absolute;left:50%;top:7px;transform:translateX(-50%);
+    width:7px;height:7px;border-radius:50%;
+    background:var(--orange);box-shadow:0 0 10px 1px var(--orange-line);
+  }
+  .nav-links{display:flex;align-items:center;gap:26px;font-family:var(--mono);font-size:13px;color:var(--ink-2)}
+  .nav-links a{transition:color .15s}
+  .nav-links a:hover{color:var(--ink)}
+  .nav-cta{
+    display:inline-flex;align-items:center;gap:8px;
+    border:1px solid var(--line);border-radius:7px;padding:7px 13px;color:var(--ink);
+    transition:border-color .15s,background .15s;
+  }
+  .nav-cta:hover{border-color:var(--orange-line);background:var(--orange-soft)}
+  .nav-hide{display:inline}
+  @media(max-width:680px){ .nav-hide{display:none} }
+
+  /* ---------- hero ---------- */
+  .hero{padding:62px 0 30px;position:relative}
+  .hero-grid{
+    display:grid;grid-template-columns:0.86fr 1.14fr;gap:52px;align-items:end;
+  }
+  @media(max-width:920px){ .hero-grid{grid-template-columns:1fr;gap:34px;align-items:start} }
+
+  h1.title{
+    font-family:var(--serif);
+    font-weight:400;
+    font-size:clamp(44px,6.4vw,82px);
+    line-height:0.99;
+    letter-spacing:-0.012em;
+    margin:18px 0 0;
+    color:#f4f4f7;
+  }
+  h1.title em{font-style:italic;color:var(--orange)}
+  .lede{
+    margin-top:22px;
+    color:var(--ink-2);
+    font-size:18px;
+    max-width:30ch;
+  }
+  .lede strong{color:var(--ink);font-weight:600}
+  .hero-actions{display:flex;flex-wrap:wrap;gap:12px;margin-top:28px}
+  .btn{
+    display:inline-flex;align-items:center;gap:9px;
+    font-family:var(--mono);font-size:13.5px;font-weight:500;
+    padding:11px 16px;border-radius:8px;border:1px solid var(--line);
+    color:var(--ink);transition:transform .12s,border-color .15s,background .15s;
+  }
+  .btn svg{width:15px;height:15px}
+  .btn:hover{transform:translateY(-1px)}
+  .btn-primary{background:var(--orange);color:#1a0c02;border-color:var(--orange)}
+  .btn-primary:hover{background:#ff7d36}
+  .btn-ghost:hover{border-color:var(--ink-3);background:var(--panel)}
+
+  /* video viewport */
+  .viewport{
+    border:1px solid var(--line);
+    border-radius:12px;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+    overflow:hidden;
+    box-shadow:0 30px 80px -40px rgba(0,0,0,0.9), 0 0 0 1px rgba(255,255,255,0.02) inset;
+  }
+  .viewport-bar{
+    display:flex;align-items:center;gap:12px;
+    padding:11px 14px;border-bottom:1px solid var(--line);
+    font-family:var(--mono);font-size:12px;color:var(--ink-3);
+    background:rgba(255,255,255,0.012);
+  }
+  .vlights{display:flex;gap:6px}
+  .vlights i{width:9px;height:9px;border-radius:50%;background:#26262f;display:block}
+  .vlights i:first-child{background:#34343f}
+  .vbar-label{display:flex;align-items:center;gap:8px}
+  .live{
+    display:inline-flex;align-items:center;gap:7px;margin-left:auto;
+    color:var(--orange);font-size:11.5px;letter-spacing:0.08em;
+  }
+  .live .pulse{width:7px;height:7px;border-radius:50%;background:var(--orange);box-shadow:0 0 9px 1px var(--orange-line);animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.35}}
+
+  .video-slot{
+    position:relative;aspect-ratio:16/9;width:100%;
+    background:
+      radial-gradient(120% 90% at 50% 0%,#15151f 0%,#0b0b11 70%);
+    display:flex;align-items:center;justify-content:center;
+  }
+  .video-slot iframe,.video-slot video{position:absolute;inset:0;width:100%;height:100%;border:0;display:block}
+  .vph{display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;padding:24px;color:var(--ink-3)}
+  .play{
+    width:62px;height:62px;border-radius:50%;border:1px solid var(--orange-line);
+    background:var(--orange-soft);display:flex;align-items:center;justify-content:center;
+    transition:transform .15s,background .15s;
+  }
+  .play svg{width:20px;height:20px;margin-left:3px;fill:var(--orange)}
+  .vph .cap{font-family:var(--mono);font-size:12.5px;letter-spacing:0.04em}
+  .vph .cap b{color:var(--ink-2);font-weight:500}
+
+  /* ---------- HUD status strip ---------- */
+  .hud{
+    margin-top:40px;border-top:1px solid var(--line-soft);border-bottom:1px solid var(--line-soft);
+    padding:13px 0;
+  }
+  .hud-row{
+    display:flex;flex-wrap:wrap;align-items:center;gap:10px 22px;
+    font-family:var(--mono);font-size:12.5px;color:var(--ink-3);
+  }
+  .hud-row b{color:var(--ink-2);font-weight:500}
+  .hud-row .ok{color:var(--orange)}
+  .hud-sep{color:var(--ink-4)}
+
+  /* ---------- generic section ---------- */
+  section{position:relative;z-index:1}
+  .sec{padding:88px 0}
+  .sec-label{display:flex;align-items:center;gap:14px;margin-bottom:30px}
+  .sec-label .num{font-family:var(--mono);font-size:12px;color:var(--orange)}
+  .sec-label .ln{height:1px;flex:1;background:var(--line-soft)}
+  .sec-label .ttl{font-family:var(--mono);font-size:12.5px;letter-spacing:0.14em;text-transform:uppercase;color:var(--ink-3)}
+
+  h2.head{
+    font-family:var(--serif);font-weight:400;
+    font-size:clamp(30px,4.3vw,52px);line-height:1.02;letter-spacing:-0.01em;
+    color:#f1f1f5;margin:0;
+  }
+  h2.head em{font-style:italic;color:var(--orange)}
+
+  /* ---------- why I built this ---------- */
+  .why{
+    display:grid;grid-template-columns:0.9fr 1.1fr;gap:48px;align-items:start;
+  }
+  @media(max-width:860px){ .why{grid-template-columns:1fr;gap:26px} }
+  .why-note p{color:var(--ink-2);max-width:60ch}
+  .why-note p + p{margin-top:18px}
+  .why-note .sig{
+    margin-top:26px;font-family:var(--mono);font-size:13px;color:var(--ink-3);
+    display:flex;align-items:center;gap:10px;
+  }
+  .why-note .sig b{color:var(--ink);font-weight:500}
+  .pullquote{
+    font-family:var(--serif);font-size:clamp(26px,3.4vw,40px);line-height:1.12;
+    color:#f1f1f5;letter-spacing:-0.01em;
+    border-left:2px solid var(--orange);padding-left:24px;
+  }
+  .pullquote span{color:var(--ink-3)}
+
+  /* ---------- console / session log ---------- */
+  .console{
+    border:1px solid var(--line);border-radius:12px;overflow:hidden;
+    background:linear-gradient(180deg,#0d0d14,#0a0a10);
+    box-shadow:0 30px 80px -50px rgba(0,0,0,0.9);
+  }
+  .console-bar{
+    display:flex;align-items:center;gap:12px;padding:11px 15px;
+    border-bottom:1px solid var(--line);font-family:var(--mono);font-size:12px;color:var(--ink-3);
+    background:rgba(255,255,255,0.012);
+  }
+  .console-bar .path{margin-left:4px}
+  .console-bar .path b{color:var(--ink-2);font-weight:500}
+  .console-body{
+    padding:26px 24px 30px;font-family:var(--mono);font-size:14px;line-height:1.85;
+    min-height:340px;
+  }
+  @media(max-width:560px){ .console-body{font-size:12.5px;padding:20px 16px 24px} }
+  .ln{display:block;white-space:pre-wrap;opacity:0}
+  .ln.show{opacity:1}
+  .ln .you{color:var(--indigo)}
+  .ln .bibi{color:var(--orange)}
+  .ln .said{color:var(--ink)}
+  .ln .sys{color:var(--ink-3)}
+  .ln .voice{color:var(--ink-2);font-style:italic}
+  .ln .voice::before{content:"♪ ";color:var(--orange);font-style:normal}
+  .cursor{display:inline-block;width:8px;height:16px;vertical-align:-2px;background:var(--orange);margin-left:2px;animation:blink 1.05s steps(1) infinite}
+  @keyframes blink{50%{opacity:0}}
+  .console-foot{
+    border-top:1px solid var(--line-soft);padding:12px 16px;
+    display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center;
+    font-family:var(--mono);font-size:11.5px;color:var(--ink-4);
+  }
+  .console-foot kbd{
+    font-family:var(--mono);border:1px solid var(--line);border-radius:5px;
+    padding:2px 7px;color:var(--ink-2);background:var(--panel);font-size:11px;
+  }
+
+  /* ---------- capabilities: flight manual ---------- */
+  .manual{display:grid;grid-template-columns:repeat(12,1fr);gap:1px;background:var(--line-soft);
+    border:1px solid var(--line-soft);border-radius:12px;overflow:hidden}
+  .cap-item{background:var(--bg);padding:30px 28px;position:relative}
+  .cap-item .tag{font-family:var(--mono);font-size:12px;color:var(--orange);letter-spacing:0.06em}
+  .cap-item h3{font-family:var(--serif);font-weight:400;font-size:28px;line-height:1.1;margin:12px 0 10px;color:#eef0f3}
+  .cap-item p{margin:0;color:var(--ink-2);font-size:15.5px;line-height:1.55}
+  .cap-item .ex{margin-top:14px;font-family:var(--mono);font-size:12.5px;color:var(--ink-3);border-top:1px dashed var(--line);padding-top:12px}
+  .cap-item .ex .q{color:var(--indigo)}
+  /* asymmetric spans */
+  .span-7{grid-column:span 7}
+  .span-5{grid-column:span 5}
+  .span-6{grid-column:span 6}
+  .span-12{grid-column:span 12}
+  @media(max-width:820px){ .manual{grid-template-columns:1fr} .cap-item{grid-column:1/-1 !important} }
+
+  /* ---------- data flow / privacy ---------- */
+  .priv{display:grid;grid-template-columns:1fr 1fr;gap:46px;align-items:center}
+  @media(max-width:860px){ .priv{grid-template-columns:1fr;gap:30px} }
+  .priv p{color:var(--ink-2);max-width:52ch}
+  .priv p + p{margin-top:16px}
+  .priv .em{color:var(--ink)}
+  .flow{
+    border:1px solid var(--line);border-radius:12px;background:var(--panel);
+    padding:24px 22px;font-family:var(--mono);font-size:13px;
+  }
+  .flow .frow{display:flex;align-items:center;gap:12px;padding:11px 0}
+  .flow .frow + .frow{border-top:1px solid var(--line-soft)}
+  .flow .node{display:flex;align-items:center;gap:10px;flex:1;min-width:0}
+  .flow .node .nm{color:var(--ink);white-space:nowrap}
+  .flow .node .sub{color:var(--ink-4);font-size:11px}
+  .flow .where{font-size:11px;letter-spacing:0.06em;padding:3px 9px;border-radius:20px;white-space:nowrap}
+  .flow .local{color:#7fd6a3;border:1px solid rgba(127,214,163,0.3);background:rgba(127,214,163,0.07)}
+  .flow .cloud{color:var(--orange);border:1px solid var(--orange-line);background:var(--orange-soft)}
+  .flow .gly{width:18px;text-align:center;color:var(--ink-4)}
+  .flow-note{margin-top:14px;font-family:var(--mono);font-size:11.5px;color:var(--ink-4);line-height:1.6}
+
+  /* ---------- stack + requirements ---------- */
+  .two{display:grid;grid-template-columns:1.1fr 0.9fr;gap:46px;align-items:start}
+  @media(max-width:860px){ .two{grid-template-columns:1fr;gap:34px} }
+  .speclist{font-family:var(--mono);font-size:14px;border-top:1px solid var(--line-soft)}
+  .speclist .r{display:flex;justify-content:space-between;gap:18px;padding:13px 2px;border-bottom:1px solid var(--line-soft)}
+  .speclist .r .k{color:var(--ink-3)}
+  .speclist .r .v{color:var(--ink);text-align:right}
+  .speclist .r .v b{color:var(--orange);font-weight:500}
+
+  .req h3{font-family:var(--mono);font-size:12.5px;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-3);margin:0 0 14px}
+  .req ul{list-style:none;margin:0;padding:0}
+  .req li{display:flex;gap:12px;padding:9px 0;color:var(--ink-2);font-size:15px;border-bottom:1px solid var(--line-soft)}
+  .req li .m{color:var(--orange);font-family:var(--mono);flex:none}
+  .honest{
+    margin-top:24px;border:1px solid var(--line);border-radius:10px;background:var(--panel);
+    padding:18px 20px;color:var(--ink-2);font-size:15px;line-height:1.6;
+  }
+  .honest b{color:var(--ink);font-weight:600}
+
+  /* ---------- install / cta ---------- */
+  .install{
+    border:1px solid var(--line);border-radius:14px;overflow:hidden;
+    background:linear-gradient(180deg,var(--panel-2),var(--panel));
+  }
+  .install-top{padding:40px 34px 8px}
+  .install-top h2{margin-bottom:10px}
+  .install-top p{color:var(--ink-2);max-width:58ch}
+  .term{
+    margin:22px 34px 0;border:1px solid var(--line);border-radius:10px;overflow:hidden;background:#08080c;
+  }
+  .term-bar{display:flex;align-items:center;gap:10px;padding:9px 13px;border-bottom:1px solid var(--line);font-family:var(--mono);font-size:11.5px;color:var(--ink-4)}
+  .term-body{padding:18px 18px 20px;font-family:var(--mono);font-size:13px;line-height:1.9}
+  @media(max-width:560px){ .term-body{font-size:11.5px} .install-top,.term{margin-left:16px;margin-right:16px} .install-top{padding:28px 0 8px;margin-bottom:0} }
+  .term-body .c{color:var(--ink)}
+  .term-body .c::before{content:"$ ";color:var(--orange)}
+  .term-body .o{color:var(--ink-3)}
+  .install-actions{display:flex;flex-wrap:wrap;gap:12px;padding:26px 34px 36px}
+  @media(max-width:560px){ .install-actions{padding:24px 16px 30px} }
+
+  /* ---------- footer ---------- */
+  footer{border-top:1px solid var(--line-soft);padding:46px 0 60px;margin-top:30px}
+  .foot-grid{display:flex;flex-wrap:wrap;justify-content:space-between;gap:26px;align-items:flex-start}
+  .foot-grid .col{font-family:var(--mono);font-size:13px;color:var(--ink-3);line-height:2}
+  .foot-grid .col a{color:var(--ink-2);transition:color .15s}
+  .foot-grid .col a:hover{color:var(--orange)}
+  .foot-grid .col .lbl{color:var(--ink-4);font-size:11px;letter-spacing:0.12em;text-transform:uppercase;display:block;margin-bottom:8px}
+  .foot-sig{margin-top:34px;font-family:var(--mono);font-size:12px;color:var(--ink-4);display:flex;flex-wrap:wrap;gap:8px 18px;align-items:center}
+  .foot-sig .dot{color:var(--orange)}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none !important;transition:none !important}
+    .ln{opacity:1 !important}
+  }
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <div class="nav-inner">
+    <a class="brand" href="#top"><span class="sigil" aria-hidden="true"></span>bibi</a>
+    <nav class="nav-links" aria-label="primary">
+      <a href="#session" class="nav-hide">session</a>
+      <a href="#flies" class="nav-hide">what it flies</a>
+      <a href="#private" class="nav-hide">private</a>
+      <a href="#install">install</a>
+      <a class="nav-cta" href="https://github.com/sharique2004/pc-assistant" target="_blank" rel="noopener">
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+        source
+      </a>
+    </nav>
+  </div>
+</header>
+
+<a id="top"></a>
+<main>
+
+  <!-- ============ HERO ============ -->
+  <section class="hero">
+    <div class="wrap">
+      <div class="hero-grid">
+        <div class="hero-copy">
+          <div class="kicker">local-first voice co-pilot · windows&nbsp;<span class="dot">●</span></div>
+          <h1 class="title">I wanted my own&nbsp;BB&#8209;8.<br/>So I gave one to my <em>PC</em>.</h1>
+          <p class="lede">Your desktop is the ship. <strong>Bibi</strong> is the little droid that takes the helm — I say its name and it opens apps, moves the real mouse, reads what's on screen, and answers back out loud.</p>
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="#install">Watch &amp; build it</a>
+            <a class="btn btn-ghost" href="https://github.com/sharique2004/pc-assistant" target="_blank" rel="noopener">
+              <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+              Read every line
+            </a>
+          </div>
+        </div>
+
+        <!-- ===================== DEMO VIDEO ===================== -->
+        <!-- The video is the star. Drop your demo into .video-slot below.
+             YouTube:  replace the <div class="vph">…</div> with —
+               <iframe src="https://www.youtube.com/embed/VIDEO_ID" title="Bibi demo"
+                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                       allowfullscreen></iframe>
+             Local file (Flask static):
+               <video src="{{ url_for('static', filename='bibi-demo.mp4') }}"
+                      poster="{{ url_for('static', filename='bibi-poster.jpg') }}"
+                      controls preload="metadata"></video>
+             The slot keeps a clean 16:9 frame either way. -->
+        <div class="viewport">
+          <div class="viewport-bar">
+            <span class="vlights" aria-hidden="true"><i></i><i></i><i></i></span>
+            <span class="vbar-label"><span style="color:var(--ink-2)">bibi.exe</span> — main viewport</span>
+            <span class="live"><span class="pulse"></span> LIVE</span>
+          </div>
+          <div class="video-slot">
+            <!-- paste iframe/video here; placeholder shown until then -->
+            <div class="vph">
+              <span class="play" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg></span>
+              <span class="cap"><b>demo &middot; 2 min</b> &nbsp;·&nbsp; one take, my actual machine</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- HUD status strip -->
+      <div class="hud">
+        <div class="hud-row">
+          <span>stt&nbsp;<b>faster-whisper</b></span>
+          <span class="hud-sep">/</span>
+          <span>tts&nbsp;<b>edge-tts</b></span>
+          <span class="hud-sep">/</span>
+          <span>brain&nbsp;<b>claude code</b></span>
+          <span class="hud-sep">/</span>
+          <span>shell&nbsp;<b>electron</b></span>
+          <span class="hud-sep">/</span>
+          <span>host&nbsp;<b>windows 11</b></span>
+          <span class="hud-sep">/</span>
+          <span>license&nbsp;<b>MIT</b></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHY I BUILT THIS ============ -->
+  <section class="sec" id="why">
+    <div class="wrap">
+      <div class="sec-label">
+        <span class="num">00</span>
+        <span class="ttl">flight log</span>
+        <span class="ln"></span>
+      </div>
+      <div class="why">
+        <div class="pullquote">
+          Everyone wanted Jarvis.<br/><span>I just wanted</span> the little droid that<br/>plugs into the ship and <em style="font-style:italic;color:var(--orange)">flies it</em>.
+        </div>
+        <div class="why-note">
+          <p>I grew up on the astromech — the dome that rolls up to the cockpit, jacks in, and quietly runs the ship while the pilot does the brave stuff. Loyal, a little plucky, always at the helm. I didn't want a chatbot in a sidebar. I wanted <em style="font-style:normal;color:var(--ink)">that</em>, for the machine I actually use.</p>
+          <p>So I built Bibi (say it like "BB"). It lives in its own window, not a browser tab. Open the app, it's on; close it, it's off. I talk, it takes the controls — for real, on real Windows. It's not magic and I won't pretend it is. But it's mine, it's honest about what it does, and every line is open so you can check.</p>
+          <div class="sig">— <b>Sharique Khatri</b> <span style="color:var(--ink-4)">/ cs student, builder</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ SESSION LOG (console) ============ -->
+  <section class="sec" id="session" style="padding-top:20px">
+    <div class="wrap">
+      <div class="sec-label">
+        <span class="num">01</span>
+        <span class="ttl">a real session, not a script</span>
+        <span class="ln"></span>
+      </div>
+      <h2 class="head" style="margin-bottom:26px;max-width:18ch">This is what it sounds like to <em>hand over the controls.</em></h2>
+
+      <div class="console" id="console">
+        <div class="console-bar">
+          <span class="vlights" aria-hidden="true"><i></i><i></i><i></i></span>
+          <span class="path">bibi &mdash; <b>session.log</b></span>
+          <span class="live" style="margin-left:auto"><span class="pulse"></span> listening</span>
+        </div>
+        <div class="console-body" id="log" aria-label="Example voice session transcript"></div>
+        <div class="console-foot">
+          <span>push-to-talk <kbd>Ctrl</kbd> + <kbd>Space</kbd></span>
+          <span>or just say <span style="color:var(--orange)">&ldquo;Bibi&rdquo;</span></span>
+          <span>or type it</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ WHAT IT FLIES ============ -->
+  <section class="sec" id="flies" style="padding-top:30px">
+    <div class="wrap">
+      <div class="sec-label">
+        <span class="num">02</span>
+        <span class="ttl">what it can actually fly</span>
+        <span class="ln"></span>
+      </div>
+
+      <div class="manual">
+        <div class="cap-item span-7">
+          <div class="tag">// control</div>
+          <h3>It moves the real mouse and keyboard.</h3>
+          <p>Not an API, not a sandbox tab. Bibi drives the same cursor you do — opening apps, switching windows, typing, clicking. Whatever you can do with your hands, it does on the actual desktop.</p>
+          <div class="ex"><span class="q">you ›</span> &ldquo;open VS Code and minimize everything else&rdquo;</div>
+        </div>
+        <div class="cap-item span-5">
+          <div class="tag">// vision</div>
+          <h3>It clicks what it sees.</h3>
+          <p>It reads the screen and acts on what's actually there — buttons, results, fields — instead of guessing at coordinates.</p>
+          <div class="ex"><span class="q">you ›</span> &ldquo;click the second result&rdquo;</div>
+        </div>
+        <div class="cap-item span-5">
+          <div class="tag">// search</div>
+          <h3>It uses the site you're on.</h3>
+          <p>Already on YouTube, Crunchyroll, or Amazon? Say search and it uses <em style="font-style:normal;color:var(--ink)">that site's</em> own search box — not a random Google query.</p>
+          <div class="ex"><span class="q">you ›</span> &ldquo;search for Frieren&rdquo;</div>
+        </div>
+        <div class="cap-item span-7">
+          <div class="tag">// voice</div>
+          <h3>It answers out loud, in a real voice.</h3>
+          <p>Ask it something and it talks back — natural speech, like ChatGPT voice mode, but wired straight into the machine it's running. Question, answer, and the next action all in one breath.</p>
+          <div class="ex"><span class="q">you ›</span> &ldquo;what's the tallest volcano in the solar system?&rdquo;</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ PRIVATE / DATA FLOW ============ -->
+  <section class="sec" id="private">
+    <div class="wrap">
+      <div class="sec-label">
+        <span class="num">03</span>
+        <span class="ttl">where your voice actually goes</span>
+        <span class="ln"></span>
+      </div>
+      <div class="priv">
+        <div>
+          <h2 class="head" style="margin-bottom:22px;max-width:14ch">Most of it never leaves the cockpit.</h2>
+          <p>Bibi is local-first on purpose. Your speech is transcribed on your machine with <span class="em">faster-whisper</span>, and spoken back on your machine with <span class="em">edge-tts</span>. There's no always-on cloud mic and no telemetry — nothing is auto-sent anywhere.</p>
+          <p>The one thing that leaves is the reasoning: the words of a request go to <span class="em">Claude</span> to figure out the plan. That's the trade for a brain that's actually smart. You can see exactly where the line is — it's drawn right here.</p>
+        </div>
+        <div>
+          <div class="flow" aria-label="Data flow diagram">
+            <div class="frow">
+              <div class="node"><span class="gly">◉</span><span class="nm">your voice</span><span class="sub">— mic</span></div>
+              <span class="where local">on your pc</span>
+            </div>
+            <div class="frow">
+              <div class="node"><span class="gly">↓</span><span class="nm">faster-whisper</span><span class="sub">— speech → text</span></div>
+              <span class="where local">on your pc</span>
+            </div>
+            <div class="frow">
+              <div class="node"><span class="gly">↓</span><span class="nm">claude</span><span class="sub">— the reasoning only</span></div>
+              <span class="where cloud">leaves the pc</span>
+            </div>
+            <div class="frow">
+              <div class="node"><span class="gly">↓</span><span class="nm">pyautogui</span><span class="sub">— moves mouse / keys</span></div>
+              <span class="where local">on your pc</span>
+            </div>
+            <div class="frow">
+              <div class="node"><span class="gly">↓</span><span class="nm">edge-tts</span><span class="sub">— text → speech</span></div>
+              <span class="where local">on your pc</span>
+            </div>
+          </div>
+          <div class="flow-note">// one hop to the cloud, and only the words. the mic, the screen, the keys — all stay home.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ STACK + REQUIREMENTS ============ -->
+  <section class="sec" id="under" style="padding-top:30px">
+    <div class="wrap">
+      <div class="sec-label">
+        <span class="num">04</span>
+        <span class="ttl">under the dome</span>
+        <span class="ln"></span>
+      </div>
+      <div class="two">
+        <div>
+          <h2 class="head" style="margin-bottom:8px">For the curious.</h2>
+          <p style="color:var(--ink-2);margin:0 0 22px;max-width:46ch">It ships as one native app — <span style="color:var(--ink)">Bibi.exe</span> — an Electron shell wrapped around a Python/Flask backend. Here's what's actually inside.</p>
+          <div class="speclist">
+            <div class="r"><span class="k">shell</span><span class="v">Electron <b>· own window</b></span></div>
+            <div class="r"><span class="k">backend</span><span class="v">Python / Flask</span></div>
+            <div class="r"><span class="k">brain</span><span class="v">Claude Code CLI</span></div>
+            <div class="r"><span class="k">speech → text</span><span class="v">faster-whisper</span></div>
+            <div class="r"><span class="k">text → speech</span><span class="v">edge-tts</span></div>
+            <div class="r"><span class="k">control</span><span class="v">pyautogui</span></div>
+            <div class="r"><span class="k">browser</span><span class="v">Brave</span></div>
+            <div class="r"><span class="k">license</span><span class="v"><b>MIT · open source</b></span></div>
+          </div>
+        </div>
+        <div class="req">
+          <h3>What you'll need</h3>
+          <ul>
+            <li><span class="m">›</span> Windows 11</li>
+            <li><span class="m">›</span> Your own Claude Code CLI</li>
+            <li><span class="m">›</span> Python 3.11+</li>
+            <li><span class="m">›</span> Node 18+</li>
+            <li><span class="m">›</span> A microphone</li>
+          </ul>
+          <div class="honest">
+            <b>Straight up:</b> this is a power-user tool, not a one-click consumer app. You bring the CLI and the runtimes; it can see your screen and move your mouse, so you <em style="font-style:normal;color:var(--ink)">should</em> read the source before you run it. That openness is the point.
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ INSTALL / CTA ============ -->
+  <section class="sec" id="install" style="padding-bottom:40px">
+    <div class="wrap">
+      <div class="install">
+        <div class="install-top">
+          <h2 class="head">Take it for a flight.</h2>
+          <p>It's all on GitHub under MIT. Clone it, read every line — it can see your screen and move your mouse, so you should — then bring your own Claude Code CLI and start it up.</p>
+        </div>
+        <div class="term">
+          <div class="term-bar"><span class="vlights" aria-hidden="true"><i></i><i></i><i></i></span> &nbsp;powershell</div>
+          <div class="term-body">
+            <div class="c">git clone https://github.com/sharique2004/pc-assistant</div>
+            <div class="o"># read the code first. seriously — it drives your machine.</div>
+            <div class="c">cd pc-assistant</div>
+            <div class="c">python -m venv .venv; .\.venv\Scripts\Activate.ps1</div>
+            <div class="c">pip install -r requirements.txt</div>
+            <div class="c">cd frontend; npm install; npm run build; cd ..</div>
+            <div class="c">cd desktop; npm install; npm start</div>
+            <div class="o"># Bibi.exe opens in its own window. say &ldquo;Bibi&rdquo; — you're flying.</div>
+          </div>
+        </div>
+        <div class="install-actions">
+          <a class="btn btn-primary" href="https://github.com/sharique2004/pc-assistant" target="_blank" rel="noopener">
+            <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+            github.com/sharique2004/pc-assistant
+          </a>
+          <a class="btn btn-ghost" href="https://shariquekhatri.com" rel="noopener">← back to shariquekhatri.com</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div class="col" style="max-width:34ch">
+        <a class="brand" href="#top" style="color:var(--ink);margin-bottom:12px;display:inline-flex"><span class="sigil" aria-hidden="true"></span>bibi</a>
+        <div style="color:var(--ink-4);line-height:1.7">A faithful little co-pilot for your machine. Built by one person who wanted it to exist.</div>
+      </div>
+      <div class="col">
+        <span class="lbl">project</span>
+        <a href="https://github.com/sharique2004/pc-assistant" target="_blank" rel="noopener">source · MIT</a><br/>
+        <a href="#session">session log</a><br/>
+        <a href="#install">install</a>
+      </div>
+      <div class="col">
+        <span class="lbl">elsewhere</span>
+        <a href="https://shariquekhatri.com">shariquekhatri.com</a><br/>
+        <a href="https://shariquekhatri.com">portfolio</a>
+      </div>
+    </div>
+    <div class="foot-sig">
+      <span class="dot">●</span>
+      <span>Bibi — a personal homage to a loyal little droid. Spirit, not trademark. Not affiliated with, or endorsed by, any film franchise.</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Session transcript — written as real lines. type "html" lets us style runs.
+  var lines = [
+    {html:'<span class="sys">› session start &middot; ' + 'mic armed, claude online</span>'},
+    {html:'<span class="you">you ›</span> <span class="said">"Bibi, open Brave and go to YouTube"</span>'},
+    {html:'<span class="bibi">bibi ›</span> <span class="sys">opening Brave… navigating to youtube.com</span>'},
+    {html:'<span class="you">you ›</span> <span class="said">"search for Frieren"</span>'},
+    {html:'<span class="bibi">bibi ›</span> <span class="sys">you\u2019re on YouTube — using its search box, not Google.</span>'},
+    {html:'<span class="you">you ›</span> <span class="said">"play the first result"</span>'},
+    {html:'<span class="bibi">bibi ›</span> <span class="sys">I can see 6 results on screen. clicking the top one.</span>'},
+    {html:'<span class="you">you ›</span> <span class="said">"what\u2019s the tallest volcano in the solar system?"</span>'},
+    {html:'<span class="bibi">bibi ›</span> <span class="voice">Olympus Mons, on Mars — about 22 km high. Roughly two and a half Everests.</span>'},
+    {html:'<span class="you">you ›</span> <span class="said">"minimize everything and open VS Code"</span>'},
+    {html:'<span class="bibi">bibi ›</span> <span class="sys">done. windows cleared, VS Code is up.</span>'},
+    {html:'<span class="sys">› idle &middot; listening for "Bibi"</span>'}
+  ];
+
+  var logEl = document.getElementById('log');
+  if(!logEl) return;
+
+  function buildAll(){
+    logEl.innerHTML = '';
+    lines.forEach(function(l){
+      var div = document.createElement('div');
+      div.className = 'ln show';
+      div.innerHTML = l.html;
+      logEl.appendChild(div);
+    });
+    var cur = document.createElement('span');
+    cur.className = 'cursor';
+    logEl.appendChild(cur);
+  }
+
+  if(reduce){ buildAll(); return; }
+
+  // typewriter: reveal lines one at a time with a per-char feel on the spoken parts
+  var started = false;
+  function run(){
+    if(started) return; started = true;
+    logEl.innerHTML = '';
+    var cursor = document.createElement('span');
+    cursor.className = 'cursor';
+    logEl.appendChild(cursor);
+    var i = 0;
+    function next(){
+      if(i >= lines.length){ return; }
+      var div = document.createElement('div');
+      div.className = 'ln show';
+      div.innerHTML = lines[i].html;
+      logEl.insertBefore(div, cursor);
+      // keep newest line in view within the console body only
+      logEl.scrollTop = logEl.scrollHeight;
+      i++;
+      // pacing: longer pause after a spoken/answer line
+      var delay = 520 + Math.random()*220;
+      if(lines[i-1] && lines[i-1].html.indexOf('voice') > -1) delay = 1100;
+      if(lines[i-1] && lines[i-1].html.indexOf('you ›') > -1) delay = 380;
+      setTimeout(next, delay);
+    }
+    next();
+  }
+
+  var consoleEl = document.getElementById('console');
+  function inView(){
+    var r = consoleEl.getBoundingClientRect();
+    var vh = window.innerHeight || document.documentElement.clientHeight;
+    return r.top < vh * 0.82 && r.bottom > 0;
+  }
+  function maybeStart(){
+    if(started) return;
+    if(inView()){ run(); cleanup(); }
+  }
+  function cleanup(){
+    window.removeEventListener('scroll', maybeStart);
+    window.removeEventListener('resize', maybeStart);
+  }
+  window.addEventListener('scroll', maybeStart, {passive:true});
+  window.addEventListener('resize', maybeStart);
+  // run once on load in case it's already visible; fallback timer guarantees it fires
+  maybeStart();
+  setTimeout(maybeStart, 1200);
+  // polling fallback for environments where scroll events don't fire reliably
+  var poll = setInterval(function(){ if(started){ clearInterval(poll); return; } maybeStart(); }, 450);
+  setTimeout(function(){ clearInterval(poll); }, 20000);
+})();
+</script>
+
+</body>
+</html>

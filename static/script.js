@@ -150,6 +150,11 @@
       openApp(num[e.code]);
       e.preventDefault();
     }
+    // Bibi opens its own full page (not an in-OS window).
+    if (e.code === "Digit6" && !document.querySelector(".window") && !e.metaKey && !e.ctrlKey) {
+      window.location.href = "/bibi";
+      e.preventDefault();
+    }
     if (e.code === "Escape") {
       closeApp();
     }

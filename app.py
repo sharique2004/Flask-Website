@@ -214,6 +214,11 @@ def llms_txt():
     """Served at root so LLM crawlers and agents can find it (per llmstxt.org)."""
     return send_from_directory(app.root_path, "llms.txt", mimetype="text/plain")
 
+@app.route("/bibi")
+def bibi():
+    """Showcase page for Bibi — the voice-controlled PC assistant."""
+    return render_template("bibi.html")
+
 @app.route("/achievements")
 def achievements():
     return render_template("achievements.html")
