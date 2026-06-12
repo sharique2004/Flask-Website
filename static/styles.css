@@ -226,7 +226,7 @@ a { color: inherit; text-decoration: none; }
 /* Background terminal */
 .motd {
   position: absolute;
-  left: 36px; bottom: 60px;
+  left: 36px; bottom: 14px;
   font-family: var(--ff-mono);
   font-size: 11px;
   line-height: 1.7;
