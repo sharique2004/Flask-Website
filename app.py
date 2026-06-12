@@ -219,6 +219,11 @@ def bibi():
     """Showcase page for Bibi — the voice-controlled PC assistant."""
     return render_template("bibi.html")
 
+@app.route("/scribe")
+def scribe():
+    """Showcase page for MeetingScribe — the local-first meeting transcriber."""
+    return render_template("scribe.html")
+
 @app.route("/achievements")
 def achievements():
     return render_template("achievements.html")
