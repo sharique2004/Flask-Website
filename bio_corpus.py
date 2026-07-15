@@ -329,7 +329,8 @@ CHUNKS = [
         "topic": "projects",
         "text": (
             "MeetingScribe is my on device meeting transcriber for macOS, "
-            "live at shariquekhatri.com/scribe, open source under MIT at "
+            "live at meetingscribe.insforge.site (also reachable via "
+            "shariquekhatri.com/scribe), open source under MIT at "
             "github.com/sharique2004/MeetingScribe. No bot joins your call. "
             "Your computer is already in the meeting, so it records at the "
             "OS audio layer through a virtual CoreAudio device, capturing "
@@ -486,9 +487,9 @@ CHUNKS = [
             "a production RAG pipeline in miniature: a curated bio corpus "
             "embedded in a MongoDB Atlas vector index, Gemini for retrieval "
             "grounded answers, rate limiting, and layered fallbacks. Every "
-            "number on the site traces to a verified ledger. The two "
-            "product pages, shariquekhatri.com/bibi and "
-            "shariquekhatri.com/scribe, are part of the portfolio too."
+            "number on the site traces to a verified ledger. Bibi lives at "
+            "shariquekhatri.com/bibi and MeetingScribe at "
+            "meetingscribe.insforge.site; both are part of the portfolio."
         ),
     },
 

@@ -222,11 +222,12 @@ _FALLBACKS = [
         "Full story at shariquekhatri.com/bibi.",
     ),
     (
-        r"\b(scribe|meeting|transcri|granola)\b",
+        r"\b(meetingscribe|scribe|meeting|transcri|granola)\b",
         "MeetingScribe transcribes meetings fully on device: no bot joins the "
         "call, it records at the OS audio layer and a 45 minute call "
         "transcribes in roughly 90 seconds on the Apple Neural Engine. Open "
-        "source, MIT. Details at shariquekhatri.com/scribe.",
+        "source, MIT. The site is meetingscribe.insforge.site (also linked "
+        "from shariquekhatri.com/scribe).",
     ),
     (
         r"\b(omnisch|paper|publication|eccv|research|benchmark)\b",

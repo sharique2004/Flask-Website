@@ -13,7 +13,7 @@ POST /ask with JSON body `{"query": "..."}` returns a grounded answer: `{"answer
 - WellX AI (Dec 2025 to Mar 2026): built production RAG pipelines serving 10,000+ users over wearable data with Python, FastAPI, and vector search. Reported to the CTO.
 - OmniSch: co author on a multimodal PCB schematic benchmark accepted at ECCV 2026 (arXiv:2604.00270). Owned the human annotation pipeline for 1,854 schematics.
 - Bibi (https://shariquekhatri.com/bibi): local first voice agent for Windows. Open source, MIT.
-- MeetingScribe (https://shariquekhatri.com/scribe): on device meeting transcription for macOS, roughly 90 seconds for a 45 minute call on the Apple Neural Engine. Open source, MIT.
+- MeetingScribe (https://meetingscribe.insforge.site): on device meeting transcription for macOS, roughly 90 seconds for a 45 minute call on the Apple Neural Engine. Open source, MIT. Also reachable at https://shariquekhatri.com/scribe.
 - Work authorization: OPT plus STEM extension, no US sponsorship needed for about three years. UAE Golden Visa covers Dubai and Abu Dhabi.
 
 ## Contact

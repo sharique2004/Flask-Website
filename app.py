@@ -56,9 +56,14 @@ def bibi():
     return render_template("bibi.html")
 
 
+SCRIBE_URL = "https://meetingscribe.insforge.site/"
+
+
 @app.route("/scribe")
 def scribe():
-    return render_template("scribe.html")
+    # The real MeetingScribe product site lives off-domain. Keep the printed
+    # shariquekhatri.com/scribe link (resume, Apple deck) resolving to it.
+    return redirect(SCRIBE_URL, code=302)
 
 
 @app.route("/resume")
@@ -196,7 +201,8 @@ def robots():
 
 @app.route("/sitemap.xml")
 def sitemap():
-    pages = ["/", "/bibi", "/scribe"]
+    # /scribe 302s off-domain, so it is intentionally not in the sitemap.
+    pages = ["/", "/bibi"]
     urls = "".join(
         f"<url><loc>{CANONICAL}{p}</loc><changefreq>monthly</changefreq></url>"
         for p in pages
