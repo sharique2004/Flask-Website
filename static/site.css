@@ -151,6 +151,7 @@ h1 .a{color:var(--accent)}
   font-family:var(--sans);font-size:14px;
 }
 .btn:hover{background:var(--btn-hover)}
+.btn[aria-busy="true"]{opacity:.55;pointer-events:none}
 .btn.ghost{background:transparent;border:1px solid var(--btn-border);color:var(--ink)}
 .btn.ghost:hover{border-color:var(--accent);color:var(--accent-deep);background:var(--card)}
 .btn svg{width:15px;height:15px}

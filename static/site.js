@@ -22,6 +22,7 @@
   var log = document.getElementById("chat-log");
   var chips = document.getElementById("chat-chips");
   if (!form || !input || !log) return;
+  var submitBtn = form.querySelector('button[type="submit"]');
 
   var busy = false;
   var history = [];
@@ -70,12 +71,15 @@
   function ask(question) {
     if (busy || !question) return;
     busy = true;
+    // Guard the submit button with aria-busy instead of disabling the input.
+    // Disabling a focused input on iOS dismisses the keyboard and scrolls the
+    // page to the top; toggling it back scrolls again. We never touch focus.
+    if (submitBtn) submitBtn.setAttribute("aria-busy", "true");
     var mine = msg("You", "");
     mine.querySelector(".txt").textContent = question;
     var pending = msg("Mini Sharique", "me thinking");
     pending.querySelector(".txt").textContent = "thinking";
     input.value = "";
-    input.disabled = true;
 
     fetch("/ask", {
       method: "POST",
@@ -97,15 +101,20 @@
       })
       .finally(function () {
         busy = false;
-        input.disabled = false;
-        input.focus();
+        if (submitBtn) submitBtn.removeAttribute("aria-busy");
         log.scrollTop = log.scrollHeight;
       });
   }
 
   form.addEventListener("submit", function (e) {
     e.preventDefault();
-    ask(input.value.trim());
+    e.stopPropagation();
+    var q = input.value.trim();
+    // Dismiss the mobile keyboard once so the answer is visible. A single
+    // blur is smooth; the disable/refocus churn we removed was what jumped.
+    input.blur();
+    ask(q);
+    return false;
   });
 
   if (chips) {
