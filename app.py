@@ -1,281 +1,238 @@
 import os
-from flask import Flask, render_template, request, jsonify, send_from_directory
+import time
+from collections import defaultdict, deque
+
 from dotenv import load_dotenv
+from flask import (
+    Flask,
+    Response,
+    jsonify,
+    redirect,
+    render_template,
+    request,
+    send_from_directory,
+)
 
-# Optional RAG stack (won't crash if not installed)
-RAG_OK = True
-RAG_IMPORT_ERROR = None
-try:
-    from pymongo import MongoClient
-    from langchain_cohere import ChatCohere
-    from langchain_cohere.embeddings import CohereEmbeddings
-    from langchain_mongodb import MongoDBAtlasVectorSearch
-    from langchain_core.prompts import PromptTemplate
-    from langchain_core.output_parsers import StrOutputParser
-except ImportError as e:
-    RAG_OK = False
-    RAG_IMPORT_ERROR = repr(e)
-
-# Gemini (primary LLM). If not installed or unkeyed, /ask falls back to Cohere.
-GEMINI_OK = True
-GEMINI_IMPORT_ERROR = None
-try:
-    from langchain_google_genai import ChatGoogleGenerativeAI
-except ImportError as e:
-    GEMINI_OK = False
-    GEMINI_IMPORT_ERROR = repr(e)
+import portfolio_data as data
+import rag
+from assistant import answer
 
 load_dotenv()
 
 app = Flask(__name__, template_folder="templates", static_folder="static")
 
-def get_personal_info(query: str, request_meta: dict | None = None):
-    """Answer questions using Gemini (primary) with Cohere fallback.
+CANONICAL = "https://shariquekhatri.com"
 
-    Embeddings stay on Cohere (matches the MongoDB Atlas vector index).
-    Returns a tuple (answer_text, provider_label) where provider_label is
-    one of: 'gemini', 'cohere (fallback)', or 'error'.
+# Sync the assistant's knowledge base and vector index on boot. Idempotent
+# and fully guarded: a no-op when unchanged or when the keys are absent, and
+# any failure is swallowed so the app always comes up.
+rag.ensure_ready_in_background()
 
-    request_meta is an optional dict of Flask request info (ip, ua,
-    referrer) — attached to LangSmith traces so you can see who's
-    actually asking questions on the portfolio."""
-    request_meta = request_meta or {}
-    if not RAG_OK:
-        return f"RAG imports missing: {RAG_IMPORT_ERROR}", "error"
-    cohere_key = os.getenv("COHERE_API_KEY")
-    atlas_uri = os.getenv("ATLAS_CONNECTION_STRING")
-    google_key = os.getenv("GOOGLE_API_KEY") or os.getenv("GEMINI_API_KEY")
 
-    if not cohere_key or not atlas_uri:
-        return (
-            f"Missing env vars: COHERE_API_KEY={bool(cohere_key)} "
-            f"ATLAS_CONNECTION_STRING={bool(atlas_uri)}"
-        ), "error"
-    embeddings = CohereEmbeddings(
-        cohere_api_key=cohere_key,
-        model="embed-english-v3.0",
-    )
-    mongo_client = MongoClient(host=os.getenv("ATLAS_CONNECTION_STRING"))
-    mywebsite_db = mongo_client["mywebsite"]
-    mybio_collection = mywebsite_db["mybio"]
-    vectorstore = MongoDBAtlasVectorSearch(
-        collection=mybio_collection,
-        embedding=embeddings,
-        index_name="bio_index",
-    )
+# ---------------------------------------------------------------------------
+# Pages
+# ---------------------------------------------------------------------------
 
-    results = vectorstore.similarity_search(query=query, k=8)
-    context = ""
-    for i, doc in enumerate(results, 1):
-        context += f"Source {i}:\n{doc.page_content}\n\n"
-
-    template = PromptTemplate(
-        template=(
-            "You are the AI assistant on Sharique Khatri's portfolio website. "
-            "You speak about him in the third person ('Sharique', 'he'), warmly "
-            "and confidently — like a friend who knows him well.\n\n"
-
-            "HOW TO ANSWER:\n"
-            "- Use the retrieved context below as your source of truth.\n"
-            "- If the exact answer isn't spelled out, SYNTHESIZE from what is — "
-            "connect his experience, projects, and skills to reason about the "
-            "question.\n"
-            "- For open-ended questions ('strongest skill', 'why hire him', "
-            "'could he do X', 'what's he like'), give a real answer grounded in "
-            "his track record.\n\n"
-
-            "ALWAYS PIVOT, NEVER COLDLY REFUSE:\n"
-            "- For personal questions you can't know (dating, family, finances, "
-            "health, age, address, looks, etc.), DON'T just say 'I don't know' "
-            "and stop. Briefly acknowledge, then PIVOT to something real and "
-            "positive about him — a passion, a strength, a recent project, a "
-            "trait shown in his work.\n"
-            "- For questions completely unrelated to him (weather, math, "
-            "current events, random jokes), same move: brief acknowledgment, "
-            "then bridge back to something true about Sharique.\n"
-            "- The pivot should feel natural and earned, not forced. Pull from "
-            "his real traits: curiosity about local AI, comfort with low-level "
-            "systems, willingness to build from scratch (RSA, VaultCache), care "
-            "for the Dubai community (AmanUAE), shipped production backend at "
-            "scale (WellX AI), thoughtful written communicator (CS grader, "
-            "arXiv co-author), etc.\n\n"
-
-            "EXAMPLES OF THE PIVOT PATTERN:\n\n"
-            "Q: Who is Sharique dating right now?\n"
-            "A: No clue, honestly. I can tell you what he's into though — "
-            "he's been deep in local LLM stuff lately, built a voice "
-            "assistant called Bibi that runs entirely offline on his own "
-            "machine.\n\n"
-
-            "Q: How tall is Sharique?\n"
-            "A: Couldn't tell you. He does have receipts on the technical "
-            "side if that's useful — wrote VaultCache, an encrypted "
-            "filesystem in C with AES-256 and PBKDF2, just to actually "
-            "understand crypto instead of calling a library.\n\n"
-
-            "Q: What's the weather today?\n"
-            "A: Don't have live weather. He did build an AI travel planner "
-            "though that pulls weather and flight data to figure out when "
-            "to actually go somewhere, if that's interesting.\n\n"
-
-            "Q: Does he like pineapple on pizza?\n"
-            "A: No idea on the pizza take. The thing he's actually "
-            "opinionated about is backend hygiene — idempotency, retry "
-            "safety, that kind of thing. Came up a lot in his WellX AI "
-            "internship doing reward logic.\n\n"
-
-            "Q: What's 2+2?\n"
-            "A: Four. If you want actual interesting math, he did RSA from "
-            "scratch in CMPSC 443 — key generation, modular exponentiation, "
-            "no libraries.\n\n"
-
-            "WHEN TO POINT TO EMAIL:\n"
-            "Specific facts only Sharique can confirm (exact references, "
-            "current availability for a specific interview slot, salary "
-            "expectations) — note you don't have that and suggest "
-            "sharique@psu.edu. Still try to bridge to a trait too.\n\n"
-
-            "STYLE — sound like a human, not an AI:\n"
-            "- 2–4 sentences usually. Longer only if warranted.\n"
-            "- Write like a friend explaining him to another person, not "
-            "like a corporate bio.\n"
-            "- AVOID these AI tells: em-dash + restatement ('X — a real Y'); "
-            "stacked superlatives ('production-grade', 'robust', 'from the "
-            "ground up', 'real-time' all in one sentence); tricolons / "
-            "rule-of-three lists with elegant symmetry; rehearsed "
-            "cleverness ('he carries himself the same way he writes code: "
-            "clean, careful, and unafraid…'); cramming a metric into every "
-            "sentence; closers like 'in short', 'ultimately', or 'what "
-            "stands out is…'.\n"
-            "- Vary sentence length. Some short. Some longer. Use plain "
-            "phrasing. Drop adjectives you don't need.\n"
-            "- Don't say 'based on the context' or 'the documents indicate'.\n"
-            "- Don't invent specific numbers or dates.\n\n"
-
-            "Context about Sharique:\n{context}\n"
-            "Question: {query}\n\n"
-            "Answer:"
-        ),
-        input_variables=["context", "query"],
-    )
-    def _run_config(provider_tag: str):
-        """LangSmith config — tags + metadata so traces are filterable
-        by provider and you can spot recruiter traffic vs your own
-        testing in the LangSmith UI."""
-        return {
-            "run_name": "portfolio-ask",
-            "tags": ["portfolio", f"provider:{provider_tag}"],
-            "metadata": {
-                "provider": provider_tag,
-                "query_preview": query[:80],
-                **request_meta,
-            },
-        }
-
-    # ----- Try Gemini first (primary) -----
-    if GEMINI_OK and google_key:
-        try:
-            llm = ChatGoogleGenerativeAI(
-                model="gemini-2.5-flash",
-                temperature=0.4,
-                google_api_key=google_key,
-            )
-            chain = template | llm | StrOutputParser()
-            answer = chain.invoke(
-                {"context": context, "query": query},
-                config=_run_config("gemini"),
-            )
-            return answer, "gemini"
-        except Exception as e:
-            app.logger.warning(f"Gemini failed, falling back to Cohere: {e}")
-
-    # ----- Fallback to Cohere -----
-    try:
-        llm = ChatCohere(model="command-a-03-2025", temperature=0.4)
-        chain = template | llm | StrOutputParser()
-        answer = chain.invoke(
-            {"context": context, "query": query},
-            config=_run_config("cohere-fallback"),
-        )
-        return answer, "cohere (fallback)"
-    except Exception as e:
-        return (
-            f"Both Gemini and Cohere failed. Last error: {type(e).__name__}: {e}",
-            "error",
-        )
 
 @app.route("/")
-def home():
-    return render_template("index.html")
+def index():
+    has_photo = os.path.exists(os.path.join(app.static_folder, "headshot.jpg"))
+    return render_template(
+        "index.html",
+        has_photo=has_photo,
+        identity=data.IDENTITY,
+        links=data.LINKS,
+        featured=data.FEATURED,
+        cases=data.CASES,
+        experience=data.EXPERIENCE,
+        publication=data.PUBLICATION,
+        archive=data.ARCHIVE,
+        canonical=CANONICAL,
+    )
 
-
-@app.route("/llms.txt")
-def llms_txt():
-    """Served at root so LLM crawlers and agents can find it (per llmstxt.org)."""
-    return send_from_directory(app.root_path, "llms.txt", mimetype="text/plain")
 
 @app.route("/bibi")
 def bibi():
-    """Showcase page for Bibi — the voice-controlled PC assistant."""
     return render_template("bibi.html")
+
 
 @app.route("/scribe")
 def scribe():
-    """Showcase page for MeetingScribe — the local-first meeting transcriber."""
     return render_template("scribe.html")
 
-@app.route("/achievements")
-def achievements():
-    return render_template("achievements.html")
 
-@app.route("/education")
-def education():
-    return render_template("education.html")
+@app.route("/resume")
+def resume():
+    return send_from_directory(
+        app.static_folder, "resume.pdf", mimetype="application/pdf"
+    )
 
-@app.route("/experience")
-def experience():
-    return render_template("experience.html")
 
-@app.route("/projects")
-def projects():
-    return render_template("projects.html")
+@app.route("/llms.txt")
+def llms():
+    return send_from_directory(app.root_path, "llms.txt", mimetype="text/plain")
 
-@app.route("/assistant")
-def assistant():
-    return render_template("assistant.html")
 
-def _client_ip():
-    """Best-effort client IP. Behind Heroku / a CDN, X-Forwarded-For has
-    the real IP as the first comma-separated value."""
+# Legacy deep links from old resumes and outreach keep resolving.
+_LEGACY = {
+    "/projects": "/#work",
+    "/experience": "/#experience",
+    "/research": "/#work",
+    "/education": "/#ask",
+    "/achievements": "/#ask",
+    "/assistant": "/#ask",
+}
+
+for _path, _target in _LEGACY.items():
+
+    def _make(target):
+        def _redirect():
+            return redirect(target, code=301)
+
+        return _redirect
+
+    app.add_url_rule(_path, f"legacy_{_path.strip('/')}", _make(_target))
+
+
+# ---------------------------------------------------------------------------
+# Assistant endpoint, rate limited
+# ---------------------------------------------------------------------------
+
+_WINDOW_SECONDS = 60
+_PER_IP_LIMIT = 8
+_GLOBAL_LIMIT = 40
+_ip_hits: dict[str, deque] = defaultdict(deque)
+_global_hits: deque = deque()
+
+
+def _rate_limited(ip: str) -> bool:
+    now = time.monotonic()
+    bucket = _ip_hits.get(ip)
+    if bucket:
+        while bucket and now - bucket[0] > _WINDOW_SECONDS:
+            bucket.popleft()
+        if not bucket:
+            del _ip_hits[ip]
+            bucket = None
+    while _global_hits and now - _global_hits[0] > _WINDOW_SECONDS:
+        _global_hits.popleft()
+    if (bucket and len(bucket) >= _PER_IP_LIMIT) or len(_global_hits) >= _GLOBAL_LIMIT:
+        return True
+    if len(_ip_hits) > 5_000:
+        # flood of distinct keys: drop buckets that are already empty or stale
+        for key in [k for k, v in _ip_hits.items() if not v or now - v[-1] > _WINDOW_SECONDS]:
+            del _ip_hits[key]
+    _ip_hits[ip].append(now)
+    _global_hits.append(now)
+    return False
+
+
+def _client_ip() -> str:
+    # Heroku's router appends the real client IP as the LAST value of
+    # X-Forwarded-For; anything earlier is client controlled and spoofable.
     xff = request.headers.get("X-Forwarded-For", "")
     if xff:
-        return xff.split(",")[0].strip()
-    return request.remote_addr or "unknown"
+        return xff.rsplit(",", 1)[-1].strip()
+    return request.remote_addr or "?"
 
 
 @app.route("/ask", methods=["POST"])
 def ask():
-    data = request.get_json() or {}
-    q = (data.get("query") or "").strip()
-    if not q:
-        return jsonify({"answer": "Please enter a question.", "provider": "error"}), 400
+    payload = request.get_json(silent=True)
+    if not isinstance(payload, dict):
+        payload = {}
+    raw = payload.get("query")
+    query = raw.strip() if isinstance(raw, str) else ""
+    if not query:
+        return jsonify({"answer": "Ask me something first.", "source": "none"}), 400
+    if len(query) > 500:
+        return (
+            jsonify(
+                {
+                    "answer": "That is a lot of question. Keep it under 500 characters, "
+                    "or just email sharique.khatri@gmail.com.",
+                    "source": "none",
+                }
+            ),
+            400,
+        )
+    if _rate_limited(_client_ip()):
+        return (
+            jsonify(
+                {
+                    "answer": "You are asking faster than I can think. Give it a minute, "
+                    "or email sharique.khatri@gmail.com.",
+                    "source": "none",
+                }
+            ),
+            429,
+        )
+    history = []
+    raw_history = payload.get("history")
+    if isinstance(raw_history, list):
+        for turn in raw_history[-8:]:
+            if (
+                isinstance(turn, dict)
+                and turn.get("role") in ("user", "assistant")
+                and isinstance(turn.get("text"), str)
+            ):
+                history.append(
+                    {"role": turn["role"], "text": turn["text"][:500]}
+                )
+    text, source = answer(query, history)
+    return jsonify({"answer": text, "source": source})
 
-    # Build metadata for LangSmith traces — lets you see WHO is asking
-    # what on the portfolio (IP, browser, where they came from).
-    request_meta = {
-        "client_ip": _client_ip(),
-        "user_agent": request.headers.get("User-Agent", "")[:200],
-        "referrer": request.referrer or "(direct)",
-        "host": request.host,
-    }
 
-    try:
-        answer, provider = get_personal_info(q, request_meta=request_meta)
-    except Exception as e:
-        answer = f"Backend error: {type(e).__name__}: {e}"
-        provider = "error"
-    return jsonify({"answer": answer, "provider": provider})
+# ---------------------------------------------------------------------------
+# Discovery plumbing
+# ---------------------------------------------------------------------------
+
+
+@app.route("/robots.txt")
+def robots():
+    body = f"User-agent: *\nAllow: /\nSitemap: {CANONICAL}/sitemap.xml\n"
+    return Response(body, mimetype="text/plain")
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    pages = ["/", "/bibi", "/scribe"]
+    urls = "".join(
+        f"<url><loc>{CANONICAL}{p}</loc><changefreq>monthly</changefreq></url>"
+        for p in pages
+    )
+    body = (
+        '<?xml version="1.0" encoding="UTF-8"?>'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">'
+        f"{urls}</urlset>"
+    )
+    return Response(body, mimetype="application/xml")
+
+
+@app.errorhandler(404)
+def not_found(_err):
+    return render_template("404.html"), 404
+
+
+@app.after_request
+def headers(resp: Response) -> Response:
+    resp.headers.setdefault("X-Content-Type-Options", "nosniff")
+    resp.headers.setdefault("X-Frame-Options", "SAMEORIGIN")
+    resp.headers.setdefault("Referrer-Policy", "strict-origin-when-cross-origin")
+    resp.headers.setdefault(
+        "Content-Security-Policy",
+        "default-src 'self'; script-src 'self' 'unsafe-inline'; "
+        "style-src 'self' 'unsafe-inline'; font-src 'self'; "
+        "img-src 'self' data:; connect-src 'self'; frame-ancestors 'self'",
+    )
+    if request.path.startswith("/static/"):
+        resp.headers.setdefault("Cache-Control", "public, max-age=86400")
+    return resp
+
 
 if __name__ == "__main__":
-    # Use 0.0.0.0 in dev to be reachable from local network if needed
-    app.run(host="0.0.0.0", port=int(os.getenv("PORT", 5001)), debug=True)
+    app.run(
+        host="0.0.0.0",
+        port=int(os.getenv("PORT", 5001)),
+        debug=os.getenv("FLASK_DEBUG") == "1",
+    )

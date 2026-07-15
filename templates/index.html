@@ -1,334 +1,237 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Sharique Khatri — sk/os</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sharique Khatri · Applied AI Engineer</title>
+<meta name="description" content="Applied AI engineer. Built production RAG serving 10,000+ users at WellX AI, co authored a paper accepted at ECCV 2026, and ships local first products." />
+<link rel="canonical" href="{{ canonical }}/" />
 
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<meta property="og:type" content="website" />
+<meta property="og:site_name" content="Sharique Khatri" />
+<meta property="og:locale" content="en_US" />
+<meta property="og:url" content="{{ canonical }}/" />
+<meta property="og:title" content="Sharique Khatri · Applied AI Engineer" />
+<meta property="og:description" content="Built production RAG serving 10,000+ users at WellX AI. A paper accepted at ECCV 2026. Two local first products live on this domain." />
+<meta property="og:image" content="{{ canonical }}/static/og-home.png" />
+<meta property="og:image:width" content="1200" />
+<meta property="og:image:height" content="630" />
+<meta property="og:image:alt" content="Sharique Khatri, applied AI engineer" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:title" content="Sharique Khatri · Applied AI Engineer" />
+<meta name="twitter:description" content="Built production RAG serving 10,000+ users at WellX AI. A paper accepted at ECCV 2026. Two local first products live on this domain." />
+<meta name="twitter:image" content="{{ canonical }}/static/og-home.png" />
+<meta name="theme-color" content="#fafaf8" />
+<link rel="icon" type="image/png" href="/static/favicon.png" />
+<script>(function(){try{var t=localStorage.getItem("theme");if(t){document.documentElement.setAttribute("data-theme",t);}var d=t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d){var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute("content","#131316");}}}catch(e){}})()</script>
 
-<link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
-<link rel="stylesheet" href="{{ url_for('static', filename='mobile.css') }}">
+<link rel="stylesheet" href="/static/site.css?v=20260714e" />
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Person",
+  "name": "Sharique Khatri",
+  "url": "{{ canonical }}/",
+  "email": "mailto:{{ links.email }}",
+  "jobTitle": "Applied AI Engineer",
+  "alumniOf": "Penn State University",
+  "sameAs": ["{{ links.github }}", "{{ links.linkedin }}"]
+}
+</script>
 </head>
-
 <body>
+<a class="skip" href="#main">Skip to content</a>
 
-<!-- Fullscreen toggle (always visible) -->
-<button class="fs-toggle" id="fs-toggle" aria-label="Toggle fullscreen">
-  <svg class="fs-icon-expand" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
-    <path d="M2 5V2h3M14 5V2h-3M2 11v3h3M14 11v3h-3" stroke-linecap="square"/>
-  </svg>
-  <svg class="fs-icon-collapse" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
-    <path d="M5 2v3H2M11 2v3h3M5 14v-3H2M11 14v-3h3" stroke-linecap="square"/>
-  </svg>
-</button>
+<nav class="top" aria-label="primary">
+  <a class="nm" href="/">Sharique Khatri</a>
+  <span class="lks">
+    <a href="#ask">Ask</a>
+    <a href="#work">Work</a>
+    <a href="#experience">Experience</a>
+    <button class="theme-btn" id="theme-toggle" type="button" aria-label="Switch between light and dark theme">
+      <svg class="ic-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+      <svg class="ic-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+    </button>
+  </span>
+</nav>
 
-<!-- ============================================================
-     SCENE — Monitor + Keyboard + Mouse
-============================================================ -->
-<div class="scene" id="scene">
+<main id="main" class="wrap">
 
-  <!-- ─────────── MONITOR ─────────── -->
-  <div class="monitor">
-    <div class="screen" id="screen">
-
-      <!-- ─── OS MENU BAR ─── -->
-      <div class="menubar">
-        <div class="menubar-left">
-          <span class="mb-logo">◐</span>
-          <span class="mb-app">sk/os</span>
-          <span class="mb-item">File</span>
-          <span class="mb-item">View</span>
-          <span class="mb-item">Window</span>
-          <span class="mb-item">Help</span>
-        </div>
-        <div class="menubar-right">
-          <span class="mb-stat">⌘ K</span>
-          <span class="mb-stat" id="mb-clock">--:--:--</span>
-          <span class="mb-stat">v2026</span>
-        </div>
+  <!-- ============ HERO ============ -->
+  <header class="hero">
+    <div>
+      <div class="kick">Applied AI Engineer · Penn State CS, May 2026</div>
+      <h1>I build software that real people <span class="a">depend on</span>, not demos.</h1>
+      <p class="lede">Built production RAG serving <b>10,000+ users</b> at WellX AI. Co authored a benchmark paper <b>accepted at ECCV 2026</b>. Two local first products live on this domain. I look for the unglamorous fix first.</p>
+      <div class="cta">
+        <a class="btn" href="mailto:{{ links.email }}">{{ links.email }}</a>
+        <a class="btn ghost" href="{{ links.github }}" target="_blank" rel="noopener">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
+          GitHub
+        </a>
+        <a class="btn ghost" href="{{ links.linkedin }}" target="_blank" rel="noopener">LinkedIn</a>
+        <a class="btn ghost" href="/resume" target="_blank" rel="noopener">Resume</a>
       </div>
-
-      <!-- ─── DESKTOP ─── -->
-      <div class="desktop" id="desktop">
-
-        <!-- Background ambient terminal -->
-        <div class="motd">
-          <div class="motd-line"><span class="g">$</span> whoami</div>
-          <div class="motd-line"><span class="d">sharique.khatri</span></div>
-          <div class="motd-line"><span class="g">$</span> cat readme.md</div>
-          <div class="motd-line"><span class="d">SK — CS senior @ Penn State '26.</span></div>
-          <div class="motd-line"><span class="d">Builds backend systems, AI tooling,</span></div>
-          <div class="motd-line"><span class="d">and the occasional security lab.</span></div>
-          <div class="motd-line"><span class="d">Open to summer '26 + new grad.</span></div>
-          <div class="motd-line"><span class="g">$</span> ls -la apps/</div>
-          <div class="motd-line"><span class="m">drwx</span> ask &nbsp; work &nbsp; projects &nbsp; research &nbsp; profile</div>
-          <div class="motd-line"><span class="g">$</span> <span class="caret">▮</span></div>
-        </div>
-
-        <!-- App tiles -->
-        <div class="apps" id="apps">
-          <button class="app-tile" data-app="ask">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-                <path d="M2 3h12v8H8l-3 3v-3H2V3z" stroke-linejoin="miter"/>
-                <circle cx="6" cy="7" r=".6" fill="currentColor"/>
-                <circle cx="8" cy="7" r=".6" fill="currentColor"/>
-                <circle cx="10" cy="7" r=".6" fill="currentColor"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Assistant</div>
-            </div>
-            <div class="app-hint">1</div>
-          </button>
-
-          <button class="app-tile" data-app="work">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-                <rect x="2" y="4" width="12" height="9" stroke-linejoin="miter"/>
-                <path d="M6 4V2.5h4V4M2 7h12" stroke-linejoin="miter"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Experience</div>
-            </div>
-            <div class="app-hint">2</div>
-          </button>
-
-          <button class="app-tile" data-app="projects">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-                <path d="M2 4h4l1.5 1.5H14V13H2V4z" stroke-linejoin="miter"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Projects</div>
-            </div>
-            <div class="app-hint">3</div>
-          </button>
-
-          <button class="app-tile" data-app="research">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-                <path d="M3 2h7l3 3v9H3V2z" stroke-linejoin="miter"/>
-                <path d="M10 2v3h3M5 8h6M5 10h6M5 12h4" stroke-linejoin="miter"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Research</div>
-            </div>
-            <div class="app-hint">4</div>
-          </button>
-
-          <button class="app-tile" data-app="profile">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.2">
-                <circle cx="8" cy="6" r="2.5"/>
-                <path d="M3 14c0-2.8 2.2-5 5-5s5 2.2 5 5"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Profile</div>
-            </div>
-            <div class="app-hint">5</div>
-          </button>
-
-          <a class="app-tile" href="/bibi" data-app="bibi" aria-label="Bibi — voice assistant">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="#FF6A1A" stroke-width="1.3">
-                <circle cx="8" cy="8" r="6" opacity=".5"/>
-                <circle cx="8" cy="8" r="3.2"/>
-                <circle cx="8" cy="8" r="1.2" fill="#FF6A1A" stroke="none"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Bibi</div>
-            </div>
-            <div class="app-hint">6</div>
-          </a>
-
-          <a class="app-tile" href="/scribe" data-app="scribe" aria-label="MeetingScribe — local meeting transcriber">
-            <div class="app-glyph">
-              <svg viewBox="0 0 16 16" fill="none" stroke="#33BBD6" stroke-width="1.3" stroke-linecap="round">
-                <path d="M2 8h1.2M5 5.5v5M8 3.5v9M11 6v4M14 8h-1.2"/>
-              </svg>
-            </div>
-            <div class="app-meta">
-              <div class="app-name">Scribe</div>
-            </div>
-            <div class="app-hint">7</div>
-          </a>
-        </div>
-
-        <!-- Floating status card top-right of desktop -->
-        <div class="status-card">
-          <div class="sc-row"><span class="sc-k">name</span><span class="sc-dots"></span><span class="sc-v">Sharique Khatri</span></div>
-          <div class="sc-row"><span class="sc-k">school</span><span class="sc-dots"></span><span class="sc-v">Penn State '26</span></div>
-          <div class="sc-row"><span class="sc-k">major</span><span class="sc-dots"></span><span class="sc-v">CS · cybersec minor</span></div>
-          <div class="sc-row"><span class="sc-k">based in</span><span class="sc-dots"></span><span class="sc-v">PA · USA</span></div>
-        </div>
-      </div>
-
-      <!-- ─── WINDOW LAYER (apps render here) ─── -->
-      <div class="windows" id="windows"></div>
-
-      <!-- ─── DOCK ─── -->
-      <div class="dock">
-        <div class="dock-left">
-          <span class="dock-pwd">Sharique Khatri — Portfolio</span>
-        </div>
-        <div class="dock-right">
-          <a class="dock-link" href="https://github.com/sharique2004" target="_blank">github</a>
-          <span class="dock-sep">·</span>
-          <a class="dock-link" href="https://www.linkedin.com/in/sharique-khatri/" target="_blank">linkedin</a>
-          <span class="dock-sep">·</span>
-          <a class="dock-link" href="mailto:sharique@psu.edu">mail</a>
-        </div>
-      </div>
-
-    </div><!-- /screen -->
-
-    <div class="monitor-stand"></div>
-    <div class="monitor-base"></div>
-  </div>
-
-  <!-- ─────────── KEYBOARD ─────────── -->
-  <div class="keyboard" id="keyboard"></div>
-
-  <!-- ─────────── MOUSEPAD ─────────── -->
-  <div class="mousepad" id="mousepad">
-    <div class="mousepad-label">SK · 30×24</div>
-    <div class="vmouse" id="vmouse">
-      <div class="vmouse-wheel"></div>
+      <p class="meta">State College, PA · open to <b>SF Bay Area, NYC, Seattle, Dubai</b></p>
     </div>
-  </div>
 
-</div><!-- /scene -->
-
-
-<!-- ============================================================
-     MOBILE sk/os — single-page CLI-aesthetic experience
-============================================================ -->
-<div class="mobile-os" id="mobileOs">
-
-  <!-- Top bar -->
-  <header class="mob-bar">
-    <div class="mob-bar-left">
-      <span class="mob-bar-logo">◐</span>
-      <span class="mob-bar-app">sk/os</span>
-    </div>
-    <div class="mob-bar-right">
-      <span class="mob-bar-clock" id="mobClock">--:--</span>
-    </div>
+    <figure class="photo">
+      {% if has_photo %}
+      <img src="/static/headshot.jpg" alt="Sharique Khatri" width="640" height="800" />
+      {% else %}
+      <div class="photo-fallback" role="img" aria-label="Initials of Sharique Khatri">SK</div>
+      {% endif %}
+      <figcaption>State College, PA</figcaption>
+    </figure>
   </header>
 
-  <main class="mob-content">
+  <!-- ============ ASK ============ -->
+  <section class="section" id="ask">
+    <h2 class="sec">Questions? Ask the small version of me.</h2>
 
-    <!-- Hero -->
-    <section class="mob-hero">
-      <div class="mob-hero-line"><span class="mob-mono-prompt">$</span> whoami</div>
-      <h1 class="mob-hero-name">Sharique <em>Khatri</em></h1>
-      <p class="mob-hero-tag">CS senior @ Penn State '26. Backend systems, AI tooling, security labs.</p>
-      <div class="mob-hero-status">
-        <span class="mob-status-dot"></span>
-        open to summer '26 / new grad
+    <div class="ask-card">
+      <div class="ask-log" id="chat-log" role="log" aria-live="polite" aria-label="Assistant conversation">
+        <div class="msg me">
+          <span class="who">Mini Sharique</span>
+          <span class="txt">Ask me about the work. I only answer from verified facts, so I'd rather say less than make something up.</span>
+        </div>
       </div>
-    </section>
-
-    <!-- Bibi (featured) -->
-    <section class="mob-section">
-      <a href="/bibi" style="display:flex;align-items:center;gap:13px;padding:15px 16px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:linear-gradient(180deg,rgba(255,106,26,.09),rgba(255,255,255,.01));text-decoration:none;color:inherit">
-        <svg width="36" height="36" viewBox="0 0 16 16" fill="none" stroke="#FF6A1A" stroke-width="1.3" style="flex:0 0 36px">
-          <circle cx="8" cy="8" r="6" opacity=".5"/><circle cx="8" cy="8" r="3.2"/><circle cx="8" cy="8" r="1.2" fill="#FF6A1A" stroke="none"/>
-        </svg>
-        <span>
-          <span style="display:block;font-weight:700">Bibi — voice assistant <span style="color:#FF6A1A">&rarr;</span></span>
-          <span style="display:block;font-size:13px;color:#9aa0ac;margin-top:2px">A local-first AI that runs your Windows PC by voice.</span>
-        </span>
-      </a>
-    </section>
-
-    <!-- MeetingScribe (featured) -->
-    <section class="mob-section">
-      <a href="/scribe" style="display:flex;align-items:center;gap:13px;padding:15px 16px;border:1px solid rgba(255,255,255,.14);border-radius:14px;background:linear-gradient(180deg,rgba(51,187,214,.09),rgba(255,255,255,.01));text-decoration:none;color:inherit">
-        <svg width="36" height="36" viewBox="0 0 16 16" fill="none" stroke="#33BBD6" stroke-width="1.3" stroke-linecap="round" style="flex:0 0 36px">
-          <path d="M2 8h1.2M5 5.5v5M8 3.5v9M11 6v4M14 8h-1.2"/>
-        </svg>
-        <span>
-          <span style="display:block;font-weight:700">MeetingScribe — meeting transcriber <span style="color:#33BBD6">&rarr;</span></span>
-          <span style="display:block;font-size:13px;color:#9aa0ac;margin-top:2px">Records both sides of any call, transcribes on-device. Nothing uploaded.</span>
-        </span>
-      </a>
-    </section>
-
-    <!-- Ask -->
-    <section class="mob-section" id="mobAsk">
-      <h2 class="mob-section-title"><span class="mob-hash">#</span> ask</h2>
-      <p class="mob-section-sub">Ask anything — grounded in his bio via MongoDB Atlas RAG.</p>
-      <div class="mob-ask-chips" id="mobAskChips">
-        <button class="mob-chip" data-q="What's Sharique's strongest technical area?">strongest skill</button>
-        <button class="mob-chip" data-q="Tell me about the WellX AI internship.">wellx ai</button>
-        <button class="mob-chip" data-q="What is Bibi?">what is bibi</button>
-        <button class="mob-chip" data-q="Why should I hire him?">why hire him</button>
-      </div>
-      <div class="mob-ask-feed" id="mobAskFeed"></div>
-      <form class="mob-ask-input" id="mobAskForm">
-        <span class="mob-mono-prompt">$</span>
-        <input id="mobAskInput" type="text" autocomplete="off" placeholder="ask anything..." />
-        <button type="submit" class="mob-ask-send" aria-label="Send">→</button>
+      <form class="ask-input" id="chat-form">
+        <label class="visually-hidden" for="chat-q">Your question</label>
+        <input id="chat-q" name="q" type="text" maxlength="500" autocomplete="off"
+               placeholder="What did you build at WellX?" />
+        <button type="submit" class="btn">Ask</button>
       </form>
-    </section>
-
-    <!-- Work -->
-    <section class="mob-section">
-      <h2 class="mob-section-title"><span class="mob-hash">#</span> work</h2>
-      <div class="mob-list" id="mobWork"></div>
-    </section>
-
-    <!-- Projects -->
-    <section class="mob-section">
-      <h2 class="mob-section-title"><span class="mob-hash">#</span> projects</h2>
-      <div class="mob-tabs" id="mobProjTabs"></div>
-      <div class="mob-list" id="mobProj"></div>
-    </section>
-
-    <!-- Research -->
-    <section class="mob-section">
-      <h2 class="mob-section-title"><span class="mob-hash">#</span> research</h2>
-      <div class="mob-list" id="mobResearch"></div>
-    </section>
-
-    <!-- Profile -->
-    <section class="mob-section">
-      <h2 class="mob-section-title"><span class="mob-hash">#</span> profile</h2>
-      <div id="mobProfile"></div>
-    </section>
-
-  </main>
-
-  <footer class="mob-foot">
-    <div class="mob-foot-links">
-      <a href="https://github.com/sharique2004" target="_blank">github</a>
-      <span class="mob-foot-sep">·</span>
-      <a href="https://www.linkedin.com/in/sharique-khatri/" target="_blank">linkedin</a>
-      <span class="mob-foot-sep">·</span>
-      <a href="mailto:sharique@psu.edu">mail</a>
+      <div class="chips" id="chat-chips">
+        <button class="chip" type="button">Tell me about Sharique</button>
+        <button class="chip" type="button">What did you build at WellX?</button>
+        <button class="chip" type="button">Do you need visa sponsorship?</button>
+        <button class="chip" type="button">What is Bibi?</button>
+      </div>
     </div>
-    <div class="mob-foot-mark">// sk/os · v2026</div>
-  </footer>
+    <p class="ask-note">Gemini · MongoDB Atlas vector search · Flask · same pattern as my WellX AI work. No chat history is stored.</p>
+  </section>
 
-</div>
+  <!-- ============ PRODUCTS ============ -->
+  <section class="section" id="work">
+    <h2 class="sec">Built, shipped, and documented.</h2>
+    <p class="sec-intro">Everything below is clickable and verifiable. Live links, real repos, honest scope.</p>
 
-<!-- ============================================================
-     SCRIPTS
-============================================================ -->
-<script src="{{ url_for('static', filename='portfolio-data.js') }}"></script>
-<script src="{{ url_for('static', filename='portfolio-apps.js') }}"></script>
-<script src="{{ url_for('static', filename='script.js') }}"></script>
-<script src="{{ url_for('static', filename='mobile.js') }}"></script>
+    <div class="grid2">
+      {% for f in featured %}
+      <article class="card">
+        <a class="shot" href="{{ f.page }}" aria-label="{{ f.name }} page">
+          <img src="{{ f.poster }}" alt="{{ f.name }} interface" loading="lazy" />
+        </a>
+        <div class="body">
+          <div class="k">{{ f.kicker }}</div>
+          <h3><a href="{{ f.page }}">{{ f.name }}</a></h3>
+          <p>{{ f.summary }}</p>
+          <p class="quote">{{ f.thesis }}</p>
+          <div class="lk">
+            <a href="{{ f.page }}">Visit {{ f.page }}</a>
+            <a href="{{ f.repo }}" target="_blank" rel="noopener">Source</a>
+          </div>
+          <div class="stack">{{ f.tech }}</div>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
 
+    <div class="cases">
+      {% for c in cases %}
+      <article class="case">
+        <div class="head">
+          <h3>{{ c.name }}</h3>
+          <span class="k">{{ c.kicker }}</span>
+        </div>
+        <p><span class="lbl">On paper</span>{{ c.on_paper }}</p>
+        <p><span class="lbl real">Real story</span>{{ c.real_story }}</p>
+        <p class="honest"><span class="lbl">Honest scope</span>{{ c.honest }}</p>
+        <div class="foot">
+          <span class="lk">
+            {% for label, url in c.links %}
+            <a href="{{ url }}" target="_blank" rel="noopener">{{ label|capitalize }}</a>
+            {% endfor %}
+          </span>
+          <span class="stack">{{ c.tech }}</span>
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ============ EXPERIENCE ============ -->
+  <section class="section" id="experience">
+    <h2 class="sec">Where the numbers come from.</h2>
+
+    <div class="xp-list">
+      {% for e in experience %}
+      <article class="xp">
+        <div>
+          <h3>{{ e.company }}</h3>
+          <div class="role">{{ e.role }}</div>
+          <div class="when">{{ e.where }} · {{ e.dates }}</div>
+        </div>
+        <div class="body">
+          <p>{{ e.summary }}</p>
+          {% if e.real_story %}
+          <p class="honest"><span class="lbl real">Real story</span>{{ e.real_story }}</p>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </section>
+
+  <!-- ============ ARCHIVE ============ -->
+  <section class="section" id="archive">
+    <h2 class="sec">Smaller builds, same standard.</h2>
+    <div class="archive">
+      {% for name, desc, url in archive %}
+      {% if url %}
+      <a class="arc" href="{{ url }}" target="_blank" rel="noopener">
+        <span class="nm">{{ name }}</span>
+        <span class="ds">{{ desc }}</span>
+        <span class="go" aria-hidden="true">&nearr;</span>
+      </a>
+      {% else %}
+      <div class="arc">
+        <span class="nm">{{ name }}</span>
+        <span class="ds">{{ desc }}</span>
+        <span class="go"></span>
+      </div>
+      {% endif %}
+      {% endfor %}
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="foot">
+    <div class="col who">
+      <span class="nm">Sharique Khatri</span>
+      <p>{{ identity.line }}</p>
+    </div>
+    <div class="col">
+      <span class="lbl2">Work</span>
+      <a href="/bibi">Bibi</a><br/>
+      <a href="/scribe">MeetingScribe</a><br/>
+      <a href="{{ publication.url }}" target="_blank" rel="noopener">OmniSch, ECCV 2026</a>
+    </div>
+    <div class="col">
+      <span class="lbl2">Contact</span>
+      <a href="mailto:{{ links.email }}">{{ links.email }}</a><br/>
+      <a href="{{ links.github }}" target="_blank" rel="noopener">github.com/sharique2004</a><br/>
+      <a href="{{ links.linkedin }}" target="_blank" rel="noopener">linkedin.com/in/sharique-khatri</a><br/>
+      <a href="/resume" target="_blank" rel="noopener">resume (pdf)</a>
+    </div>
+  </div>
+  <div class="foot-line">Hand built with Flask. Self hosted fonts, no trackers, no analytics, no cookies. Verified numbers only; every claim links to its source.</div>
+</footer>
+
+<script src="/static/site.js?v=20260714e" defer></script>
 </body>
 </html>
