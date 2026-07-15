@@ -117,7 +117,13 @@ nav.top .lks a:hover{color:var(--accent-deep)}
 .theme-btn:hover{color:var(--accent-deep);border-color:var(--accent)}
 .theme-btn svg{width:15px;height:15px;display:block}
 .ic-sun{display:none}
-@media(max-width:560px){ nav.top{padding:20px 24px} nav.top .lks{gap:16px} }
+/* On phones the page is short, so drop the in-page anchor links and keep a
+   clean two-item bar: name on the left, theme toggle on the right. */
+@media(max-width:600px){
+  nav.top{padding:18px 24px}
+  nav.top .lks{gap:14px}
+  nav.top .lks a{display:none}
+}
 
 /* ---------- kickers & headings ---------- */
 .kick{
