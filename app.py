@@ -26,7 +26,14 @@ CANONICAL = "https://shariquekhatri.com"
 # Sync the assistant's knowledge base and vector index on boot. Idempotent
 # and fully guarded: a no-op when unchanged or when the keys are absent, and
 # any failure is swallowed so the app always comes up.
-rag.ensure_ready_in_background()
+#
+# Skip on serverless (Vercel): there is no persistent process to own a
+# background thread, and spawning one per cold start could race on the Atlas
+# index. On serverless, retrieval just queries whatever index already exists;
+# ingestion is a one-time step run from a real process (e.g. a local run or a
+# Heroku dyno). See rag.ensure_ready_in_background.
+if not os.getenv("VERCEL"):
+    rag.ensure_ready_in_background()
 
 
 # ---------------------------------------------------------------------------
@@ -68,9 +75,10 @@ def scribe():
 
 @app.route("/resume")
 def resume():
-    return send_from_directory(
-        app.static_folder, "resume.pdf", mimetype="application/pdf"
-    )
+    # The PDF is served from /static by the CDN (and by Flask locally); point
+    # the friendly /resume link at it rather than reading the file in-process,
+    # which keeps it working on serverless where static is not in the bundle.
+    return redirect("/static/resume.pdf", code=302)
 
 
 @app.route("/llms.txt")
