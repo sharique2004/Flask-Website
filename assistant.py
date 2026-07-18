@@ -222,6 +222,17 @@ _FALLBACKS = [
         "Full story at shariquekhatri.com/bibi.",
     ),
     (
+        r"\b(donna|hackathon|first place|1st place|won|award|food bank)\b",
+        "Donna won first place at the AI Supply Chain Hackathon 2026 (Food "
+        "Banks and AI) by The AI Objectives Institute, first prize 2,500 "
+        "dollars. It is a voice dispatcher for food bank donations: a "
+        "supplier calls in surplus food, Donna transcribes the call, pulls "
+        "out each item, and triages it. Perishables get dispatched straight "
+        "to a food bank, shelf stable goods go into inventory, and a human "
+        "approves first. Live at projectdonna.vercel.app, source at "
+        "github.com/sharique2004/Donna.",
+    ),
+    (
         r"\b(meetingscribe|scribe|meeting|transcri|granola)\b",
         "MeetingScribe transcribes meetings fully on device: no bot joins the "
         "call, it records at the OS audio layer and a 45 minute call "

@@ -25,7 +25,7 @@
 <link rel="icon" type="image/png" href="/static/favicon.png" />
 <script>(function(){try{var t=localStorage.getItem("theme");if(t){document.documentElement.setAttribute("data-theme",t);}var d=t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d){var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute("content","#131316");}}}catch(e){}})()</script>
 
-<link rel="stylesheet" href="/static/site.css?v=20260715b" />
+<link rel="stylesheet" href="/static/site.css?v=20260718a" />
 
 <script type="application/ld+json">
 {
@@ -120,17 +120,22 @@
 
     <div class="grid2">
       {% for f in featured %}
-      <article class="card">
-        <a class="shot" href="{{ f.page }}" aria-label="{{ f.name }} page">
+      <article class="card accent-{{ f.accent }}{% if f.wide %} wide{% endif %}">
+        <a class="shot" href="{{ f.page }}" aria-label="{{ f.name }}"{% if f.external %} target="_blank" rel="noopener"{% endif %}>
           <img src="{{ f.poster }}" alt="{{ f.name }} interface" loading="lazy" />
+          {% if f.award %}<span class="award">★ {{ f.award }}</span>{% endif %}
         </a>
         <div class="body">
           <div class="k">{{ f.kicker }}</div>
-          <h3><a href="{{ f.page }}">{{ f.name }}</a></h3>
+          <h3><a href="{{ f.page }}"{% if f.external %} target="_blank" rel="noopener"{% endif %}>{{ f.name }}</a></h3>
           <p>{{ f.summary }}</p>
           <p class="quote">{{ f.thesis }}</p>
           <div class="lk">
+            {% if f.external %}
+            <a href="{{ f.page }}" target="_blank" rel="noopener">Live demo ↗</a>
+            {% else %}
             <a href="{{ f.page }}">Visit {{ f.page }}</a>
+            {% endif %}
             <a href="{{ f.repo }}" target="_blank" rel="noopener">Source</a>
           </div>
           <div class="stack">{{ f.tech }}</div>
@@ -232,6 +237,6 @@
   <div class="foot-line">Hand built with Flask. Self hosted fonts, no trackers, no analytics, no cookies. Verified numbers only; every claim links to its source.</div>
 </footer>
 
-<script src="/static/site.js?v=20260715b" defer></script>
+<script src="/static/site.js?v=20260718a" defer></script>
 </body>
 </html>

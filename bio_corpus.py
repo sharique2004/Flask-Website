@@ -383,6 +383,25 @@ CHUNKS = [
         ),
     },
     {
+        "id": "donna",
+        "topic": "projects",
+        "text": (
+            "Donna won first place at the AI Supply Chain Hackathon 2026 "
+            "(Food Banks and AI), hosted by The AI Objectives Institute in "
+            "San Francisco, July 2026. First prize was 2,500 dollars. Donna "
+            "is a voice dispatcher for food bank donations: a supplier calls "
+            "in surplus or rejected food, Donna answers, transcribes the "
+            "call, extracts each item, and routes it. Perishables that spoil "
+            "fast are dispatched straight to a food bank; shelf stable goods "
+            "go into inventory. A human approves before anything is "
+            "dispatched, then Donna makes the outbound calls. I built it in a "
+            "day. Live demo at projectdonna.vercel.app, source at "
+            "github.com/sharique2004/Donna. The idea: the right call for a "
+            "pallet of strawberries that spoils in 48 hours is not the right "
+            "call for canned beans, and an agent can make that triage fast."
+        ),
+    },
+    {
         "id": "aman-uae",
         "topic": "projects",
         "text": (

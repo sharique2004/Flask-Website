@@ -187,8 +187,24 @@ h1 .a{color:var(--accent)}
   transition:box-shadow .2s,border-color .2s;
 }
 .card:hover{box-shadow:0 6px 24px rgba(0,0,0,0.10);border-color:var(--input-border)}
-.card .shot{display:block;border-bottom:1px solid var(--rule);background:#111}
+.card .shot{display:block;position:relative;border-bottom:1px solid var(--rule);background:#111}
 .card .shot img{display:block;width:100%;height:auto;aspect-ratio:16/9;object-fit:cover;object-position:top}
+.card .shot .award{
+  position:absolute;top:14px;left:14px;z-index:2;
+  background:var(--accent);color:#1c1206;font-size:12px;font-weight:600;
+  padding:6px 12px;border-radius:999px;letter-spacing:0.01em;
+  box-shadow:0 2px 10px rgba(0,0,0,0.28);
+}
+/* wide featured card: spans the grid, image beside the text */
+.card.wide{grid-column:1 / -1;flex-direction:row;align-items:stretch}
+.card.wide .shot{flex:0 0 56%;border-bottom:0;border-right:1px solid var(--rule)}
+.card.wide .shot img{height:100%;aspect-ratio:auto;object-position:left top}
+.card.wide .body{flex:1;justify-content:center}
+@media(max-width:800px){
+  .card.wide{flex-direction:column}
+  .card.wide .shot{flex:none;border-right:0;border-bottom:1px solid var(--rule)}
+  .card.wide .shot img{aspect-ratio:16/9;height:auto}
+}
 .card .body{padding:26px 26px 28px;display:flex;flex-direction:column;gap:10px;flex:1}
 .card .k{font-size:12px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);font-weight:500}
 .card h3{font-size:24px;margin:2px 0 0;font-weight:600;letter-spacing:-0.01em}

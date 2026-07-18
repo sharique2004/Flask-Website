@@ -37,6 +37,28 @@ LINKS = {
 
 FEATURED = [
     {
+        "slug": "donna",
+        "name": "Donna",
+        "page": "https://projectdonna.vercel.app/",
+        "repo": "https://github.com/sharique2004/Donna",
+        "external": True,
+        "wide": True,
+        "award": "1st place · AI Supply Chain Hackathon 2026",
+        "kicker": "hackathon winner · food banks + AI · live demo",
+        "accent": "orange",
+        "poster": "/static/donna-shot.jpg",
+        "title_html": "A voice dispatcher for food bank donations.",
+        "summary": (
+            "A supplier calls in surplus food. Donna answers, transcribes the "
+            "call, pulls out each item, and decides on the spot: perishables "
+            "that spoil fast get dispatched straight to a food bank, shelf "
+            "stable goods go into inventory. A human approves before anything "
+            "is dispatched. Built in a day and won first place."
+        ),
+        "thesis": "The right call for a pallet of strawberries is not the right call for canned beans.",
+        "tech": "Voice intake · live transcription · LLM triage · map dispatch",
+    },
+    {
         "slug": "bibi",
         "name": "Bibi",
         "page": "/bibi",
