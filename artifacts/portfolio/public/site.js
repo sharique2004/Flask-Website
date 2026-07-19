@@ -1,54 +1,77 @@
-/* shariquekhatri.com — liquid glass motion: cursor-tracked shine, tilt, and
-   the aurora following the pointer. All gated on a fine pointer + motion pref. */
+/* shariquekhatri.com — Aurora Glass 2.0 motion.
+   One rAF loop with exponential smoothing drives the aurora glow; per-surface
+   pointer vars feed the cursor shine (real glass) and the border spotlight
+   (faux-glass case rows). Cards never move on hover — motion lives in the
+   light. The loop sleeps whenever nothing is converging. Desktop only. */
 (function () {
   "use strict";
-  var root = document.documentElement;
   var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
   var fine = window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches;
 
-  // aurora drifts toward the pointer
-  if (!reduce) {
-    var raf = 0, px = 50, py = 40;
-    window.addEventListener("pointermove", function (e) {
-      px = (e.clientX / window.innerWidth) * 100;
-      py = (e.clientY / window.innerHeight) * 100;
-      if (!raf) raf = requestAnimationFrame(function () {
-        root.style.setProperty("--px", px + "%");
-        root.style.setProperty("--py", py + "%");
-        raf = 0;
+  // scroll reveal: observe-once, opacity+translate only (CSS gates on motion pref)
+  if ("IntersectionObserver" in window) {
+    var io = new IntersectionObserver(function (entries) {
+      entries.forEach(function (en) {
+        if (en.isIntersecting) { en.target.classList.add("in"); io.unobserve(en.target); }
       });
-    }, { passive: true });
+    }, { threshold: 0.35, rootMargin: "0px 0px -10% 0px" });
+    document.querySelectorAll(".rv").forEach(function (el) { io.observe(el); });
   }
 
-  // per-glass shine + tilt (desktop only)
-  if (fine && !reduce) {
-    document.querySelectorAll(".glass").forEach(function (el) {
-      var er = 0;
-      el.addEventListener("pointermove", function (e) {
-        if (er) return;
-        er = requestAnimationFrame(function () {
-          var b = el.getBoundingClientRect();
-          var mx = ((e.clientX - b.left) / b.width) * 100;
-          var my = ((e.clientY - b.top) / b.height) * 100;
-          el.style.setProperty("--mx", mx + "%");
-          el.style.setProperty("--my", my + "%");
-          el.style.setProperty("--shine", "1");
-          if (el.classList.contains("tilt")) {
-            var tx = (e.clientX - b.left) / b.width - 0.5;
-            var ty = (e.clientY - b.top) / b.height - 0.5;
-            el.style.setProperty("--tx", (tx * 5).toFixed(2) + "deg");
-            el.style.setProperty("--ty", (-ty * 5).toFixed(2) + "deg");
-          }
-          er = 0;
-        });
-      }, { passive: true });
-      el.addEventListener("pointerleave", function () {
-        el.style.setProperty("--shine", "0");
-        el.style.setProperty("--tx", "0deg");
-        el.style.setProperty("--ty", "0deg");
-      });
-    });
+  if (reduce || !fine) return;
+
+  var glow = document.querySelector(".aurora i");
+  var px = window.innerWidth / 2, py = window.innerHeight * 0.4;  // pointer
+  var gx = px, gy = py;                                           // glow (lerped)
+
+  var running = false;
+  function wake() {
+    if (!running) { running = true; requestAnimationFrame(tick); }
   }
+
+  function tick() {
+    // aurora glow: slow dreamy trail (~6% convergence per frame)
+    gx += (px - gx) * 0.06;
+    gy += (py - gy) * 0.06;
+    if (glow) glow.style.transform =
+      "translate3d(" + gx.toFixed(1) + "px," + gy.toFixed(1) + "px,0) translate(-50%,-50%)";
+    if (Math.abs(px - gx) < 0.3 && Math.abs(py - gy) < 0.3) { running = false; return; }
+    requestAnimationFrame(tick);
+  }
+
+  window.addEventListener("pointermove", function (e) {
+    px = e.clientX; py = e.clientY;
+    wake();
+  }, { passive: true });
+
+  // cursor position vars: shine on real glass, border spotlight on case rows
+  document.querySelectorAll(".glass, .lit").forEach(function (el) {
+    el.addEventListener("pointermove", function (e) {
+      var b = el.getBoundingClientRect();
+      el.style.setProperty("--mx", (((e.clientX - b.left) / b.width) * 100).toFixed(1) + "%");
+      el.style.setProperty("--my", (((e.clientY - b.top) / b.height) * 100).toFixed(1) + "%");
+      el.style.setProperty("--shine", "1");
+    }, { passive: true });
+    el.addEventListener("pointerleave", function () {
+      el.style.setProperty("--shine", "0");
+    });
+  });
+
+  // magnetic buttons: lean a few px toward the cursor, spring home on leave.
+  // The pull rides CSS vars so hover-lift and press-scale stack cleanly.
+  document.querySelectorAll(".btn").forEach(function (el) {
+    el.addEventListener("pointermove", function (e) {
+      var b = el.getBoundingClientRect();
+      var dx = (e.clientX - (b.left + b.width / 2)) / (b.width / 2);
+      var dy = (e.clientY - (b.top + b.height / 2)) / (b.height / 2);
+      el.style.setProperty("--magx", (dx * 3).toFixed(2) + "px");
+      el.style.setProperty("--magy", (dy * 2).toFixed(2) + "px");
+    }, { passive: true });
+    el.addEventListener("pointerleave", function () {
+      el.style.setProperty("--magx", "0px");
+      el.style.setProperty("--magy", "0px");
+    });
+  });
 })();
 
 /* shariquekhatri.com. The ask panel and the theme toggle. */
@@ -73,7 +96,6 @@
   var form = document.getElementById("chat-form");
   var input = document.getElementById("chat-q");
   var log = document.getElementById("chat-log");
-  var chips = document.getElementById("chat-chips");
   if (!form || !input || !log) return;
   var submitBtn = form.querySelector('button[type="submit"]');
 
@@ -163,17 +185,9 @@
     e.preventDefault();
     e.stopPropagation();
     var q = input.value.trim();
-    // Dismiss the mobile keyboard once so the answer is visible. A single
-    // blur is smooth; the disable/refocus churn we removed was what jumped.
+    // Dismiss the mobile keyboard once so the answer is visible.
     input.blur();
     ask(q);
     return false;
   });
-
-  if (chips) {
-    chips.addEventListener("click", function (e) {
-      var btn = e.target.closest(".chip");
-      if (btn) ask(btn.textContent.trim());
-    });
-  }
 })();

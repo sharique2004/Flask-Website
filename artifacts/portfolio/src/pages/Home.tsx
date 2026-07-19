@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useGlassEffects } from "../hooks/useGlassEffects";
 import { Nav } from "../components/Nav";
 import { AskPanel } from "../components/AskPanel";
+import { IconSprite, Pills } from "../components/IconSprite";
 import {
   IDENTITY,
   LINKS,
@@ -21,60 +22,23 @@ export default function Home() {
 
   return (
     <>
-      <a className="skip" href="#main">
-        Skip to content
-      </a>
+      <a className="skip" href="#main">Skip to content</a>
+
+      {/* Inline SVG sprite for brand icons */}
+      <IconSprite />
 
       <div className="aurora" aria-hidden="true">
         <b /><b /><b /><b /><i />
       </div>
 
-      <svg
-        width="0"
-        height="0"
-        style={{ position: "absolute" }}
-        aria-hidden="true"
-      >
-        <defs>
-          <filter
-            id="glassRefract"
-            x="-20%"
-            y="-20%"
-            width="140%"
-            height="140%"
-          >
-            <feTurbulence
-              type="fractalNoise"
-              baseFrequency="0.008 0.012"
-              numOctaves={2}
-              seed={7}
-              result="noise"
-            >
-              <animate
-                attributeName="baseFrequency"
-                dur="26s"
-                values="0.008 0.012;0.011 0.009;0.008 0.012"
-                repeatCount="indefinite"
-              />
-            </feTurbulence>
-            <feDisplacementMap
-              in="SourceGraphic"
-              in2="noise"
-              scale={9}
-              xChannelSelector="R"
-              yChannelSelector="G"
-            />
-          </filter>
-        </defs>
-      </svg>
-
       <Nav />
 
       <main id="main" className="wrap">
-        {/* HERO */}
+        {/* ============ HERO ============ */}
         <header className="hero">
           <div>
-            <div className="kick">
+            <div className="status">
+              <span className="dot" aria-hidden="true" />
               Applied AI Engineer · Penn State CS, May 2026
             </div>
             <h1>
@@ -89,47 +53,25 @@ export default function Home() {
             </p>
             <div className="cta">
               <a className="btn primary" href={`mailto:${LINKS.email}`}>
+                <span className="sweep" aria-hidden="true" />
                 {LINKS.email}
               </a>
-              <a
-                className="btn ghost"
-                href={LINKS.github}
-                target="_blank"
-                rel="noopener"
-              >
-                <svg
-                  viewBox="0 0 16 16"
-                  fill="currentColor"
-                  aria-hidden="true"
-                >
+              <a className="btn ghost" href={LINKS.github} target="_blank" rel="noopener">
+                <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                   <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" />
                 </svg>
                 GitHub
               </a>
-              <a
-                className="btn ghost"
-                href={LINKS.linkedin}
-                target="_blank"
-                rel="noopener"
-              >
-                LinkedIn
-              </a>
-              <a
-                className="btn ghost"
-                href="/resume"
-                target="_blank"
-                rel="noopener"
-              >
-                Resume
-              </a>
+              <a className="btn ghost" href={LINKS.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+              <a className="btn ghost" href="/resume" target="_blank" rel="noopener">Resume</a>
             </div>
             <p className="meta">
-              State College, PA · open to{" "}
-              <b>SF Bay Area, NYC, Seattle, Dubai</b>
+              San Francisco, CA · open to{" "}
+              <b>New York, Seattle, Dubai, and the Bay Area</b>
             </p>
           </div>
 
-          <figure className="photo glass tilt">
+          <figure className="photo glass">
             <img
               src="/headshot.jpg"
               alt="Sharique Khatri"
@@ -137,9 +79,10 @@ export default function Home() {
               height={800}
               onError={(e) => {
                 (e.currentTarget as HTMLImageElement).style.display = "none";
-                const fallback = e.currentTarget
-                  .parentElement?.querySelector(".photo-fallback") as HTMLElement;
-                if (fallback) fallback.style.display = "flex";
+                const fb = e.currentTarget.parentElement?.querySelector(
+                  ".photo-fallback"
+                ) as HTMLElement | null;
+                if (fb) fb.style.display = "flex";
               }}
             />
             <div
@@ -150,14 +93,14 @@ export default function Home() {
             >
               SK
             </div>
-            <figcaption>State College, PA</figcaption>
+            <figcaption>San Francisco, CA</figcaption>
           </figure>
         </header>
 
-        {/* ASK */}
+        {/* ============ ASK ============ */}
         <AskPanel />
 
-        {/* PRODUCTS */}
+        {/* ============ PRODUCTS ============ */}
         <section className="section" id="work">
           <h2 className="sec">Built, shipped, and documented.</h2>
           <p className="sec-intro">
@@ -166,149 +109,138 @@ export default function Home() {
           </p>
 
           <div className="grid2">
-            {FEATURED.map((f) => (
+            {FEATURED.map((f, idx) => (
               <article
                 key={f.slug}
-                className={`card glass tilt accent-${f.accent}${f.wide ? " wide" : ""}`}
+                className="card fx rv"
+                style={{ "--i": idx } as React.CSSProperties}
               >
-                <a
-                  className="shot"
-                  href={f.page}
-                  aria-label={f.name}
-                  {...(f.external
-                    ? { target: "_blank", rel: "noopener" }
-                    : {})}
-                >
-                  <img src={f.poster} alt={`${f.name} interface`} loading="lazy" />
-                  {f.award && <span className="award">★ {f.award}</span>}
-                </a>
-                <div className="body">
-                  <div className="k">{f.kicker}</div>
-                  <h3>
-                    <a
-                      href={f.page}
-                      {...(f.external
-                        ? { target: "_blank", rel: "noopener" }
-                        : {})}
-                    >
-                      {f.name}
-                    </a>
-                  </h3>
-                  <p>{f.summary}</p>
-                  <p className="quote">{f.thesis}</p>
-                  <div className="lk">
-                    {f.external ? (
-                      <a href={f.page} target="_blank" rel="noopener">
-                        Live demo ↗
-                      </a>
-                    ) : (
-                      <a href={f.page}>Visit {f.page}</a>
-                    )}
-                    <a href={f.repo} target="_blank" rel="noopener">
+                <span className="sweep" aria-hidden="true" />
+                <div className="k">{f.kicker}</div>
+                <h3>
+                  <a
+                    href={f.page}
+                    {...(f.external ? { target: "_blank", rel: "noopener" } : {})}
+                  >
+                    {f.name}
+                  </a>
+                </h3>
+                <div className="stack">
+                  <Pills stack={f.stack} />
+                </div>
+                <div className="lk">
+                  <a
+                    className="lk-demo"
+                    href={f.page}
+                    {...(f.external ? { target: "_blank", rel: "noopener" } : {})}
+                  >
+                    Live demo <span aria-hidden="true">↗</span>
+                  </a>
+                  {f.repo && (
+                    <a className="lk-src" href={f.repo} target="_blank" rel="noopener">
                       Source
                     </a>
-                  </div>
-                  <div className="stack">{f.tech}</div>
+                  )}
                 </div>
               </article>
             ))}
           </div>
 
           <div className="cases">
-            {CASES.map((c) => (
-              <article key={c.name} className="case glass">
-                <div className="head">
+            {CASES.map((c, idx) => (
+              <article
+                key={c.name}
+                className="case fx lit rv"
+                style={{ "--i": idx } as React.CSSProperties}
+              >
+                <div className="case-id">
                   <h3>{c.name}</h3>
                   <span className="k">{c.kicker}</span>
                 </div>
-                <p>
-                  <span className="lbl">On paper</span>
-                  {c.on_paper}
-                </p>
-                <p>
-                  <span className="lbl real">Real story</span>
-                  {c.real_story}
-                </p>
-                <p className="honest">
-                  <span className="lbl">Honest scope</span>
-                  {c.honest}
-                </p>
-                <div className="foot">
-                  <span className="lk">
-                    {c.links.map(([label, url]) => (
-                      <a key={label} href={url} target="_blank" rel="noopener">
-                        {label.charAt(0).toUpperCase() + label.slice(1)}
-                      </a>
-                    ))}
-                  </span>
-                  <span className="stack">{c.tech}</span>
+                <div className="stack">
+                  <Pills stack={c.stack} />
                 </div>
+                <span className="lk">
+                  {c.links.map(([label, url]) => (
+                    <a key={label} href={url} target="_blank" rel="noopener">
+                      {label.charAt(0).toUpperCase() + label.slice(1)}
+                    </a>
+                  ))}
+                </span>
               </article>
             ))}
           </div>
         </section>
 
-        {/* EXPERIENCE */}
+        {/* ============ EXPERIENCE ============ */}
         <section className="section" id="experience">
           <h2 className="sec">Where the numbers come from.</h2>
 
-          <div className="xp-list">
-            {EXPERIENCE.map((e) => (
-              <article key={e.company + e.dates} className="xp glass">
-                <div>
-                  <h3>{e.company}</h3>
-                  <div className="role">{e.role}</div>
-                  <div className="when">
-                    {e.where} · {e.dates}
-                  </div>
-                </div>
-                <div className="body">
-                  <p>{e.summary}</p>
-                  {e.real_story && (
-                    <p className="honest">
-                      <span className="lbl real">Real story</span>
-                      {e.real_story}
-                    </p>
-                  )}
-                </div>
+          <div className="timeline">
+            {EXPERIENCE.map((e, idx) => (
+              <article
+                key={e.company + e.dates}
+                className={`t-entry rv${e.is_current ? " is-current" : ""}`}
+                style={{ "--i": idx } as React.CSSProperties}
+              >
+                <h3 className="t-role">
+                  {e.role}{" "}
+                  <span className="t-co">· {e.company}</span>
+                </h3>
+                <p className="t-meta">
+                  {e.where} · {e.dates}
+                </p>
+                {e.highlight && (
+                  <span className="t-chip">{e.highlight}</span>
+                )}
               </article>
             ))}
           </div>
         </section>
 
-        {/* ARCHIVE */}
+        {/* ============ ARCHIVE ============ */}
         <section className="section" id="archive">
           <h2 className="sec">Smaller builds, same standard.</h2>
-          <div className="archive">
-            {ARCHIVE.map(([name, desc, url]) =>
-              url ? (
-                <a
-                  key={name}
-                  className="arc glass"
-                  href={url}
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <span className="nm">{name}</span>
-                  <span className="ds">{desc}</span>
-                  <span className="go" aria-hidden="true">
-                    ↗
-                  </span>
-                </a>
-              ) : (
-                <div key={name} className="arc glass">
-                  <span className="nm">{name}</span>
-                  <span className="ds">{desc}</span>
-                  <span className="go" />
-                </div>
-              )
-            )}
-          </div>
+          <details className="others fx">
+            <summary>
+              <span className="others-label">Other projects</span>
+              <span className="others-count">{ARCHIVE.length}</span>
+              <svg
+                className="chev"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M6 9l6 6 6-6" />
+              </svg>
+            </summary>
+            <div className="others-body">
+              {ARCHIVE.map(([name, desc, url]) =>
+                url ? (
+                  <a key={name} className="arc" href={url} target="_blank" rel="noopener">
+                    <span className="nm">{name}</span>
+                    <span className="ds">{desc}</span>
+                    <span className="go" aria-hidden="true">↗</span>
+                  </a>
+                ) : (
+                  <div key={name} className="arc">
+                    <span className="nm">{name}</span>
+                    <span className="ds">{desc}</span>
+                    <span className="go" />
+                  </div>
+                )
+              )}
+            </div>
+          </details>
         </section>
       </main>
 
       <footer>
-        <div className="foot glass">
+        <div className="foot fx">
           <div className="col who">
             <span className="nm">Sharique Khatri</span>
             <p>{IDENTITY.line}</p>

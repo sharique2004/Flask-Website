@@ -41,13 +41,6 @@ function renderMarkdown(text: string): string {
   return blocks.join("");
 }
 
-const CHIPS = [
-  "Tell me about Sharique",
-  "What did you build at WellX?",
-  "Do you need visa sponsorship?",
-  "What is Bibi?",
-];
-
 export function AskPanel() {
   const [messages, setMessages] = useState<Message[]>([
     {
@@ -70,16 +63,16 @@ export function AskPanel() {
   async function ask(question: string) {
     if (busy || !question.trim()) return;
     setBusy(true);
+    const q = question.trim();
     setInput("");
 
-    const userMsg: Message = { who: "You", text: question, isMe: false };
+    const userMsg: Message = { who: "You", text: q, isMe: false };
     const pendingMsg: Message = {
       who: "Mini Sharique",
       text: "thinking",
       isMe: true,
       thinking: true,
     };
-
     setMessages((prev) => [...prev, userMsg, pendingMsg]);
 
     try {
@@ -87,7 +80,7 @@ export function AskPanel() {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          query: question,
+          query: q,
           history: historyRef.current.slice(-8),
         }),
       });
@@ -103,10 +96,9 @@ export function AskPanel() {
             : m
         )
       );
-
       historyRef.current = [
         ...historyRef.current,
-        { role: "user", text: question },
+        { role: "user", text: q },
         { role: "assistant", text: reply },
       ];
     } catch {
@@ -127,12 +119,10 @@ export function AskPanel() {
   }
 
   return (
-    <section className="section" id="ask">
-      <h2 className="sec">Questions? Ask the small version of me.</h2>
-
-      <div className="ask-card glass refract">
+    <section className="section" id="ask" aria-label="Ask Mini Sharique">
+      <div className="chat glass">
         <div
-          className="ask-log"
+          className="chat-log"
           id="chat-log"
           role="log"
           aria-live="polite"
@@ -143,63 +133,62 @@ export function AskPanel() {
             <div key={i} className={`msg${msg.isMe ? " me" : ""}${msg.thinking ? " thinking" : ""}`}>
               <span className="who">{msg.who}</span>
               {msg.html ? (
-                <div
-                  className="txt"
-                  dangerouslySetInnerHTML={{ __html: msg.html }}
-                />
+                <div className="txt" dangerouslySetInnerHTML={{ __html: msg.html }} />
               ) : (
-                <div className="txt">{msg.text}</div>
+                <span className="txt bubble">{msg.text}</span>
               )}
             </div>
           ))}
         </div>
 
         <form
-          className="ask-input"
+          className="chat-bar-form"
           id="chat-form"
           onSubmit={(e) => {
             e.preventDefault();
-            if (input.trim()) ask(input.trim());
+            const q = input.trim();
+            if (q) {
+              const inp = (e.currentTarget.querySelector("#chat-q") as HTMLInputElement);
+              inp?.blur();
+              ask(q);
+            }
           }}
         >
           <label className="visually-hidden" htmlFor="chat-q">
             Your question
           </label>
-          <input
-            id="chat-q"
-            name="q"
-            type="text"
-            maxLength={500}
-            autoComplete="off"
-            placeholder="What did you build at WellX?"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            disabled={busy}
-          />
-          <button type="submit" className="btn" aria-busy={busy}>
-            Ask
-          </button>
-        </form>
-
-        <div className="chips" id="chat-chips">
-          {CHIPS.map((chip) => (
+          <div className="chat-bar">
+            <input
+              id="chat-q"
+              name="q"
+              type="text"
+              maxLength={500}
+              autoComplete="off"
+              placeholder="Curious about Sharique? Ask away"
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
             <button
-              key={chip}
-              className="chip"
-              type="button"
-              onClick={() => ask(chip)}
-              disabled={busy}
+              type="submit"
+              className="chat-send"
+              aria-label="Send question"
+              aria-busy={busy}
             >
-              {chip}
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth={2.2}
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                aria-hidden="true"
+              >
+                <path d="M12 19V5M5 12l7-7 7 7" />
+              </svg>
             </button>
-          ))}
-        </div>
+          </div>
+        </form>
       </div>
-
-      <p className="ask-note">
-        Gemini · portfolio context · same pattern as my WellX AI work. No chat
-        history is stored.
-      </p>
     </section>
   );
 }

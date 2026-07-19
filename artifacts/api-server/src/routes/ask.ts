@@ -60,19 +60,25 @@ LinkedIn: https://linkedin.com/in/sharique-khatri
 Site: https://shariquekhatri.com (resume PDF at https://shariquekhatri.com/resume)
 
 FEATURED PRODUCTS
-Donna (hackathon winner · food banks + AI · live demo). A supplier calls in surplus food. Donna answers, transcribes the call, pulls out each item, and decides on the spot: perishables that spoil fast get dispatched straight to a food bank, shelf stable goods go into inventory. A human approves before anything is dispatched. Built in a day and won first place. Thesis: The right call for a pallet of strawberries is not the right call for canned beans. Stack: Voice intake · live transcription · LLM triage · map dispatch. Page: https://donna.shariquekhatri.com/ Repo: https://github.com/sharique2004/Donna
+Donna (hackathon winner · food banks + AI · live demo). 1st place at AI Supply Chain Hackathon 2026. A supplier calls in surplus food. Donna answers, transcribes the call, pulls out each item, and decides on the spot: perishables that spoil fast get dispatched straight to a food bank, shelf stable goods go into inventory. A human approves before anything is dispatched. Built in a day and won first place. Thesis: The right call for a pallet of strawberries is not the right call for canned beans. Stack: Voice intake · live transcription · LLM triage · map dispatch. Page: https://donna.shariquekhatri.com/ Repo: https://github.com/sharique2004/Donna
 
 Bibi (local first voice agent · windows · MIT). Say its name and it opens apps, moves the real mouse, reads the screen, and answers out loud. A custom agent loop routes each request across local models and Claude by task signal, cost, and latency. Thesis: The agent loop matters more than the model. Stack: Python · Flask · Electron · faster-whisper · Ollama · Claude. Page: https://shariquekhatri.com/bibi Repo: https://github.com/sharique2004/pc-assistant
 
 MeetingScribe (on device meeting transcription · macOS · MIT). No bot joins the call. It records both sides at the OS audio layer and transcribes a 45 minute call in roughly 90 seconds on the Apple Neural Engine. Everything stays as plain files on your Mac. Thesis: Granola removed the bot from your meeting. MeetingScribe removes the cloud. Stack: Swift · CoreAudio · Apple Neural Engine · EventKit. Repo: https://github.com/sharique2004/MeetingScribe
 
-CASE STUDIES
-OmniSch (publication · accepted at ECCV 2026). Co author on a multimodal PCB schematic benchmark, arXiv:2604.00270. I owned the human annotation pipeline: 1,854 real world schematics, about 109.9K labeled instances aligning 423.4K semantic labels to visual regions. I wrote the validity spec and enforced annotator consistency across the team. The vision model architecture and training were the advisor's work. Honest scope: I did not train the model or design the architecture. My contribution was the benchmark dataset and the pipeline that made it trustworthy.
+Aman UAE (live news platform · LLM source verification). A real time UAE news platform with LLM based source verification. Built end to end with Claude Code in days, not weeks: Next.js, TypeScript, Tailwind, MCP server integrations. The launch post reached 26,000+ impressions on LinkedIn. Thesis: Built end to end with Claude Code in days, not weeks. Stack: Next.js · TypeScript · MCP · Claude Code. Page: https://dubai-news-tracker.vercel.app
 
-WellX AI (production RAG · 10,000+ users · startup). Health tech startup, reported directly to the CTO. Built production RAG pipelines serving 10,000+ users over enterprise wearable data with Python, FastAPI, and vector search. Designed REST ingestion for Fitbit, Apple Watch, and WHOOP. Owned AI features from prompt design through offline evaluation, deployment, and monitoring. WellX is past tense. The internship ended in March 2026.
+CASE STUDIES
+OmniSch (publication · accepted at ECCV 2026). Co author on a multimodal PCB schematic benchmark, arXiv:2604.00270. I owned the human annotation pipeline: 1,854 real world schematics, about 109.9K labeled instances aligning 423.4K semantic labels to visual regions. I wrote the validity spec and enforced annotator consistency. Benchmark numbers only mean something if the ground truth is consistent. Mine: the annotation pipeline and its quality bar. Not mine: methodology design.
+
+Taazify (iOS · the unglamorous fix). A SwiftUI app that scans grocery receipts and tracks expiry. The vision model kept hallucinating on POS abbreviations like BNLS SKNLS CKN BRST. Rather than throw a bigger model at it, I traced the failure and built a ReceiptNormalizer that expands abbreviations deterministically before the model ever sees the input. Not on the App Store. A working system I use, not a shipped product. Repo: https://github.com/sharique2004/Taazify
+
+VaultCache (systems · C). An encrypted file system in C. AES-256 block encryption, SHA-256 integrity, PBKDF2 key derivation, crash recovery journaling, and a custom LRU cache that cut repeated file access latency 65%. A learning build. Repo: https://github.com/sharique2004/vaultcache
+
+Intrsekt (paid client work). A marketing site for a consulting firm, hand coded solo in vanilla HTML, CSS, and JavaScript under a signed contractor agreement. Real client, real deadline, real invoice. No framework because the job did not need one. Live: https://intrsekt.com
 
 EXPERIENCE
-WellX AI, Applied AI Intern, Remote, Sep 2025 – Mar 2026. Built production RAG pipelines serving 10,000+ users over enterprise wearable data. Reported directly to the CTO.
+WellX AI, Software Engineering Intern, Dubai remote, Dec 2025 – Mar 2026. Health tech startup, reported directly to the CTO. Built production RAG pipelines serving 10,000+ users over enterprise wearable data with Python, FastAPI, and vector search. Designed REST ingestion for Fitbit, Apple Watch, and WHOOP. Owned AI features from prompt design through offline evaluation, deployment, and monitoring. WellX is past tense. The internship ended in March 2026.
 
 Penn State ORIS, DevOps Intern, University Park PA, May 2025 – Aug 2025. Modernized legacy research IT: C# .NET backends, parameterized SQL, CI/CD on Azure DevOps, Docker. 11 backend enhancements, 40% cut in deployment time.
 
@@ -80,15 +86,17 @@ Fourth Square, Software Engineering Intern, Texas remote, May 2024 – Aug 2024.
 
 HVAC Digital Twin, Capstone Team Lead, Penn State sponsored by Automated Logic (Carrier), 2025–2026. BACnet integration, Python backend, React dashboard.
 
+SEERA Travel Group, Frontend Web Development Intern, Dubai remote, Oct 2022 – Dec 2022. Built React UI components and customer facing booking flows on a travel platform.
+
 PUBLICATION
-OmniSch: A Comprehensive Benchmark for PCB Schematic Understanding. ECCV 2026 (arXiv:2604.00270, https://arxiv.org/abs/2604.00270). Advised by Dr. Amulya Yadav. I owned the human annotation pipeline: 1,854 schematics, 109.9K labeled instances, 423.4K semantic labels.
+OmniSch: A Multimodal PCB Schematic Benchmark For Structured Diagram Visual Reasoning. Accepted at ECCV 2026 (arXiv:2604.00270, https://arxiv.org/abs/2604.00270). Advised by Prof. Mahanth Gowda, Penn State. My contribution: the human annotation pipeline for 1,854 real world PCB schematics, about 109.9K labeled instances aligning 423.4K semantic labels to visual regions, plus the validity spec that kept annotators consistent.
 
 SKILLS
-Languages: Python, TypeScript/JavaScript, Swift, C#, SQL
-AI/ML: Gemini, OpenAI, Claude, LangChain, vector search, RAG, prompt engineering, offline evaluation
-Backend: FastAPI, Flask, Express, Node.js, REST, BACnet
-Frontend: React, Vite, SwiftUI, Electron
-Infra: Azure DevOps, Docker, CI/CD, Drizzle ORM, PostgreSQL, MongoDB Atlas
+Applied AI: Production RAG, agent harnesses and multi model routing, offline eval harnesses, prompt engineering, MCP servers, vector search (Pinecone, FAISS, Chroma, MongoDB), OpenAI, Anthropic, Cohere, local models via Ollama
+Backend: Python (primary), FastAPI, Flask, REST API design, PostgreSQL, MongoDB, C# .NET
+Frontend: TypeScript, JavaScript, React, Next.js, Tailwind, Swift and SwiftUI
+Infra: Docker, Azure DevOps CI/CD, GitHub Actions, Vercel, Linux, Git
+Systems & security: C, AES-256, SHA-256, PBKDF2, block I/O, LRU caching, parameterized SQL, crash recovery journaling
 `.trim();
 
 const PERSONA = `You are the assistant on shariquekhatri.com. You speak as a mini version of Sharique Khatri, in the first person, to recruiters, founders, and engineers deciding whether to talk to him. Your job is to be the best possible answering machine about Sharique: specific, warm, fast, and honest.
