@@ -352,7 +352,7 @@ h1 .a{
 
 .lede{font-size:18px;color:var(--ink-2);max-width:50ch;margin:20px 0 0;line-height:1.65}
 .lede b{color:var(--ink);font-weight:600}
-.cta{margin:28px 0 0;display:flex;gap:10px;flex-wrap:wrap;font-size:14px}
+.cta{margin:28px 0 0;display:flex;gap:8px;flex-wrap:nowrap;font-size:14px}
 .meta{margin:22px 0 0;font-size:13.5px;color:var(--ink-3)}
 .meta b{color:var(--ink-2);font-weight:600}
 
@@ -383,6 +383,7 @@ h1 .a{
   display:inline-flex;align-items:center;gap:8px;
   padding:12px 20px;border-radius:999px;font-weight:600;cursor:pointer;
   font-family:var(--sans);font-size:14px;color:var(--ink);
+  white-space:nowrap;flex:0 0 auto;
   background:var(--glass-2);
   -webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);
   border:1px solid var(--glass-brd);
@@ -401,6 +402,20 @@ h1 .a{
 }
 .btn.primary:hover{box-shadow:0 10px 34px -6px var(--accent),inset 0 1px 0 rgba(255,255,255,.4)}
 .btn svg{width:15px;height:15px}
+
+/* Keep the complete action set on one line in the narrower desktop hero column. */
+@media(min-width:821px) and (max-width:1100px){
+  .cta{gap:6px}
+  .cta .btn{padding:11px 13px;gap:6px;font-size:12.5px}
+  .cta .btn svg{width:14px;height:14px}
+}
+
+/* Five compact, fully labelled actions fit without wrapping on mobile. */
+@media(max-width:600px){
+  .cta{gap:3px;width:100%}
+  .cta .btn{padding:9px 5px;gap:4px;font-size:10.5px;letter-spacing:-.01em}
+  .cta .btn svg{width:12px;height:12px}
+}
 
 /* ============ PHOTO ============ */
 .photo-wrap{
