@@ -22,6 +22,7 @@ export const LINKS = {
   email: "sharique.khatri@gmail.com",
   github: "https://github.com/sharique2004",
   linkedin: "https://linkedin.com/in/sharique-khatri",
+  x: "https://x.com/ShariqueKhatri",
   site: "https://shariquekhatri.com",
 };
 
