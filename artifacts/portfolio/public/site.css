@@ -412,12 +412,15 @@ h1 .a{
   .cta .btn.icon-only{width:42px;height:42px;padding:0}
 }
 
-/* Five compact, fully labelled actions fit without wrapping on mobile. */
+/* Keep the mobile action row comfortably tappable without letting it wrap. */
 @media(max-width:600px){
-  .cta{gap:3px;width:100%}
-  .cta .btn{padding:9px 5px;gap:4px;font-size:10.5px;letter-spacing:-.01em}
-  .cta .btn svg{width:12px;height:12px}
-  .cta .btn.icon-only{width:35px;height:35px;padding:0}
+  .cta{gap:clamp(3px,1.25vw,5px);width:100%}
+  .cta .btn{
+    min-height:42px;padding:0 clamp(8px,2.9vw,11px);gap:clamp(4px,1.5vw,6px);
+    font-size:clamp(11.5px,3.4vw,13px);letter-spacing:-.01em
+  }
+  .cta .btn svg{width:16px;height:16px}
+  .cta .btn.icon-only{width:42px;height:42px;min-height:42px;padding:0}
 }
 
 /* ============ PHOTO ============ */
