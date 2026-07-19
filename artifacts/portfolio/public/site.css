@@ -8,10 +8,10 @@
 @property --angle{syntax:'<angle>';initial-value:200deg;inherits:false}
 
 :root{
-  /* base canvas + aurora (light) */
-  --bg:#eef0f7;
-  --aurora-1:#8ab4ff; --aurora-2:#c9a3ff; --aurora-3:#ffb4a0; --aurora-4:#8ff0d6;
-  --aurora-op:0.55;
+  /* base canvas + aurora (light) — near-pure white so aurora colours show through glass */
+  --bg:#f3f3f9;
+  --aurora-1:#7aaeff; --aurora-2:#c490ff; --aurora-3:#ff9f8a; --aurora-4:#6ee8ca;
+  --aurora-op:0.72;
 
   /* ink */
   --ink:#191922;
@@ -20,17 +20,21 @@
   --faint:#82828f;
 
   /* glass material (light = frosted white) */
-  --glass:rgba(255,255,255,0.52);
-  --glass-2:rgba(255,255,255,0.62);
-  --glass-hi:rgba(255,255,255,0.9);
-  --glass-lo:rgba(255,255,255,0.25);
-  --glass-brd:rgba(255,255,255,0.7);
-  --glass-brd-2:rgba(120,120,150,0.14);
-  --glass-shine:rgba(255,255,255,0.55);
-  --fringe-1:rgba(120,165,255,0.5);
-  --fringe-2:rgba(255,150,190,0.4);
-  --glass-blur:20px; --glass-sat:170%;
-  --glass-shadow:0 10px 30px -12px rgba(40,40,80,0.28), 0 2px 8px -4px rgba(40,40,80,0.18);
+  --glass:rgba(255,255,255,0.48);
+  --glass-2:rgba(255,255,255,0.60);
+  --glass-hi:rgba(255,255,255,0.92);
+  --glass-lo:rgba(255,255,255,0.20);
+  --glass-brd:rgba(255,255,255,0.78);
+  --glass-brd-2:rgba(120,120,150,0.12);
+  --glass-shine:rgba(255,255,255,0.65);
+  --fringe-1:rgba(100,160,255,0.55);
+  --fringe-2:rgba(255,130,200,0.45);
+  --fringe-3:rgba(130,255,210,0.35);
+  --glass-blur:26px; --glass-sat:200%;
+  --glass-shadow:0 12px 36px -14px rgba(40,40,80,0.30), 0 2px 8px -4px rgba(40,40,80,0.16);
+  /* chromatic aberration — subtle RGB halo at glass edges */
+  --chroma-r:rgba(255,80,100,0.10);
+  --chroma-b:rgba(80,130,255,0.12);
 
   /* faux-glass surface system (L2) */
   --srf:rgba(255,255,255,0.55);
@@ -67,18 +71,21 @@
 
 @media (prefers-color-scheme: dark){
   :root:not([data-theme="light"]){
-    --bg:#07070d;
+    --bg:#050509;
     --aurora-1:#4a5cff; --aurora-2:#9b4dff; --aurora-3:#ff5a86; --aurora-4:#18d3c8;
-    --aurora-op:0.5;
+    --aurora-op:0.62;
     --ink:#f3f3f8; --ink-2:#c4c4d0; --ink-3:#9a9aa8; --faint:#74747f;
-    --glass:rgba(255,255,255,0.055); --glass-2:rgba(255,255,255,0.09);
-    --glass-hi:rgba(255,255,255,0.55); --glass-lo:rgba(255,255,255,0.03);
-    --glass-brd:rgba(255,255,255,0.16); --glass-brd-2:rgba(255,255,255,0.05);
-    --glass-shine:rgba(255,255,255,0.22);
-    --fringe-1:rgba(130,160,255,0.38);
-    --fringe-2:rgba(255,120,170,0.32);
-    --glass-blur:22px; --glass-sat:150%;
-    --glass-shadow:0 16px 40px -14px rgba(0,0,0,0.7), 0 2px 10px -4px rgba(0,0,0,0.5);
+    --glass:rgba(255,255,255,0.06); --glass-2:rgba(255,255,255,0.10);
+    --glass-hi:rgba(255,255,255,0.58); --glass-lo:rgba(255,255,255,0.03);
+    --glass-brd:rgba(255,255,255,0.18); --glass-brd-2:rgba(255,255,255,0.05);
+    --glass-shine:rgba(255,255,255,0.28);
+    --fringe-1:rgba(130,160,255,0.45);
+    --fringe-2:rgba(255,120,170,0.38);
+    --fringe-3:rgba(80,255,200,0.30);
+    --glass-blur:28px; --glass-sat:180%;
+    --glass-shadow:0 18px 48px -14px rgba(0,0,0,0.75), 0 2px 10px -4px rgba(0,0,0,0.55);
+    --chroma-r:rgba(255,60,80,0.14);
+    --chroma-b:rgba(60,120,255,0.16);
     --srf:rgba(255,255,255,0.05);
     --srf-hi:rgba(255,255,255,0.09);
     --edge:rgba(255,255,255,0.14);
@@ -97,18 +104,21 @@
   :root:not([data-theme="light"]) .ic-sun{display:inline}
 }
 :root[data-theme="dark"]{
-  --bg:#07070d;
+  --bg:#050509;
   --aurora-1:#4a5cff; --aurora-2:#9b4dff; --aurora-3:#ff5a86; --aurora-4:#18d3c8;
-  --aurora-op:0.5;
+  --aurora-op:0.62;
   --ink:#f3f3f8; --ink-2:#c4c4d0; --ink-3:#9a9aa8; --faint:#74747f;
-  --glass:rgba(255,255,255,0.055); --glass-2:rgba(255,255,255,0.09);
-  --glass-hi:rgba(255,255,255,0.55); --glass-lo:rgba(255,255,255,0.03);
-  --glass-brd:rgba(255,255,255,0.16); --glass-brd-2:rgba(255,255,255,0.05);
-  --glass-shine:rgba(255,255,255,0.22);
-  --fringe-1:rgba(130,160,255,0.38);
-  --fringe-2:rgba(255,120,170,0.32);
-  --glass-blur:22px; --glass-sat:150%;
-  --glass-shadow:0 16px 40px -14px rgba(0,0,0,0.7), 0 2px 10px -4px rgba(0,0,0,0.5);
+  --glass:rgba(255,255,255,0.06); --glass-2:rgba(255,255,255,0.10);
+  --glass-hi:rgba(255,255,255,0.58); --glass-lo:rgba(255,255,255,0.03);
+  --glass-brd:rgba(255,255,255,0.18); --glass-brd-2:rgba(255,255,255,0.05);
+  --glass-shine:rgba(255,255,255,0.28);
+  --fringe-1:rgba(130,160,255,0.45);
+  --fringe-2:rgba(255,120,170,0.38);
+  --fringe-3:rgba(80,255,200,0.30);
+  --glass-blur:28px; --glass-sat:180%;
+  --glass-shadow:0 18px 48px -14px rgba(0,0,0,0.75), 0 2px 10px -4px rgba(0,0,0,0.55);
+  --chroma-r:rgba(255,60,80,0.14);
+  --chroma-b:rgba(60,120,255,0.16);
   --srf:rgba(255,255,255,0.05);
   --srf-hi:rgba(255,255,255,0.09);
   --edge:rgba(255,255,255,0.14);
@@ -145,37 +155,47 @@ a:focus-visible,button:focus-visible,input:focus-visible,.btn:focus-visible,.pil
 }
 .wrap{max-width:var(--maxw);margin:0 auto;padding:0 28px;position:relative;z-index:1}
 
-/* ============ AURORA BACKDROP ============ */
+/* ============ AURORA BACKDROP ============
+   Blobs are large, slow, and saturated so the glass surfaces have
+   rich colour gradients to "refract" — the more vivid the background,
+   the more the liquid glass displacement is visible.                    */
 .aurora{position:fixed;inset:-20vmax;z-index:-2;pointer-events:none;overflow:hidden;background:var(--bg)}
 .aurora b{
   position:absolute;display:block;border-radius:50%;
   opacity:var(--aurora-op);
   will-change:transform;
+  mix-blend-mode:normal;
 }
-.aurora b:nth-child(1){width:64vmax;height:64vmax;left:-12vmax;top:-10vmax;
-  background:radial-gradient(circle at 50% 50%,var(--aurora-1) 0%,color-mix(in srgb,var(--aurora-1) 55%,transparent) 32%,transparent 68%);
-  animation:drift1 34s ease-in-out infinite}
-.aurora b:nth-child(2){width:58vmax;height:58vmax;right:-10vmax;top:0;
-  background:radial-gradient(circle at 50% 50%,var(--aurora-2) 0%,color-mix(in srgb,var(--aurora-2) 55%,transparent) 32%,transparent 68%);
-  animation:drift2 42s ease-in-out infinite}
-.aurora b:nth-child(3){width:62vmax;height:62vmax;left:6vmax;bottom:-16vmax;
-  background:radial-gradient(circle at 50% 50%,var(--aurora-3) 0%,color-mix(in srgb,var(--aurora-3) 55%,transparent) 32%,transparent 68%);
-  animation:drift3 38s ease-in-out infinite}
-.aurora b:nth-child(4){width:52vmax;height:52vmax;right:2vmax;bottom:-8vmax;
-  background:radial-gradient(circle at 50% 50%,var(--aurora-4) 0%,color-mix(in srgb,var(--aurora-4) 55%,transparent) 32%,transparent 68%);
-  animation:drift4 46s ease-in-out infinite}
+/* blob 1 — blue, top-left */
+.aurora b:nth-child(1){width:82vmax;height:82vmax;left:-18vmax;top:-14vmax;
+  background:radial-gradient(circle at 42% 42%,var(--aurora-1) 0%,color-mix(in srgb,var(--aurora-1) 60%,transparent) 28%,transparent 62%);
+  animation:drift1 44s ease-in-out infinite}
+/* blob 2 — purple, top-right */
+.aurora b:nth-child(2){width:72vmax;height:72vmax;right:-14vmax;top:-4vmax;
+  background:radial-gradient(circle at 55% 45%,var(--aurora-2) 0%,color-mix(in srgb,var(--aurora-2) 60%,transparent) 28%,transparent 62%);
+  animation:drift2 52s ease-in-out infinite}
+/* blob 3 — coral, bottom-left */
+.aurora b:nth-child(3){width:78vmax;height:78vmax;left:4vmax;bottom:-20vmax;
+  background:radial-gradient(circle at 48% 52%,var(--aurora-3) 0%,color-mix(in srgb,var(--aurora-3) 60%,transparent) 28%,transparent 62%);
+  animation:drift3 48s ease-in-out infinite}
+/* blob 4 — teal, bottom-right */
+.aurora b:nth-child(4){width:64vmax;height:64vmax;right:0vmax;bottom:-10vmax;
+  background:radial-gradient(circle at 50% 50%,var(--aurora-4) 0%,color-mix(in srgb,var(--aurora-4) 60%,transparent) 28%,transparent 62%);
+  animation:drift4 58s ease-in-out infinite}
+/* cursor-following glow */
 .aurora i{
-  position:fixed;left:0;top:0;width:44vmax;height:44vmax;border-radius:50%;
+  position:fixed;left:0;top:0;width:48vmax;height:48vmax;border-radius:50%;
   background:radial-gradient(circle at 50% 50%,var(--aurora-2) 0%,color-mix(in srgb,var(--aurora-2) 45%,transparent) 34%,transparent 66%);
-  opacity:calc(var(--aurora-op) * 0.55);
+  opacity:calc(var(--aurora-op) * 0.50);
   transform:translate3d(50vw,40vh,0) translate(-50%,-50%);
   will-change:transform;
+  transition:transform .08s linear;
 }
 @media (hover:none){ .aurora i{display:none} }
-@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(10vmax,6vmax) scale(1.15)}}
-@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-8vmax,8vmax) scale(1.1)}}
-@keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(6vmax,-8vmax) scale(1.12)}}
-@keyframes drift4{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(-6vmax,-6vmax) scale(1.08)}}
+@keyframes drift1{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(12vmax,8vmax) scale(1.12)}66%{transform:translate(4vmax,14vmax) scale(1.06)}}
+@keyframes drift2{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-10vmax,10vmax) scale(1.08)}66%{transform:translate(-16vmax,4vmax) scale(1.14)}}
+@keyframes drift3{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(8vmax,-10vmax) scale(1.10)}66%{transform:translate(16vmax,-4vmax) scale(1.06)}}
+@keyframes drift4{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(-8vmax,-8vmax) scale(1.08)}66%{transform:translate(-4vmax,-14vmax) scale(1.12)}}
 
 body::after{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
@@ -188,40 +208,65 @@ body::after{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ============ GLASS MATERIAL ============ */
+/* ============ GLASS MATERIAL — Liquid Glass ============
+   Three-layer system:
+   1. backdrop-filter (blur + saturate) on the element itself
+   2. ::before  — chromatic border fringe via SVG lg-fringe filter
+   3. ::after   — liquid caustic highlight via SVG lg-caustic filter
+      Always visible at low opacity; brightens to cursor on hover/focus  */
 .glass{
   position:relative;
   background:var(--glass);
-  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(1.05);
-  backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(1.05);
+  -webkit-backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(1.06);
+  backdrop-filter:blur(var(--glass-blur)) saturate(var(--glass-sat)) brightness(1.06);
   border:1px solid var(--glass-brd);
-  box-shadow:var(--glass-shadow),
-             inset 0 1px 0 var(--glass-hi),
-             inset 0 -1px 0 var(--glass-lo),
-             inset 0 12px 28px -20px var(--glass-hi);
+  box-shadow:
+    var(--glass-shadow),
+    inset 0 1px 0 var(--glass-hi),
+    inset 0 -1px 0 var(--glass-lo),
+    inset 0 12px 32px -22px var(--glass-hi),
+    /* chromatic aberration halos at glass edges */
+    0 0 0 1.5px var(--chroma-b),
+    inset 0 0 0 1.5px var(--chroma-r);
   border-radius:22px;
   isolation:isolate;
 }
+
+/* chromatic fringe border — SVG displacement makes it subtly warp like a prism */
 .glass::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
-  padding:1px;
-  background:linear-gradient(135deg,
-    var(--glass-hi) 0%,
-    var(--fringe-1) 16%,
-    transparent 42%,
-    transparent 58%,
-    var(--fringe-2) 86%,
+  padding:1.5px;
+  background:linear-gradient(138deg,
+    var(--glass-hi)   0%,
+    var(--fringe-1)   14%,
+    var(--fringe-3)   30%,
+    transparent       45%,
+    transparent       55%,
+    var(--fringe-2)   80%,
     var(--glass-brd-2) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
-  opacity:.92;
+  /* SVG filter — displacement makes the rainbow ring warp like real glass */
+  filter:url(#lg-fringe);
+  opacity:.88;
 }
+
+/* liquid caustic highlight — the "bending light through glass" layer */
 .glass::after{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
+  /* two radial spots: cursor-tracking bright caustic + static tint from opposite corner */
   background:
-    radial-gradient(170px circle at var(--mx,50%) var(--my,0%),var(--glass-shine),transparent 62%),
-    radial-gradient(480px circle at var(--mx,50%) var(--my,0%),color-mix(in srgb,var(--glass-shine) 45%,transparent),transparent 70%);
-  opacity:var(--shine,0);transition:opacity .35s ease;
+    radial-gradient(160px circle at var(--mx,30%) var(--my,18%),
+      var(--glass-shine) 0%, transparent 62%),
+    radial-gradient(420px circle at var(--mx,30%) var(--my,18%),
+      color-mix(in srgb,var(--glass-shine) 40%,transparent) 0%, transparent 68%),
+    radial-gradient(220px circle at 80% 85%,
+      color-mix(in srgb,var(--fringe-1) 28%,transparent) 0%, transparent 60%);
+  /* SVG filter turns the clean highlight into a morphing liquid caustic */
+  filter:url(#lg-caustic);
+  /* always visible at base opacity — the glass always glows, cursor amplifies it */
+  opacity:max(0.20, var(--shine,0));
+  transition:opacity .4s ease;
 }
 .glass>*{position:relative;z-index:1}
 
