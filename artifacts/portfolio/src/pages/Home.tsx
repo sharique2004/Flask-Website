@@ -288,37 +288,26 @@ export default function Home() {
         </section>
       </main>
 
-      <footer>
-        <div className="foot fx">
+      <footer className="foot">
+        <div className="foot-top">
           <div className="col who">
             <span className="nm">Sharique Khatri</span>
             <p>{IDENTITY.line}</p>
           </div>
-          <div className="col">
-            <span className="lbl2">Work</span>
-            <a href="/bibi">Bibi</a>
-            <br />
-            <a href="/scribe">MeetingScribe</a>
-            <br />
-            <a href={PUBLICATION.url} target="_blank" rel="noopener">
-              OmniSch · ECCV 2026
-            </a>
-          </div>
-          <div className="col">
-            <span className="lbl2">Contact</span>
-            <a href={`mailto:${LINKS.email}`}>{LINKS.email}</a>
-            <br />
-            <a href={LINKS.github} target="_blank" rel="noopener">
-              github/sharique2004
-            </a>
-            <br />
-            <a href={LINKS.linkedin} target="_blank" rel="noopener">
-              linkedin/sharique-khatri
-            </a>
-            <br />
-            <a href="/resume" target="_blank" rel="noopener">
-              résumé (pdf)
-            </a>
+          <div className="foot-links">
+            <div className="col">
+              <span className="lbl2">Work</span>
+              <a href="/bibi">Bibi</a>
+              <a href="/scribe">MeetingScribe</a>
+              <a href={PUBLICATION.url} target="_blank" rel="noopener">OmniSch · ECCV 2026</a>
+            </div>
+            <div className="col">
+              <span className="lbl2">Contact</span>
+              <a href={`mailto:${LINKS.email}`}>{LINKS.email}</a>
+              <a href={LINKS.github} target="_blank" rel="noopener">github/sharique2004</a>
+              <a href={LINKS.linkedin} target="_blank" rel="noopener">linkedin/sharique-khatri</a>
+              <a href="/resume" target="_blank" rel="noopener">résumé (pdf)</a>
+            </div>
           </div>
         </div>
         <div className="foot-line">
