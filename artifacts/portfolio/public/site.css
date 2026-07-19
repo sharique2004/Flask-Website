@@ -208,12 +208,12 @@ body::after{
   background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
 }
 
-/* ============ GLASS MATERIAL — Liquid Glass ============
+/* ============ GLASS MATERIAL — Stable Aurora Glass ============
    Three-layer system:
    1. backdrop-filter (blur + saturate) on the element itself
-   2. ::before  — chromatic border fringe via SVG lg-fringe filter
-   3. ::after   — liquid caustic highlight via SVG lg-caustic filter
-      Always visible at low opacity; brightens to cursor on hover/focus  */
+   2. ::before  — crisp chromatic border fringe
+   3. ::after   — soft cursor-following specular highlight
+      No displacement filters: glass geometry stays stable on hover/focus. */
 .glass{
   position:relative;
   background:var(--glass);
@@ -232,7 +232,7 @@ body::after{
   isolation:isolate;
 }
 
-/* chromatic fringe border — SVG displacement makes it subtly warp like a prism */
+/* chromatic fringe border — stable gradient ring with no geometric distortion */
 .glass::before{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
   padding:1.5px;
@@ -246,12 +246,10 @@ body::after{
     var(--glass-brd-2) 100%);
   -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
   -webkit-mask-composite:xor;mask-composite:exclude;
-  /* SVG filter — displacement makes the rainbow ring warp like real glass */
-  filter:url(#lg-fringe);
   opacity:.88;
 }
 
-/* liquid caustic highlight — the "bending light through glass" layer */
+/* soft specular highlight — follows the pointer without distorting the surface */
 .glass::after{
   content:"";position:absolute;inset:0;border-radius:inherit;pointer-events:none;z-index:0;
   /* two radial spots: cursor-tracking bright caustic + static tint from opposite corner */
@@ -262,9 +260,7 @@ body::after{
       color-mix(in srgb,var(--glass-shine) 40%,transparent) 0%, transparent 68%),
     radial-gradient(220px circle at 80% 85%,
       color-mix(in srgb,var(--fringe-1) 28%,transparent) 0%, transparent 60%);
-  /* SVG filter turns the clean highlight into a morphing liquid caustic */
-  filter:url(#lg-caustic);
-  /* always visible at base opacity — the glass always glows, cursor amplifies it */
+  /* always visible at base opacity; cursor movement only changes light position */
   opacity:max(0.20, var(--shine,0));
   transition:opacity .4s ease;
 }
