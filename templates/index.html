@@ -21,11 +21,11 @@
 <meta name="twitter:title" content="Sharique Khatri · Applied AI Engineer" />
 <meta name="twitter:description" content="Built production RAG serving 10,000+ users at WellX AI. A paper accepted at ECCV 2026. Two local first products live on this domain." />
 <meta name="twitter:image" content="{{ canonical }}/static/og-home.png" />
-<meta name="theme-color" content="#fafaf8" />
+<meta name="theme-color" content="#eef0f7" />
 <link rel="icon" type="image/png" href="/static/favicon.png" />
-<script>(function(){try{var t=localStorage.getItem("theme");if(t){document.documentElement.setAttribute("data-theme",t);}var d=t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d){var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute("content","#131316");}}}catch(e){}})()</script>
+<script>(function(){try{var t=localStorage.getItem("theme");if(t){document.documentElement.setAttribute("data-theme",t);}var d=t==="dark"||(!t&&window.matchMedia("(prefers-color-scheme: dark)").matches);if(d){var m=document.querySelector('meta[name="theme-color"]');if(m){m.setAttribute("content","#07070d");}}}catch(e){}})()</script>
 
-<link rel="stylesheet" href="/static/site.css?v=20260718b" />
+<link rel="stylesheet" href="/static/site.css?v=glass1" />
 
 <script type="application/ld+json">
 {
@@ -43,7 +43,18 @@
 <body>
 <a class="skip" href="#main">Skip to content</a>
 
-<nav class="top" aria-label="primary">
+<div class="aurora" aria-hidden="true"><b></b><b></b><b></b><b></b><i></i></div>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <filter id="glassRefract" x="-20%" y="-20%" width="140%" height="140%">
+    <feTurbulence type="fractalNoise" baseFrequency="0.008 0.012" numOctaves="2" seed="7" result="noise">
+      <animate attributeName="baseFrequency" dur="26s" values="0.008 0.012;0.011 0.009;0.008 0.012" repeatCount="indefinite"/>
+    </feTurbulence>
+    <feDisplacementMap in="SourceGraphic" in2="noise" scale="9" xChannelSelector="R" yChannelSelector="G"/>
+  </filter>
+</svg>
+
+<nav class="top glass refract" aria-label="primary">
   <a class="nm" href="/">Sharique Khatri</a>
   <span class="lks">
     <a href="#ask">Ask</a>
@@ -65,7 +76,7 @@
       <h1>I build software that real people <span class="a">depend on</span>, not demos.</h1>
       <p class="lede">Built production RAG serving <b>10,000+ users</b> at WellX AI. Co authored a benchmark paper <b>accepted at ECCV 2026</b>. Two local first products live on this domain. I look for the unglamorous fix first.</p>
       <div class="cta">
-        <a class="btn" href="mailto:{{ links.email }}">{{ links.email }}</a>
+        <a class="btn primary" href="mailto:{{ links.email }}">{{ links.email }}</a>
         <a class="btn ghost" href="{{ links.github }}" target="_blank" rel="noopener">
           <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z"></path></svg>
           GitHub
@@ -76,7 +87,7 @@
       <p class="meta">State College, PA · open to <b>SF Bay Area, NYC, Seattle, Dubai</b></p>
     </div>
 
-    <figure class="photo">
+    <figure class="photo glass tilt">
       {% if has_photo %}
       <img src="/static/headshot.jpg" alt="Sharique Khatri" width="640" height="800" />
       {% else %}
@@ -90,7 +101,7 @@
   <section class="section" id="ask">
     <h2 class="sec">Questions? Ask the small version of me.</h2>
 
-    <div class="ask-card">
+    <div class="ask-card glass refract">
       <div class="ask-log" id="chat-log" role="log" aria-live="polite" aria-label="Assistant conversation">
         <div class="msg me">
           <span class="who">Mini Sharique</span>
@@ -120,7 +131,7 @@
 
     <div class="grid2">
       {% for f in featured %}
-      <article class="card accent-{{ f.accent }}{% if f.wide %} wide{% endif %}">
+      <article class="card glass tilt accent-{{ f.accent }}{% if f.wide %} wide{% endif %}">
         <a class="shot" href="{{ f.page }}" aria-label="{{ f.name }}"{% if f.external %} target="_blank" rel="noopener"{% endif %}>
           <img src="{{ f.poster }}" alt="{{ f.name }} interface" loading="lazy" />
           {% if f.award %}<span class="award">★ {{ f.award }}</span>{% endif %}
@@ -146,7 +157,7 @@
 
     <div class="cases">
       {% for c in cases %}
-      <article class="case">
+      <article class="case glass">
         <div class="head">
           <h3>{{ c.name }}</h3>
           <span class="k">{{ c.kicker }}</span>
@@ -173,7 +184,7 @@
 
     <div class="xp-list">
       {% for e in experience %}
-      <article class="xp">
+      <article class="xp glass">
         <div>
           <h3>{{ e.company }}</h3>
           <div class="role">{{ e.role }}</div>
@@ -196,13 +207,13 @@
     <div class="archive">
       {% for name, desc, url in archive %}
       {% if url %}
-      <a class="arc" href="{{ url }}" target="_blank" rel="noopener">
+      <a class="arc glass" href="{{ url }}" target="_blank" rel="noopener">
         <span class="nm">{{ name }}</span>
         <span class="ds">{{ desc }}</span>
         <span class="go" aria-hidden="true">&nearr;</span>
       </a>
       {% else %}
-      <div class="arc">
+      <div class="arc glass">
         <span class="nm">{{ name }}</span>
         <span class="ds">{{ desc }}</span>
         <span class="go"></span>
@@ -215,7 +226,7 @@
 </main>
 
 <footer>
-  <div class="foot">
+  <div class="foot glass">
     <div class="col who">
       <span class="nm">Sharique Khatri</span>
       <p>{{ identity.line }}</p>
@@ -237,6 +248,6 @@
   <div class="foot-line">Hand built with Flask. Self hosted fonts, no trackers, no analytics, no cookies. Verified numbers only; every claim links to its source.</div>
 </footer>
 
-<script src="/static/site.js?v=20260718b" defer></script>
+<script src="/static/site.js?v=glass1" defer></script>
 </body>
 </html>

@@ -1,3 +1,56 @@
+/* shariquekhatri.com — liquid glass motion: cursor-tracked shine, tilt, and
+   the aurora following the pointer. All gated on a fine pointer + motion pref. */
+(function () {
+  "use strict";
+  var root = document.documentElement;
+  var reduce = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var fine = window.matchMedia && window.matchMedia("(hover:hover) and (pointer:fine)").matches;
+
+  // aurora drifts toward the pointer
+  if (!reduce) {
+    var raf = 0, px = 50, py = 40;
+    window.addEventListener("pointermove", function (e) {
+      px = (e.clientX / window.innerWidth) * 100;
+      py = (e.clientY / window.innerHeight) * 100;
+      if (!raf) raf = requestAnimationFrame(function () {
+        root.style.setProperty("--px", px + "%");
+        root.style.setProperty("--py", py + "%");
+        raf = 0;
+      });
+    }, { passive: true });
+  }
+
+  // per-glass shine + tilt (desktop only)
+  if (fine && !reduce) {
+    document.querySelectorAll(".glass").forEach(function (el) {
+      var er = 0;
+      el.addEventListener("pointermove", function (e) {
+        if (er) return;
+        er = requestAnimationFrame(function () {
+          var b = el.getBoundingClientRect();
+          var mx = ((e.clientX - b.left) / b.width) * 100;
+          var my = ((e.clientY - b.top) / b.height) * 100;
+          el.style.setProperty("--mx", mx + "%");
+          el.style.setProperty("--my", my + "%");
+          el.style.setProperty("--shine", "1");
+          if (el.classList.contains("tilt")) {
+            var tx = (e.clientX - b.left) / b.width - 0.5;
+            var ty = (e.clientY - b.top) / b.height - 0.5;
+            el.style.setProperty("--tx", (tx * 5).toFixed(2) + "deg");
+            el.style.setProperty("--ty", (-ty * 5).toFixed(2) + "deg");
+          }
+          er = 0;
+        });
+      }, { passive: true });
+      el.addEventListener("pointerleave", function () {
+        el.style.setProperty("--shine", "0");
+        el.style.setProperty("--tx", "0deg");
+        el.style.setProperty("--ty", "0deg");
+      });
+    });
+  }
+})();
+
 /* shariquekhatri.com. The ask panel and the theme toggle. */
 (function () {
   "use strict";
@@ -13,7 +66,7 @@
       root.setAttribute("data-theme", next);
       try { localStorage.setItem("theme", next); } catch (e) {}
       var m = document.querySelector('meta[name="theme-color"]');
-      if (m) m.setAttribute("content", next === "dark" ? "#131316" : "#fafaf8");
+      if (m) m.setAttribute("content", next === "dark" ? "#07070d" : "#eef0f7");
     });
   }
 
