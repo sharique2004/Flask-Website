@@ -157,10 +157,16 @@ importers:
 
   .:
     dependencies:
+      '@google/genai':
+        specifier: ^1.44.0
+        version: 1.52.0
       '@replit/connectors-sdk':
         specifier: ^0.4.1
         version: 0.4.1
     devDependencies:
+      '@types/node':
+        specifier: 'catalog:'
+        version: 25.9.5
       prettier:
         specifier: ^3.9.5
         version: 3.9.5
