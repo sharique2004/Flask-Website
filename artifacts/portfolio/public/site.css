@@ -639,7 +639,7 @@ h1 .a{
   transition:opacity .4s,animation-duration .4s;
 }
 .qa-glass:focus-within::before{
-  opacity:1;animation-duration:4s;
+  opacity:.68;animation-duration:8s;
   background:conic-gradient(from var(--angle),
     var(--aurora-1),var(--aurora-2),var(--aurora-4),var(--aurora-3),var(--aurora-1));
 }
@@ -650,36 +650,16 @@ h1 .a{
 /* ---- input row ---- */
 .qa-form{
   display:flex;align-items:center;gap:12px;
-  margin:14px;padding:13px 14px 13px 20px;
+  margin:14px 14px 10px;padding:13px 14px 13px 20px;
   border:1px solid var(--edge);border-radius:20px;
   background:color-mix(in srgb,var(--glass-2) 58%,transparent);
   box-shadow:inset 0 1px 0 var(--edge-hi);
   transition:border-color .25s,background .25s,box-shadow .25s;
 }
 .qa-form:focus-within{
-  border-color:color-mix(in srgb,var(--aurora-2) 58%,var(--glass-brd));
-  background:color-mix(in srgb,var(--glass-2) 78%,transparent);
-  box-shadow:0 0 0 4px color-mix(in srgb,var(--aurora-2) 13%,transparent),
-             0 14px 34px -24px var(--aurora-2),inset 0 1px 0 var(--edge-hi);
-}
-.qa-composer{
-  display:flex;flex:1;min-width:0;flex-direction:column;gap:5px;
-}
-.qa-kicker{
-  display:flex;align-items:center;gap:7px;
-  color:var(--faint);font-size:9.5px;line-height:1;
-  font-weight:750;letter-spacing:.13em;text-transform:uppercase;
-  transition:color .2s;
-}
-.qa-status{
-  width:6px;height:6px;border-radius:50%;flex:none;
-  background:var(--aurora-4);box-shadow:0 0 0 3px color-mix(in srgb,var(--aurora-4) 14%,transparent);
-}
-.qa-form:focus-within .qa-kicker{color:var(--ink-2)}
-.qa-form:focus-within .qa-status{animation:qa-listening 1.8s ease-out infinite}
-@keyframes qa-listening{
-  0%{box-shadow:0 0 0 0 color-mix(in srgb,var(--aurora-4) 35%,transparent)}
-  70%,100%{box-shadow:0 0 0 7px transparent}
+  border-color:color-mix(in srgb,var(--aurora-2) 38%,var(--edge));
+  background:color-mix(in srgb,var(--glass-2) 72%,transparent);
+  box-shadow:0 14px 34px -27px var(--aurora-2),inset 0 1px 0 var(--edge-hi);
 }
 .qa-input{
   flex:1;min-width:0;background:none;border:0;outline:0;
@@ -705,6 +685,26 @@ h1 .a{
 .qa-busy{opacity:.65;cursor:default}
 .qa-spin{animation:qa-rotate .8s linear infinite}
 @keyframes qa-rotate{to{transform:rotate(360deg)}}
+
+/* ---- conversation starters ---- */
+.qa-suggestions{padding:0 20px 16px;display:flex;align-items:center;gap:10px}
+.qa-suggestions-label{font-size:11.5px;color:var(--faint);white-space:nowrap}
+.qa-prompts{display:flex;gap:7px;min-width:0;flex-wrap:wrap}
+.qa-suggestion{
+  appearance:none;border:1px solid var(--edge);border-radius:999px;
+  padding:7px 11px;background:var(--srf);color:var(--ink-2);
+  font:600 11.5px/1.2 var(--sans);cursor:pointer;white-space:nowrap;
+  box-shadow:inset 0 1px 0 var(--edge-hi);
+  transition:color .2s,border-color .2s,background .2s,transform .2s;
+}
+.qa-suggestion:hover{
+  color:var(--ink);border-color:color-mix(in srgb,var(--aurora-2) 38%,var(--edge));
+  background:color-mix(in srgb,var(--srf-hi) 78%,var(--aurora-2));transform:translateY(-1px);
+}
+.qa-suggestion:focus-visible{
+  outline:2px solid color-mix(in srgb,var(--aurora-2) 72%,transparent);outline-offset:2px;
+}
+.qa-suggestion:disabled{opacity:.5;cursor:default;transform:none}
 
 /* ---- divider ---- */
 .qa-rule{
@@ -742,10 +742,14 @@ h1 .a{
 .qa-body strong{color:var(--ink);font-weight:700}
 
 @media(max-width:600px){
-  .qa-form{margin:10px;padding:11px 10px 11px 14px;gap:8px;border-radius:17px}
-  .qa-kicker{font-size:8.5px;letter-spacing:.1em}
+  .qa-form{margin:10px 10px 8px;padding:11px 10px 11px 14px;gap:8px;border-radius:17px}
   .qa-input{font-size:14px}
   .qa-send{width:42px;height:42px;border-radius:13px}
+  .qa-suggestions{padding:0 14px 13px;display:block}
+  .qa-suggestions-label{display:block;margin-bottom:7px;font-size:10.5px}
+  .qa-prompts{flex-wrap:nowrap;overflow-x:auto;padding:1px 1px 3px;scrollbar-width:none}
+  .qa-prompts::-webkit-scrollbar{display:none}
+  .qa-suggestion{font-size:11px;padding:7px 10px}
 }
 
 /* ============ EXPERIENCE TIMELINE ============ */
