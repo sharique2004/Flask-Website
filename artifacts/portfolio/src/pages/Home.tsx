@@ -58,7 +58,12 @@ export default function Home() {
                 </svg>
                 GitHub
               </a>
-              <a className="btn" href={LINKS.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+              <a className="btn" href={LINKS.linkedin} target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.047c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.06 2.06 0 1 1 0-4.12 2.06 2.06 0 0 1 0 4.12zM7.119 20.452H3.555V9H7.12v11.452z" />
+                </svg>
+                LinkedIn
+              </a>
               <a className="btn" href="/resume" target="_blank" rel="noopener">Résumé</a>
             </div>
 
@@ -75,10 +80,6 @@ export default function Home() {
               <div className="hstat">
                 <span className="hstat-val">1st</span>
                 <span className="hstat-lbl">hackathon<br />2026</span>
-              </div>
-              <div className="hstat">
-                <span className="hstat-val">3.60</span>
-                <span className="hstat-lbl">GPA · Dean's<br />List × 6</span>
               </div>
             </div>
 

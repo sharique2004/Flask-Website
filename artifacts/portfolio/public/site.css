@@ -762,8 +762,8 @@ h1 .a{
 .t-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
 .t-role{color:var(--ink);font-weight:700;font-size:16px;margin:0;letter-spacing:-.01em;flex:1;min-width:0}
 .t-co{color:var(--accent);font-weight:700}
-.t-date{font-size:11.5px;font-weight:600;color:var(--faint);white-space:nowrap;
-  padding:3px 9px;border-radius:999px;background:var(--srf);border:1px solid var(--edge);flex:none}
+.t-date{font-size:12px;font-weight:700;color:var(--ink-2);white-space:nowrap;
+  padding:4px 10px;border-radius:999px;background:var(--srf-hi);border:1px solid var(--edge);flex:none}
 .t-where{color:var(--ink-3);font-size:13.5px;margin:.3rem 0 0}
 .t-chip{
   display:inline-flex;align-items:center;gap:6px;
