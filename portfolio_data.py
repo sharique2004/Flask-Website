@@ -58,6 +58,12 @@ FEATURED = [
         ),
         "thesis": "The right call for a pallet of strawberries is not the right call for canned beans.",
         "tech": "Voice intake · live transcription · LLM triage · map dispatch",
+        "stack": [
+            ("mic", "Voice intake"),
+            ("waveform", "Live transcription"),
+            ("sparkles", "LLM triage"),
+            ("map", "Map dispatch"),
+        ],
     },
     {
         "slug": "bibi",
@@ -76,6 +82,14 @@ FEATURED = [
         ),
         "thesis": "The agent loop matters more than the model.",
         "tech": "Python · Flask · Electron · faster-whisper · Ollama · Claude",
+        "stack": [
+            ("python", "Python"),
+            ("flask", "Flask"),
+            ("electron", "Electron"),
+            ("waveform", "faster-whisper"),
+            ("ollama", "Ollama"),
+            ("claude", "Claude"),
+        ],
     },
     {
         "slug": "scribe",
@@ -94,6 +108,40 @@ FEATURED = [
         ),
         "thesis": "Granola removed the bot from your meeting. MeetingScribe removes the cloud.",
         "tech": "Swift · CoreAudio · Apple Neural Engine · EventKit",
+        "stack": [
+            ("swift", "Swift"),
+            ("audio", "CoreAudio"),
+            ("chip", "Neural Engine"),
+            ("calendar", "EventKit"),
+        ],
+    },
+    {
+        "slug": "aman",
+        "name": "Aman UAE",
+        "page": "https://dubai-news-tracker.vercel.app",
+        "repo": None,
+        "external": True,
+        "kicker": "live news platform · LLM source verification",
+        "line": "A real-time UAE news platform with LLM source verification. The launch reached 26,000+ impressions.",
+        "accent": "cyan",
+        "poster": None,
+        "title_html": "Real time UAE news, verified by LLMs.",
+        "summary": (
+            "A real time UAE news platform with LLM based source verification. "
+            "Built end to end with Claude Code in days, not weeks: Next.js, "
+            "TypeScript, Tailwind, MCP server integrations. The launch post "
+            "reached 26,000+ impressions on LinkedIn. Deployed through "
+            "Vercel's Git integration; no custom CI pipeline, and it does "
+            "not need one."
+        ),
+        "thesis": "Built end to end with Claude Code in days, not weeks.",
+        "tech": "Next.js · TypeScript · MCP · Claude Code",
+        "stack": [
+            ("nextjs", "Next.js"),
+            ("typescript", "TypeScript"),
+            ("plug", "MCP"),
+            ("terminal", "Claude Code"),
+        ],
     },
 ]
 
@@ -117,19 +165,11 @@ CASES = [
         "honest": "Mine: the annotation pipeline and its quality bar. Not mine: methodology design.",
         "links": [("paper", "https://arxiv.org/abs/2604.00270")],
         "tech": "Computer vision · VLM benchmarking · data quality",
-    },
-    {
-        "name": "Aman UAE",
-        "kicker": "shipped · live in production",
-        "on_paper": "A real time UAE news platform with LLM based source verification.",
-        "real_story": (
-            "Built end to end with Claude Code in days, not weeks: Next.js, "
-            "TypeScript, Tailwind, MCP server integrations. The launch post "
-            "reached 26,000+ impressions on LinkedIn."
-        ),
-        "honest": "Deployed through Vercel's Git integration. No custom CI pipeline, and it does not need one.",
-        "links": [("live", "https://dubai-news-tracker.vercel.app")],
-        "tech": "Next.js · TypeScript · MCP · Claude Code",
+        "stack": [
+            ("eye", "Computer vision"),
+            ("sparkles", "VLM benchmarking"),
+            ("chart", "Data quality"),
+        ],
     },
     {
         "name": "Taazify",
@@ -145,6 +185,12 @@ CASES = [
         "honest": "Not on the App Store. A working system I use, not a shipped product.",
         "links": [("repo", "https://github.com/sharique2004/Taazify")],
         "tech": "SwiftUI · FastAPI · Qwen2-VL · PostgreSQL",
+        "stack": [
+            ("swift", "SwiftUI"),
+            ("fastapi", "FastAPI"),
+            ("chip", "Qwen2-VL"),
+            ("postgres", "PostgreSQL"),
+        ],
     },
     {
         "name": "VaultCache",
@@ -159,6 +205,12 @@ CASES = [
         "honest": "A learning build, and it taught me more about storage than any course did.",
         "links": [("repo", "https://github.com/sharique2004/vaultcache")],
         "tech": "C · AES-256 · block I/O · LRU caching",
+        "stack": [
+            ("c", "C"),
+            ("lock", "AES-256"),
+            ("drive", "Block I/O"),
+            ("layers", "LRU cache"),
+        ],
     },
     {
         "name": "Intrsekt",
@@ -172,6 +224,11 @@ CASES = [
         "honest": "No framework because the job did not need one.",
         "links": [("live", "https://intrsekt.com")],
         "tech": "HTML · CSS · JavaScript",
+        "stack": [
+            ("html", "HTML"),
+            ("css", "CSS"),
+            ("js", "JavaScript"),
+        ],
     },
 ]
 
@@ -185,6 +242,7 @@ EXPERIENCE = [
         "role": "Software Engineering Intern",
         "where": "Dubai, remote",
         "dates": "Dec 2025 – Mar 2026",
+        "highlight": "Production RAG serving 10,000+ users",
         "summary": (
             "Health tech startup, reported directly to the CTO. Built production "
             "RAG pipelines serving 10,000+ users over enterprise wearable data "
@@ -347,10 +405,13 @@ def _experience_text() -> str:
 def _featured_text() -> str:
     parts = []
     for f in FEATURED:
+        page = f["page"]
+        if page.startswith("/"):
+            page = f"https://shariquekhatri.com{page}"
+        repo = f" Repo: {f['repo']}" if f.get("repo") else ""
         parts.append(
             f"{f['name']} ({f['kicker']}). {f['summary']} Thesis: {f['thesis']} "
-            f"Stack: {f['tech']}. Page: https://shariquekhatri.com{f['page']} "
-            f"Repo: {f['repo']}"
+            f"Stack: {f['tech']}. Page: {page}.{repo}"
         )
     return "\n".join(parts)
 
