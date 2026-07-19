@@ -64,6 +64,12 @@ export default function Home() {
                 </svg>
                 LinkedIn
               </a>
+              <a className="btn" href={LINKS.x} target="_blank" rel="noopener">
+                <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                  <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231 5.451-6.231zm-1.161 17.52h1.833L7.084 4.126H5.117L17.083 19.77z" />
+                </svg>
+                X
+              </a>
               <a className="btn" href="/resume" target="_blank" rel="noopener">Résumé</a>
             </div>
 
@@ -290,6 +296,7 @@ export default function Home() {
               <a href={`mailto:${LINKS.email}`}>{LINKS.email}</a>
               <a href={LINKS.github} target="_blank" rel="noopener">github/sharique2004</a>
               <a href={LINKS.linkedin} target="_blank" rel="noopener">linkedin/sharique-khatri</a>
+              <a href={LINKS.x} target="_blank" rel="noopener">x/ShariqueKhatri</a>
               <a href="/resume" target="_blank" rel="noopener">résumé (pdf)</a>
             </div>
           </div>
