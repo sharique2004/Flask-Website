@@ -25,7 +25,7 @@ function renderMarkdown(text: string): string {
   let list: string[] | null = null;
   safe.split("\n").forEach((line) => {
     const trimmed = line.trim();
-    if (trimmed.indexOf("- ") === 0) {
+    if (trimmed.startsWith("- ")) {
       if (!list) list = [];
       list.push("<li>" + trimmed.slice(2) + "</li>");
       return;
@@ -36,7 +36,6 @@ function renderMarkdown(text: string): string {
     }
     if (trimmed) blocks.push("<p>" + trimmed + "</p>");
   });
-  // @ts-ignore – list narrowed to never by TS across forEach closure; safe at runtime
   if (list) blocks.push("<ul>" + (list as string[]).join("") + "</ul>");
   return blocks.join("");
 }
@@ -45,7 +44,7 @@ export function AskPanel() {
   const [messages, setMessages] = useState<Message[]>([
     {
       who: "Mini Sharique",
-      text: "Ask me about the work. I only answer from verified facts, so I'd rather say less than make something up.",
+      text: "Ask me about the work — I only answer from verified facts.",
       isMe: true,
     },
   ]);
@@ -69,7 +68,7 @@ export function AskPanel() {
     const userMsg: Message = { who: "You", text: q, isMe: false };
     const pendingMsg: Message = {
       who: "Mini Sharique",
-      text: "thinking",
+      text: "Thinking…",
       isMe: true,
       thinking: true,
     };
@@ -87,12 +86,17 @@ export function AskPanel() {
       const data = await res.json();
       const reply =
         data.answer ||
-        "No answer came back. Email sharique.khatri@gmail.com instead.";
+        "No answer returned. Email sharique.khatri@gmail.com instead.";
 
       setMessages((prev) =>
         prev.map((m, i) =>
           i === prev.length - 1
-            ? { who: "Mini Sharique", text: reply, isMe: true, html: renderMarkdown(reply) }
+            ? {
+                who: "Mini Sharique",
+                text: reply,
+                isMe: true,
+                html: renderMarkdown(reply),
+              }
             : m
         )
       );
@@ -107,7 +111,7 @@ export function AskPanel() {
           i === prev.length - 1
             ? {
                 who: "Mini Sharique",
-                text: "Something went wrong on the wire. The reliable channel is sharique.khatri@gmail.com.",
+                text: "Something went wrong. Reach out at sharique.khatri@gmail.com.",
                 isMe: true,
               }
             : m
@@ -121,42 +125,49 @@ export function AskPanel() {
   return (
     <section className="section" id="ask" aria-label="Ask Mini Sharique">
       <div className="chat glass">
+        {/* header */}
+        <div className="chat-header">
+          <div className="chat-avatar" aria-hidden="true">SK</div>
+          <div>
+            <div className="chat-title">Mini Sharique</div>
+            <span className="chat-online">online</span>
+          </div>
+        </div>
+
+        {/* message log */}
         <div
           className="chat-log"
           id="chat-log"
           role="log"
           aria-live="polite"
-          aria-label="Assistant conversation"
           ref={logRef}
         >
           {messages.map((msg, i) => (
-            <div key={i} className={`msg${msg.isMe ? " me" : ""}${msg.thinking ? " thinking" : ""}`}>
+            <div
+              key={i}
+              className={`msg${msg.isMe ? " me" : ""}${msg.thinking ? " thinking" : ""}`}
+            >
               <span className="who">{msg.who}</span>
               {msg.html ? (
                 <div className="txt" dangerouslySetInnerHTML={{ __html: msg.html }} />
               ) : (
-                <span className="txt bubble">{msg.text}</span>
+                <div className="txt">{msg.text}</div>
               )}
             </div>
           ))}
         </div>
 
+        <hr className="chat-divider" />
+
+        {/* input */}
         <form
           className="chat-bar-form"
-          id="chat-form"
           onSubmit={(e) => {
             e.preventDefault();
-            const q = input.trim();
-            if (q) {
-              const inp = (e.currentTarget.querySelector("#chat-q") as HTMLInputElement);
-              inp?.blur();
-              ask(q);
-            }
+            if (input.trim()) ask(input);
           }}
         >
-          <label className="visually-hidden" htmlFor="chat-q">
-            Your question
-          </label>
+          <label className="visually-hidden" htmlFor="chat-q">Your question</label>
           <div className="chat-bar">
             <input
               id="chat-q"
@@ -164,21 +175,21 @@ export function AskPanel() {
               type="text"
               maxLength={500}
               autoComplete="off"
-              placeholder="Curious about Sharique? Ask away"
+              placeholder="Ask about the work…"
               value={input}
               onChange={(e) => setInput(e.target.value)}
             />
             <button
               type="submit"
               className="chat-send"
-              aria-label="Send question"
+              aria-label="Send"
               aria-busy={busy}
             >
               <svg
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={2.2}
+                strokeWidth={2.4}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 aria-hidden="true"

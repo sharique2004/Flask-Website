@@ -13,6 +13,22 @@ import {
   ARCHIVE,
 } from "../data/portfolio";
 
+/** SVG orbital ring system for the hero photo */
+function PhotoOrbit() {
+  return (
+    <svg className="photo-orbit-svg" viewBox="0 0 344 444" fill="none" aria-hidden="true">
+      {/* outer dashed ring */}
+      <ellipse cx="172" cy="222" rx="162" ry="212" className="orbit-ring" />
+      {/* traveling dot on outer ring */}
+      <circle cx="172" cy="10" r="5.5" className="orbit-dot" />
+      {/* inner counter-rotating ring */}
+      <ellipse cx="172" cy="222" rx="138" ry="180" className="orbit-ring-inner" />
+      {/* inner counter dot */}
+      <circle cx="172" cy="42" r="3.5" className="orbit-dot-rev" />
+    </svg>
+  );
+}
+
 export default function Home() {
   useGlassEffects();
 
@@ -23,8 +39,6 @@ export default function Home() {
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
-
-      {/* Inline SVG sprite for brand icons */}
       <IconSprite />
 
       <div className="aurora" aria-hidden="true">
@@ -34,67 +48,94 @@ export default function Home() {
       <Nav />
 
       <main id="main" className="wrap">
+
         {/* ============ HERO ============ */}
         <header className="hero">
           <div>
             <div className="status">
               <span className="dot" aria-hidden="true" />
-              Applied AI Engineer · Penn State CS, May 2026
+              Open to new roles · May 2026
             </div>
+
             <h1>
-              I build software that real people{" "}
-              <span className="a">depend on</span>, not demos.
+              Software that real<br />
+              people{" "}
+              <span className="a">depend on</span>.
             </h1>
-            <p className="lede">
-              Built production RAG serving <b>10,000+ users</b> at WellX AI.
-              Co authored a benchmark paper{" "}
-              <b>accepted at ECCV 2026</b>. Two local first products live on
-              this domain. I look for the unglamorous fix first.
-            </p>
+
             <div className="cta">
               <a className="btn primary" href={`mailto:${LINKS.email}`}>
                 <span className="sweep" aria-hidden="true" />
-                {LINKS.email}
+                <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                  <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+                  <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+                </svg>
+                Email me
               </a>
-              <a className="btn ghost" href={LINKS.github} target="_blank" rel="noopener">
+              <a className="btn" href={LINKS.github} target="_blank" rel="noopener">
                 <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
                   <path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0016 8c0-4.42-3.58-8-8-8z" />
                 </svg>
                 GitHub
               </a>
-              <a className="btn ghost" href={LINKS.linkedin} target="_blank" rel="noopener">LinkedIn</a>
-              <a className="btn ghost" href="/resume" target="_blank" rel="noopener">Resume</a>
+              <a className="btn" href={LINKS.linkedin} target="_blank" rel="noopener">LinkedIn</a>
+              <a className="btn" href="/resume" target="_blank" rel="noopener">Résumé</a>
             </div>
+
+            {/* key stat chips */}
+            <div className="hero-stats">
+              <div className="hstat">
+                <span className="hstat-val">10K+</span>
+                <span className="hstat-lbl">prod users<br />at WellX AI</span>
+              </div>
+              <div className="hstat">
+                <span className="hstat-val">ECCV</span>
+                <span className="hstat-lbl">2026 paper<br />accepted</span>
+              </div>
+              <div className="hstat">
+                <span className="hstat-val">1st</span>
+                <span className="hstat-lbl">hackathon<br />2026</span>
+              </div>
+              <div className="hstat">
+                <span className="hstat-val">3.60</span>
+                <span className="hstat-lbl">GPA · Dean's<br />List × 6</span>
+              </div>
+            </div>
+
             <p className="meta">
-              San Francisco, CA · open to{" "}
-              <b>New York, Seattle, Dubai, and the Bay Area</b>
+              San Francisco · open to{" "}
+              <b>NYC, Seattle, Dubai, Bay Area</b>
             </p>
           </div>
 
-          <figure className="photo glass">
-            <img
-              src="/headshot.jpg"
-              alt="Sharique Khatri"
-              width={640}
-              height={800}
-              onError={(e) => {
-                (e.currentTarget as HTMLImageElement).style.display = "none";
-                const fb = e.currentTarget.parentElement?.querySelector(
-                  ".photo-fallback"
-                ) as HTMLElement | null;
-                if (fb) fb.style.display = "flex";
-              }}
-            />
-            <div
-              className="photo-fallback"
-              role="img"
-              aria-label="Initials of Sharique Khatri"
-              style={{ display: "none" }}
-            >
-              SK
-            </div>
-            <figcaption>San Francisco, CA</figcaption>
-          </figure>
+          {/* photo + orbital ring */}
+          <div className="photo-wrap">
+            <PhotoOrbit />
+            <figure className="photo glass">
+              <img
+                src="/headshot.jpg"
+                alt="Sharique Khatri"
+                width={640}
+                height={800}
+                onError={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.display = "none";
+                  const fb = e.currentTarget.parentElement?.querySelector(
+                    ".photo-fallback"
+                  ) as HTMLElement | null;
+                  if (fb) fb.style.display = "flex";
+                }}
+              />
+              <div
+                className="photo-fallback"
+                role="img"
+                aria-label="Initials of Sharique Khatri"
+                style={{ display: "none" }}
+              >
+                SK
+              </div>
+              <figcaption>San Francisco, CA</figcaption>
+            </figure>
+          </div>
         </header>
 
         {/* ============ ASK ============ */}
@@ -102,21 +143,29 @@ export default function Home() {
 
         {/* ============ PRODUCTS ============ */}
         <section className="section" id="work">
-          <h2 className="sec">Built, shipped, and documented.</h2>
-          <p className="sec-intro">
-            Everything below is clickable and verifiable. Live links, real
-            repos, honest scope.
-          </p>
+          <p className="section-label">Selected work</p>
+          <h2 className="sec">Built, shipped, verified.</h2>
 
           <div className="grid2">
             {FEATURED.map((f, idx) => (
               <article
                 key={f.slug}
                 className="card fx rv"
+                data-n={String(idx + 1).padStart(2, "0")}
                 style={{ "--i": idx } as React.CSSProperties}
               >
                 <span className="sweep" aria-hidden="true" />
-                <div className="k">{f.kicker}</div>
+                <div className="card-head">
+                  <div className="k">{f.kicker}</div>
+                  {f.award && (
+                    <span className="award-chip">
+                      <svg viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                        <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                      </svg>
+                      1st Place
+                    </span>
+                  )}
+                </div>
                 <h3>
                   <a
                     href={f.page}
@@ -134,7 +183,7 @@ export default function Home() {
                     href={f.page}
                     {...(f.external ? { target: "_blank", rel: "noopener" } : {})}
                   >
-                    Live demo <span aria-hidden="true">↗</span>
+                    View ↗
                   </a>
                   {f.repo && (
                     <a className="lk-src" href={f.repo} target="_blank" rel="noopener">
@@ -163,7 +212,7 @@ export default function Home() {
                 <span className="lk">
                   {c.links.map(([label, url]) => (
                     <a key={label} href={url} target="_blank" rel="noopener">
-                      {label.charAt(0).toUpperCase() + label.slice(1)}
+                      {label.charAt(0).toUpperCase() + label.slice(1)} ↗
                     </a>
                   ))}
                 </span>
@@ -174,43 +223,48 @@ export default function Home() {
 
         {/* ============ EXPERIENCE ============ */}
         <section className="section" id="experience">
+          <p className="section-label">Experience</p>
           <h2 className="sec">Where the numbers come from.</h2>
 
           <div className="timeline">
             {EXPERIENCE.map((e, idx) => (
-              <article
+              <div
                 key={e.company + e.dates}
                 className={`t-entry rv${e.is_current ? " is-current" : ""}`}
                 style={{ "--i": idx } as React.CSSProperties}
               >
-                <h3 className="t-role">
-                  {e.role}{" "}
-                  <span className="t-co">· {e.company}</span>
-                </h3>
-                <p className="t-meta">
-                  {e.where} · {e.dates}
-                </p>
-                {e.highlight && (
-                  <span className="t-chip">{e.highlight}</span>
-                )}
-              </article>
+                <div className="t-card fx">
+                  <div className="t-header">
+                    <h3 className="t-role">
+                      {e.role}
+                      <span className="t-co"> · {e.company}</span>
+                    </h3>
+                    <span className="t-date">{e.dates}</span>
+                  </div>
+                  <p className="t-where">{e.where}</p>
+                  {e.highlight && (
+                    <span className="t-chip">{e.highlight}</span>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         </section>
 
         {/* ============ ARCHIVE ============ */}
         <section className="section" id="archive">
-          <h2 className="sec">Smaller builds, same standard.</h2>
-          <details className="others fx">
+          <p className="section-label">Archive</p>
+          <h2 className="sec">More builds, same bar.</h2>
+          <details className="others fx" style={{ marginTop: "24px" }}>
             <summary>
-              <span className="others-label">Other projects</span>
+              <span className="others-label">All projects</span>
               <span className="others-count">{ARCHIVE.length}</span>
               <svg
                 className="chev"
                 viewBox="0 0 24 24"
                 fill="none"
                 stroke="currentColor"
-                strokeWidth={2}
+                strokeWidth={2.2}
                 strokeLinecap="round"
                 strokeLinejoin="round"
                 aria-hidden="true"
@@ -252,7 +306,7 @@ export default function Home() {
             <a href="/scribe">MeetingScribe</a>
             <br />
             <a href={PUBLICATION.url} target="_blank" rel="noopener">
-              OmniSch, ECCV 2026
+              OmniSch · ECCV 2026
             </a>
           </div>
           <div className="col">
@@ -260,21 +314,20 @@ export default function Home() {
             <a href={`mailto:${LINKS.email}`}>{LINKS.email}</a>
             <br />
             <a href={LINKS.github} target="_blank" rel="noopener">
-              github.com/sharique2004
+              github/sharique2004
             </a>
             <br />
             <a href={LINKS.linkedin} target="_blank" rel="noopener">
-              linkedin.com/in/sharique-khatri
+              linkedin/sharique-khatri
             </a>
             <br />
             <a href="/resume" target="_blank" rel="noopener">
-              resume (pdf)
+              résumé (pdf)
             </a>
           </div>
         </div>
         <div className="foot-line">
-          Built with React. Self hosted fonts, no trackers, no analytics, no
-          cookies. Verified numbers only; every claim links to its source.
+          Built with React · No trackers · No cookies · Every claim verified
         </div>
       </footer>
     </>
