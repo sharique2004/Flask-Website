@@ -2,7 +2,6 @@ import { useEffect } from "react";
 import { useGlassEffects } from "../hooks/useGlassEffects";
 import { Nav } from "../components/Nav";
 import { AskPanel } from "../components/AskPanel";
-import { LiquidFilters } from "../components/LiquidFilters";
 import { IconSprite, Pills } from "../components/IconSprite";
 import {
   IDENTITY,
@@ -25,7 +24,6 @@ export default function Home() {
   return (
     <>
       <a className="skip" href="#main">Skip to content</a>
-      <LiquidFilters />
       <IconSprite />
 
       <div className="aurora" aria-hidden="true">
