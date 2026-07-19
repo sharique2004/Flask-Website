@@ -14,8 +14,8 @@ IDENTITY = {
     "graduated": "May 2026",
     "gpa": "3.60",
     "deans_list": "Dean's List all six semesters",
-    "base": "State College, PA",
-    "open_to": "SF Bay Area, NYC, Seattle, Dubai",
+    "base": "San Francisco, CA",
+    "open_to": "New York, Seattle, Dubai, and the Bay Area",
     "status": "Actively looking for Applied AI, Forward Deployed Engineer, and new grad SWE roles",
     "work_auth": (
         "US work authorization on OPT with STEM extension eligibility, "
@@ -39,12 +39,13 @@ FEATURED = [
     {
         "slug": "donna",
         "name": "Donna",
-        "page": "https://projectdonna.vercel.app/",
+        "page": "https://donna.shariquekhatri.com/",
         "repo": "https://github.com/sharique2004/Donna",
         "external": True,
         "wide": True,
         "award": "1st place · AI Supply Chain Hackathon 2026",
         "kicker": "hackathon winner · food banks + AI · live demo",
+        "line": "Takes a supplier's surplus-food call and routes each pallet to a food bank. Built in a day, won first place.",
         "accent": "orange",
         "poster": "/static/donna-shot.jpg",
         "title_html": "A voice dispatcher for food bank donations.",
@@ -64,6 +65,7 @@ FEATURED = [
         "page": "/bibi",
         "repo": "https://github.com/sharique2004/pc-assistant",
         "kicker": "local first voice agent · windows · MIT",
+        "line": "Say its name and it opens apps, moves the real mouse, and reads your screen out loud.",
         "accent": "orange",
         "poster": "/static/bibi-poster.jpg",
         "title_html": "A voice agent that flies a real PC.",
@@ -81,6 +83,7 @@ FEATURED = [
         "page": "/scribe",
         "repo": "https://github.com/sharique2004/MeetingScribe",
         "kicker": "on device meeting transcription · macOS · MIT",
+        "line": "Records and transcribes your meetings entirely on your Mac. No bot joins, nothing leaves the device.",
         "accent": "cyan",
         "poster": "/static/scribe-shot.png",
         "title_html": "Your meetings, transcribed. Never uploaded.",
@@ -102,6 +105,7 @@ CASES = [
     {
         "name": "OmniSch",
         "kicker": "publication · accepted at ECCV 2026",
+        "line": "I owned the human-annotation pipeline behind the benchmark: 1,854 schematics, about 109.9K labeled instances.",
         "on_paper": "Co author on a multimodal PCB schematic benchmark, arXiv:2604.00270.",
         "real_story": (
             "I owned the human annotation pipeline: 1,854 real world schematics, "

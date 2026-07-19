@@ -229,7 +229,7 @@ _FALLBACKS = [
         "supplier calls in surplus food, Donna transcribes the call, pulls "
         "out each item, and triages it. Perishables get dispatched straight "
         "to a food bank, shelf stable goods go into inventory, and a human "
-        "approves first. Live at projectdonna.vercel.app, source at "
+        "approves first. Live at donna.shariquekhatri.com, source at "
         "github.com/sharique2004/Donna.",
     ),
     (

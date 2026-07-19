@@ -395,7 +395,7 @@ CHUNKS = [
             "fast are dispatched straight to a food bank; shelf stable goods "
             "go into inventory. A human approves before anything is "
             "dispatched, then Donna makes the outbound calls. I built it in a "
-            "day. Live demo at projectdonna.vercel.app, source at "
+            "day. Live demo at donna.shariquekhatri.com, source at "
             "github.com/sharique2004/Donna. The idea: the right call for a "
             "pallet of strawberries that spoils in 48 hours is not the right "
             "call for canned beans, and an agent can make that triage fast."
