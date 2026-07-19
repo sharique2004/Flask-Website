@@ -52,11 +52,6 @@ export default function Home() {
         {/* ============ HERO ============ */}
         <header className="hero">
           <div>
-            <div className="status">
-              <span className="dot" aria-hidden="true" />
-              Open to new roles · May 2026
-            </div>
-
             <h1>
               Software that real<br />
               people{" "}
