@@ -1,16 +1,8 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef } from "react";
 
 interface HistoryTurn {
   role: "user" | "assistant";
   text: string;
-}
-
-interface Message {
-  who: string;
-  text: string;
-  isMe: boolean;
-  thinking?: boolean;
-  html?: string;
 }
 
 function esc(text: string): string {
@@ -41,38 +33,17 @@ function renderMarkdown(text: string): string {
 }
 
 export function AskPanel() {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      who: "Mini Sharique",
-      text: "Ask me about the work — I only answer from verified facts.",
-      isMe: true,
-    },
-  ]);
+  const [answer, setAnswer] = useState<{ q: string; html: string } | null>(null);
+  const [thinking, setThinking] = useState(false);
   const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
   const historyRef = useRef<HistoryTurn[]>([]);
-  const logRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (logRef.current) {
-      logRef.current.scrollTop = logRef.current.scrollHeight;
-    }
-  }, [messages]);
 
   async function ask(question: string) {
-    if (busy || !question.trim()) return;
-    setBusy(true);
+    if (thinking || !question.trim()) return;
     const q = question.trim();
     setInput("");
-
-    const userMsg: Message = { who: "You", text: q, isMe: false };
-    const pendingMsg: Message = {
-      who: "Mini Sharique",
-      text: "Thinking…",
-      isMe: true,
-      thinking: true,
-    };
-    setMessages((prev) => [...prev, userMsg, pendingMsg]);
+    setThinking(true);
+    setAnswer({ q, html: "" }); // show thinking state
 
     try {
       const res = await fetch("/api/ask", {
@@ -88,118 +59,83 @@ export function AskPanel() {
         data.answer ||
         "No answer returned. Email sharique.khatri@gmail.com instead.";
 
-      setMessages((prev) =>
-        prev.map((m, i) =>
-          i === prev.length - 1
-            ? {
-                who: "Mini Sharique",
-                text: reply,
-                isMe: true,
-                html: renderMarkdown(reply),
-              }
-            : m
-        )
-      );
+      setAnswer({ q, html: renderMarkdown(reply) });
       historyRef.current = [
         ...historyRef.current,
         { role: "user", text: q },
         { role: "assistant", text: reply },
       ];
     } catch {
-      setMessages((prev) =>
-        prev.map((m, i) =>
-          i === prev.length - 1
-            ? {
-                who: "Mini Sharique",
-                text: "Something went wrong. Reach out at sharique.khatri@gmail.com.",
-                isMe: true,
-              }
-            : m
-        )
-      );
+      setAnswer({
+        q,
+        html: "<p>Something went wrong. Reach out at sharique.khatri@gmail.com.</p>",
+      });
     } finally {
-      setBusy(false);
+      setThinking(false);
     }
   }
 
   return (
-    <section className="section" id="ask" aria-label="Ask Mini Sharique">
-      <div className="chat glass">
-        {/* header */}
-        <div className="chat-header">
-          <div className="chat-avatar" aria-hidden="true">SK</div>
-          <div>
-            <div className="chat-title">Mini Sharique</div>
-            <span className="chat-online">online</span>
-          </div>
-        </div>
+    <section className="section ask-section" id="ask" aria-label="Ask about the work">
+      <p className="section-label">Ask</p>
+      <p className="ask-sub">
+        Anything about the work, the stack, the numbers. Answers from verified facts only.
+      </p>
 
-        {/* message log */}
-        <div
-          className="chat-log"
-          id="chat-log"
-          role="log"
-          aria-live="polite"
-          ref={logRef}
-        >
-          {messages.map((msg, i) => (
-            <div
-              key={i}
-              className={`msg${msg.isMe ? " me" : ""}${msg.thinking ? " thinking" : ""}`}
-            >
-              <span className="who">{msg.who}</span>
-              {msg.html ? (
-                <div className="txt" dangerouslySetInnerHTML={{ __html: msg.html }} />
-              ) : (
-                <div className="txt">{msg.text}</div>
-              )}
-            </div>
-          ))}
-        </div>
-
-        <hr className="chat-divider" />
-
-        {/* input */}
-        <form
-          className="chat-bar-form"
-          onSubmit={(e) => {
-            e.preventDefault();
-            if (input.trim()) ask(input);
-          }}
-        >
-          <label className="visually-hidden" htmlFor="chat-q">Your question</label>
-          <div className="chat-bar">
-            <input
-              id="chat-q"
-              name="q"
-              type="text"
-              maxLength={500}
-              autoComplete="off"
-              placeholder="Ask about the work…"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-            <button
-              type="submit"
-              className="chat-send"
-              aria-label="Send"
-              aria-busy={busy}
-            >
-              <svg
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth={2.4}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                aria-hidden="true"
-              >
+      <form
+        className="ask-form"
+        onSubmit={(e) => {
+          e.preventDefault();
+          if (input.trim()) ask(input);
+        }}
+      >
+        <label className="visually-hidden" htmlFor="ask-q">Your question</label>
+        <div className="ask-bar glass">
+          <input
+            id="ask-q"
+            name="q"
+            type="text"
+            maxLength={500}
+            autoComplete="off"
+            placeholder="e.g. how does the RAG pipeline work?"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
+          <button
+            type="submit"
+            className="ask-send"
+            aria-label="Ask"
+            aria-busy={thinking}
+          >
+            {thinking ? (
+              <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="2" opacity=".25"/>
+                <path d="M12 2a10 10 0 0 1 10 10" stroke="currentColor" strokeWidth="2" strokeLinecap="round">
+                  <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur=".8s" repeatCount="indefinite"/>
+                </path>
+              </svg>
+            ) : (
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
                 <path d="M12 19V5M5 12l7-7 7 7" />
               </svg>
-            </button>
-          </div>
-        </form>
-      </div>
+            )}
+          </button>
+        </div>
+      </form>
+
+      {answer && (
+        <div className={`ask-answer fx rv in${thinking ? " ask-thinking" : ""}`} aria-live="polite">
+          <p className="ask-q">{answer.q}</p>
+          {thinking ? (
+            <p className="ask-loading">Thinking…</p>
+          ) : (
+            <div
+              className="ask-body"
+              dangerouslySetInnerHTML={{ __html: answer.html }}
+            />
+          )}
+        </div>
+      )}
     </section>
   );
 }
