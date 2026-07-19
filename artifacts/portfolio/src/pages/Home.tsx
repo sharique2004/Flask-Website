@@ -13,21 +13,6 @@ import {
   ARCHIVE,
 } from "../data/portfolio";
 
-/** SVG orbital ring system for the hero photo */
-function PhotoOrbit() {
-  return (
-    <svg className="photo-orbit-svg" viewBox="0 0 344 444" fill="none" aria-hidden="true">
-      {/* outer dashed ring */}
-      <ellipse cx="172" cy="222" rx="162" ry="212" className="orbit-ring" />
-      {/* traveling dot on outer ring */}
-      <circle cx="172" cy="10" r="5.5" className="orbit-dot" />
-      {/* inner counter-rotating ring */}
-      <ellipse cx="172" cy="222" rx="138" ry="180" className="orbit-ring-inner" />
-      {/* inner counter dot */}
-      <circle cx="172" cy="42" r="3.5" className="orbit-dot-rev" />
-    </svg>
-  );
-}
 
 export default function Home() {
   useGlassEffects();
@@ -103,9 +88,7 @@ export default function Home() {
             </p>
           </div>
 
-          {/* photo + orbital ring */}
           <div className="photo-wrap">
-            <PhotoOrbit />
             <figure className="photo glass">
               <img
                 src="/headshot.jpg"
