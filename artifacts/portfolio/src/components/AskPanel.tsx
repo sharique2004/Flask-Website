@@ -72,23 +72,30 @@ export function AskPanel() {
           className="qa-form"
           onSubmit={(e) => { e.preventDefault(); if (input.trim()) ask(input); }}
         >
-          <label className="visually-hidden" htmlFor="qa-input">Ask about the work</label>
-          <input
-            id="qa-input"
-            className="qa-input"
-            type="text"
-            maxLength={500}
-            autoComplete="off"
-            spellCheck={false}
-            placeholder="Ask about the work, the stack, the numbers…"
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-          />
+          <div className="qa-composer">
+            <span className="qa-kicker" aria-hidden="true">
+              <span className="qa-status" />
+              Ask Sharique&apos;s portfolio
+            </span>
+            <label className="visually-hidden" htmlFor="qa-input">Ask about the work</label>
+            <input
+              id="qa-input"
+              className="qa-input"
+              type="text"
+              maxLength={500}
+              autoComplete="off"
+              spellCheck={false}
+              placeholder={'Try “What did you build at WellX?”'}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+            />
+          </div>
           <button
             type="submit"
             className={`qa-send${thinking ? " qa-busy" : ""}`}
             aria-label="Send"
             aria-busy={thinking}
+            disabled={thinking || !input.trim()}
           >
             {thinking ? (
               <svg className="qa-spin" viewBox="0 0 24 24" fill="none" aria-hidden="true">
