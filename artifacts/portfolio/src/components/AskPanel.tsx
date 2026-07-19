@@ -5,6 +5,12 @@ interface HistoryTurn {
   text: string;
 }
 
+const SUGGESTED_QUESTIONS = [
+  "What did you ship at WellX?",
+  "Which project are you proudest of?",
+  "What are you looking for next?",
+];
+
 function esc(text: string): string {
   const div = document.createElement("div");
   div.textContent = text;
@@ -72,24 +78,18 @@ export function AskPanel() {
           className="qa-form"
           onSubmit={(e) => { e.preventDefault(); if (input.trim()) ask(input); }}
         >
-          <div className="qa-composer">
-            <span className="qa-kicker" aria-hidden="true">
-              <span className="qa-status" />
-              Ask Sharique&apos;s portfolio
-            </span>
-            <label className="visually-hidden" htmlFor="qa-input">Ask about the work</label>
-            <input
-              id="qa-input"
-              className="qa-input"
-              type="text"
-              maxLength={500}
-              autoComplete="off"
-              spellCheck={false}
-              placeholder={'Try “What did you build at WellX?”'}
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-            />
-          </div>
+          <label className="visually-hidden" htmlFor="qa-input">Ask about the work</label>
+          <input
+            id="qa-input"
+            className="qa-input"
+            type="text"
+            maxLength={500}
+            autoComplete="off"
+            spellCheck={false}
+            placeholder="Ask me anything about my work…"
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+          />
           <button
             type="submit"
             className={`qa-send${thinking ? " qa-busy" : ""}`}
@@ -104,11 +104,31 @@ export function AskPanel() {
               </svg>
             ) : (
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2.2} strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">
-                <path d="M12 19V5M5 12l7-7 7 7"/>
+                <path d="M21 3 9.7 14.3" />
+                <path d="m21 3-7 18-4.3-6.7L3 10Z" />
               </svg>
             )}
           </button>
         </form>
+
+        {!answer && (
+          <div className="qa-suggestions" aria-label="Suggested questions">
+            <span className="qa-suggestions-label">Not sure where to start? Try one:</span>
+            <div className="qa-prompts">
+              {SUGGESTED_QUESTIONS.map((question) => (
+                <button
+                  key={question}
+                  type="button"
+                  className="qa-suggestion"
+                  onClick={() => ask(question)}
+                  disabled={thinking}
+                >
+                  {question}
+                </button>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* answer */}
         {answer && (
