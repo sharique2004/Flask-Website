@@ -10,6 +10,8 @@ servers:
 tags:
   - name: health
     description: Health operations
+  - name: assistant
+    description: AI assistant operations
 paths:
   /healthz:
     get:
@@ -24,6 +26,37 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /ask:
+    post:
+      operationId: askAssistant
+      tags: [assistant]
+      summary: Ask the portfolio assistant
+      description: Ask the mini Sharique AI assistant a question
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AskInput"
+      responses:
+        "200":
+          description: Answer from the assistant
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskResponse"
+        "400":
+          description: Bad request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskResponse"
+        "429":
+          description: Rate limited
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AskResponse"
 components:
   schemas:
     HealthStatus:
@@ -33,4 +66,35 @@ components:
           type: string
       required:
         - status
-
+    HistoryTurn:
+      type: object
+      properties:
+        role:
+          type: string
+        text:
+          type: string
+      required:
+        - role
+        - text
+    AskInput:
+      type: object
+      properties:
+        query:
+          type: string
+          maxLength: 500
+        history:
+          type: array
+          items:
+            $ref: "#/components/schemas/HistoryTurn"
+      required:
+        - query
+    AskResponse:
+      type: object
+      properties:
+        answer:
+          type: string
+        source:
+          type: string
+      required:
+        - answer
+        - source
