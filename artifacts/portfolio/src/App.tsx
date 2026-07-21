@@ -22,7 +22,7 @@ function Router() {
       <Route path="/bibi" component={Bibi} />
       {/* /scribe → external MeetingScribe product site */}
       <Route path="/scribe">
-        <Redirect to="https://meetingscribe.insforge.site/" />
+        <Redirect to="https://meetingscribe.shariquekhatri.com/" />
       </Route>
       {/* /resume → static PDF asset */}
       <Route path="/resume">
