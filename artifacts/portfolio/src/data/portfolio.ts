@@ -137,8 +137,9 @@ export const FEATURED: Featured[] = [
   {
     slug: "scribe",
     name: "MeetingScribe",
-    page: "/scribe",
+    page: "https://meetingscribe.shariquekhatri.com/",
     repo: "https://github.com/sharique2004/MeetingScribe",
+    external: true,
     kicker: "on device meeting transcription · macOS · MIT",
     line: "Records and transcribes your meetings entirely on your Mac. No bot joins, nothing leaves the device.",
     accent: "cyan",
@@ -158,7 +159,7 @@ export const FEATURED: Featured[] = [
   {
     slug: "aman",
     name: "Aman UAE",
-    page: "https://dubai-news-tracker.vercel.app",
+    page: "https://amanuae.shariquekhatri.com",
     repo: null,
     external: true,
     kicker: "live news platform · LLM source verification",

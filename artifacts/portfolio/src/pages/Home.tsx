@@ -170,10 +170,7 @@ export default function Home() {
                   )}
                 </div>
                 <h3>
-                  <a
-                    href={f.page}
-                    {...(f.external ? { target: "_blank", rel: "noopener" } : {})}
-                  >
+                  <a href={f.page} target="_blank" rel="noopener">
                     {f.name}
                   </a>
                 </h3>
@@ -184,7 +181,8 @@ export default function Home() {
                   <a
                     className="lk-demo"
                     href={f.page}
-                    {...(f.external ? { target: "_blank", rel: "noopener" } : {})}
+                    target="_blank"
+                    rel="noopener"
                   >
                     View ↗
                   </a>

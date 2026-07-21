@@ -6,6 +6,13 @@ export default function Bibi() {
 
   useEffect(() => {
     document.title = "Bibi — a voice co-pilot that flies your PC";
+    // Swap in Bibi's own tab icon while on this page; restore SK on leave.
+    const link = document.querySelector<HTMLLinkElement>('link[rel="icon"]');
+    const prev = link ? link.href : "";
+    if (link) link.href = "/bibi-favicon.png";
+    return () => {
+      if (link && prev) link.href = prev;
+    };
   }, []);
 
   return (
