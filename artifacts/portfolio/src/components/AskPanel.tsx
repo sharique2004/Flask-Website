@@ -17,8 +17,24 @@ function esc(text: string): string {
   return div.innerHTML;
 }
 
+/* URLs in answers become real links that open in a new tab — the demos the
+   assistant mentions (donna., meetingscribe., amanuae.) should never navigate
+   the portfolio tab away. Runs on escaped text, so injection stays impossible. */
+function linkify(html: string): string {
+  let out = html.replace(
+    /https?:\/\/[^\s<>"]+[^\s<>".,)]/g,
+    (u) => `<a href="${u}" target="_blank" rel="noopener">${u}</a>`
+  );
+  out = out.replace(
+    /(^|[\s(])((?:donna|meetingscribe|amanuae|www)\.shariquekhatri\.com(?:\/[\w./-]*)?|shariquekhatri\.com\/(?:bibi|scribe|resume)|github\.com\/[\w-]+(?:\/[\w.-]+)?)/g,
+    (_m, pre: string, dom: string) =>
+      `${pre}<a href="https://${dom}" target="_blank" rel="noopener">${dom}</a>`
+  );
+  return out;
+}
+
 function renderMarkdown(text: string): string {
-  const safe = esc(text).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>");
+  const safe = linkify(esc(text).replace(/\*\*([^*]+)\*\*/g, "<strong>$1</strong>"));
   const blocks: string[] = [];
   let list: string[] | null = null;
   safe.split("\n").forEach((line) => {

@@ -303,8 +303,8 @@ export default function Home() {
           <div className="foot-links">
             <div className="col">
               <span className="lbl2">Work</span>
-              <a href="/bibi">Bibi</a>
-              <a href="/scribe">MeetingScribe</a>
+              <a href="/bibi" target="_blank" rel="noopener">Bibi</a>
+              <a href="https://meetingscribe.shariquekhatri.com/" target="_blank" rel="noopener">MeetingScribe</a>
               <a href={PUBLICATION.url} target="_blank" rel="noopener">OmniSch · ECCV 2026</a>
             </div>
             <div className="col">
