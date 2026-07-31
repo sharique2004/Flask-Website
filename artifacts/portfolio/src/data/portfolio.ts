@@ -72,6 +72,7 @@ export interface Featured {
   name: string;
   page: string;
   repo: string | null;
+  download?: string;
   external?: boolean;
   wide?: boolean;
   award?: string;
@@ -139,6 +140,8 @@ export const FEATURED: Featured[] = [
     name: "MeetingScribe",
     page: "https://meetingscribe.shariquekhatri.com/",
     repo: "https://github.com/sharique2004/MeetingScribe",
+    download:
+      "https://github.com/sharique2004/MeetingScribe/releases/latest/download/MeetingScribe.dmg",
     external: true,
     kicker: "on device meeting transcription · macOS · MIT",
     line: "Records and transcribes your meetings entirely on your Mac. No bot joins, nothing leaves the device.",

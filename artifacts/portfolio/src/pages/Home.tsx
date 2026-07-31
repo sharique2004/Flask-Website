@@ -191,6 +191,16 @@ export default function Home() {
                       Source
                     </a>
                   )}
+                  {f.download && (
+                    <a
+                      className="lk-src"
+                      href={f.download}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      Download for Mac
+                    </a>
+                  )}
                 </div>
               </article>
             ))}
