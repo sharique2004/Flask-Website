@@ -513,17 +513,20 @@ h1 .a{
   transition:opacity .35s;
 }
 .card:hover[data-n]::after{opacity:0.065}
-.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px}
+/* The chip wraps to its own line rather than pushing out of the card: a long
+   award label used to overflow by 160px on a phone. */
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;flex-wrap:wrap}
 .award-chip{
   display:inline-flex;align-items:center;gap:5px;
   padding:4px 10px;border-radius:999px;
   font-size:10.5px;font-weight:700;letter-spacing:0.06em;text-transform:uppercase;
   background:linear-gradient(120deg,var(--accent),var(--accent-2));
-  color:#fff;white-space:nowrap;flex-shrink:0;
+  color:#fff;
+  min-width:0;max-width:100%;overflow-wrap:anywhere;
   box-shadow:0 4px 12px -4px var(--accent);
 }
-.award-chip svg{width:10px;height:10px}
-.card .k{font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600}
+.award-chip svg{width:10px;height:10px;flex:0 0 auto}
+.card .k{font-size:11.5px;letter-spacing:0.12em;text-transform:uppercase;color:var(--ink-3);font-weight:600;min-width:0;flex:1 1 140px;overflow-wrap:anywhere}
 .card h3{font-size:24px;margin:0;font-weight:800;letter-spacing:-0.025em}
 .card h3 a{transition:color .25s}
 .card h3 a:hover{color:var(--accent-deep)}

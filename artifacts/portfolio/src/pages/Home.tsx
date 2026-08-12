@@ -181,6 +181,7 @@ export default function Home() {
                 <div className="stack">
                   <Pills stack={f.stack} />
                 </div>
+                {(f.page || f.repo || f.download) && (
                 <div className="lk">
                   {f.page && (
                     <a
@@ -208,6 +209,7 @@ export default function Home() {
                     </a>
                   )}
                 </div>
+                )}
               </article>
             ))}
           </div>
