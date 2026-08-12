@@ -95,14 +95,14 @@ export const FEATURED: Featured[] = [
     repo: "https://github.com/sharique2004/Donna",
     external: true,
     wide: true,
-    award: "1st place · AI Supply Chain Hackathon 2026",
-    kicker: "hackathon winner · food banks + AI · live demo",
-    line: "Takes a supplier's surplus-food call and routes each pallet to a food bank. Built in a day, won first place.",
+    award: "2× Hackathon Winner",
+    kicker: "won AI Supply Chain 2026 + ALIX hackathons · food banks + AI",
+    line: "Takes a supplier's surplus-food call and routes each pallet to a food bank. Built in a day, won first place, then won the ALIX Hackathon.",
     accent: "orange",
     poster: "/donna-shot.jpg",
     title_html: "A voice dispatcher for food bank donations.",
     summary:
-      "A supplier calls in surplus food. Donna answers, transcribes the call, pulls out each item, and decides on the spot: perishables that spoil fast get dispatched straight to a food bank, shelf stable goods go into inventory. A human approves before anything is dispatched. Built in a day and won first place.",
+      "A supplier calls in surplus food. Donna answers, transcribes the call, pulls out each item, and decides on the spot: perishables that spoil fast get dispatched straight to a food bank, shelf stable goods go into inventory. A human approves before anything is dispatched. Built in a day, won first place at the AI Supply Chain Hackathon 2026, then won the ALIX Hackathon.",
     thesis: "The right call for a pallet of strawberries is not the right call for canned beans.",
     tech: "Voice intake · live transcription · LLM triage · map dispatch",
     stack: [
@@ -110,6 +110,51 @@ export const FEATURED: Featured[] = [
       ["waveform", "Live transcription"],
       ["sparkles", "LLM triage"],
       ["map", "Map dispatch"],
+    ],
+  },
+  {
+    slug: "frontrun",
+    name: "FrontRun",
+    page: "https://frontrun-app-sigma.vercel.app/",
+    repo: "https://github.com/sharique2004/Frontrun",
+    external: true,
+    kicker: "autonomous SDR · AI employee · live demo",
+    line: "Detects a funding raise the moment it is filed, researches the company, and lands a personalized email the same day.",
+    accent: "cyan",
+    poster: "/frontrun-shot.jpg",
+    title_html: "By the time the press releases, it is too late.",
+    summary:
+      "An autonomous SDR built as an AI employee, not a chatbot. It watches SEC Form D filings, researches each raise, finds the right contact, and runs the entire outreach conversation: send, reply triage, follow up, and booking. A human watches a funnel dashboard, not a prompt box. Built in under 8 hours at the Build Your Own AI Company hackathon.",
+    thesis: "Ten agencies find out from the press release. You find out from the filing.",
+    tech: "Next.js · InsForge · You.com · Resend",
+    stack: [
+      ["nextjs", "Next.js"],
+      ["typescript", "TypeScript"],
+      ["sparkles", "LLM research"],
+      ["plug", "Outreach loop"],
+    ],
+  },
+  {
+    slug: "wisprit",
+    name: "Wisprit",
+    page: "https://wisprit.shariquekhatri.com/",
+    repo: "https://github.com/sharique2004/Wisprit",
+    external: true,
+    award: "Pizza Hackathon Winner",
+    kicker: "won the Pizza Hackathon · fully local dictation · macOS",
+    line: "Hold a key, speak, release. Words appear at the cursor, cleaned up entirely on this machine.",
+    accent: "orange",
+    poster: "/wisprit-shot.jpg",
+    title_html: "Dictation that never leaves your Mac.",
+    summary:
+      "A native Swift menu bar app. Hold the Fn key and words stream into the focused field while you are still speaking, through the same input method machinery Apple's own Dictation uses. Apple's on device speech engine transcribes on the Neural Engine with 69 to 108 ms from release to final text, on device Apple Intelligence fixes what the recognizer misheard inside a validation cage, and every failure path returns the verbatim transcript. No cloud, no account, no network calls anywhere in the app.",
+    thesis: "The moat was never the acoustic model.",
+    tech: "Swift · SpeechAnalyzer · Apple Intelligence · IMKit",
+    stack: [
+      ["swift", "Swift"],
+      ["waveform", "SpeechAnalyzer"],
+      ["chip", "Apple Intelligence"],
+      ["mic", "Push to talk"],
     ],
   },
   {
@@ -195,6 +240,36 @@ export interface Case {
 }
 
 export const CASES: Case[] = [
+  {
+    name: "LinkedIn Curator",
+    kicker: "content operating system · Claude Code",
+    on_paper: "An AI system that writes LinkedIn posts in your voice.",
+    real_story:
+      "Not a prompt, a content operating system: it knows your background and projects, tracks what you posted and what worked, and drafts in your voice. Every recommendation is grounded in 750+ posts analyzed across 15 top creators: timing, format, hooks, length, media, CTAs.",
+    honest: "It writes the drafts. What ships is still your call.",
+    links: [["repo", "https://github.com/sharique2004/Linkedin_Curator"]],
+    tech: "Claude Code · 750+ posts analyzed · voice profiles",
+    stack: [
+      ["claude", "Claude Code"],
+      ["chart", "Post analytics"],
+      ["sparkles", "Voice matching"],
+    ],
+  },
+  {
+    name: "ATS Scanner",
+    kicker: "seven agents · runs on your Claude subscription",
+    on_paper: "Scores your resume against a job description the way an ATS would.",
+    real_story:
+      "Seven specialized Claude agents parse a resume the way Workday, Greenhouse, Taleo, iCIMS and Lever actually parse it, then flag what is wrong, what is missing, and what to enhance for that specific JD. It shells out to the claude CLI, so a Claude subscription is the engine: no API key, no per call billing.",
+    honest: "It shows you what the machine sees. The resume still has to be true.",
+    links: [["repo", "https://github.com/sharique2004/ATS-System"]],
+    tech: "Python · Claude CLI · multi agent scoring",
+    stack: [
+      ["python", "Python"],
+      ["claude", "Claude agents"],
+      ["chart", "JD scoring"],
+    ],
+  },
   {
     name: "OmniSch",
     kicker: "publication · accepted at ECCV 2026",
