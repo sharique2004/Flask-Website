@@ -70,7 +70,7 @@ export type StackPill = [IconSlug, string];
 export interface Featured {
   slug: string;
   name: string;
-  page: string;
+  page?: string;
   repo: string | null;
   download?: string;
   external?: boolean;
@@ -95,14 +95,14 @@ export const FEATURED: Featured[] = [
     repo: "https://github.com/sharique2004/Donna",
     external: true,
     wide: true,
-    award: "2× Hackathon Winner",
-    kicker: "won AI Supply Chain 2026 + ALIX hackathons · food banks + AI",
-    line: "Takes a supplier's surplus-food call and routes each pallet to a food bank. Built in a day, won first place, then won the ALIX Hackathon.",
+    award: "1st place · AI Supply Chain Hackathon 2026",
+    kicker: "won the AI Supply Chain Hackathon 2026 · food banks + AI",
+    line: "Takes a supplier's surplus-food call and routes each pallet to a food bank. Built in a day, won first place.",
     accent: "orange",
     poster: "/donna-shot.jpg",
     title_html: "A voice dispatcher for food bank donations.",
     summary:
-      "A supplier calls in surplus food. Donna answers, transcribes the call, pulls out each item, and decides on the spot: perishables that spoil fast get dispatched straight to a food bank, shelf stable goods go into inventory. A human approves before anything is dispatched. Built in a day, won first place at the AI Supply Chain Hackathon 2026, then won the ALIX Hackathon.",
+      "A supplier calls in surplus food. Donna answers, transcribes the call, pulls out each item, and decides on the spot: perishables that spoil fast get dispatched straight to a food bank, shelf stable goods go into inventory. A human approves before anything is dispatched. Built in a day and won first place at the AI Supply Chain Hackathon 2026.",
     thesis: "The right call for a pallet of strawberries is not the right call for canned beans.",
     tech: "Voice intake · live transcription · LLM triage · map dispatch",
     stack: [
@@ -110,6 +110,27 @@ export const FEATURED: Featured[] = [
       ["waveform", "Live transcription"],
       ["sparkles", "LLM triage"],
       ["map", "Map dispatch"],
+    ],
+  },
+  {
+    slug: "caseline",
+    name: "Caseline",
+    repo: null,
+    award: "ALIX Hackathon Winner",
+    kicker: "won the ALIX Agents of Administration hackathon · voice agent",
+    line: "Answers high stakes admin calls, cites every fact to the transcript, and queues every action for human approval.",
+    accent: "cyan",
+    poster: null,
+    title_html: "The agent that can't get it wrong.",
+    summary:
+      "A phone agent for high stakes administrative work. Callers reach a calm intake line over a real phone number, the browser, or a simulated call, and every path feeds one pipeline: the call lands in a database, Gemini extracts the facts, and each fact is pinned to a verbatim quote from the transcript. Risky actions are never executed by the model; they wait in an approval queue on a live ops console until a human says yes. Built solo and won the ALIX Agents of Administration hackathon.",
+    thesis: "An agent for the work no one can afford to get wrong.",
+    tech: "Next.js · Vapi voice · Gemini · SQLite",
+    stack: [
+      ["mic", "Voice intake"],
+      ["sparkles", "Cited facts"],
+      ["lock", "Approval gate"],
+      ["chart", "Live ops console"],
     ],
   },
   {
@@ -140,8 +161,7 @@ export const FEATURED: Featured[] = [
     page: "https://wisprit.shariquekhatri.com/",
     repo: "https://github.com/sharique2004/Wisprit",
     external: true,
-    award: "Pizza Hackathon Winner",
-    kicker: "won the Pizza Hackathon · fully local dictation · macOS",
+    kicker: "fully local dictation · macOS",
     line: "Hold a key, speak, release. Words appear at the cursor, cleaned up entirely on this machine.",
     accent: "orange",
     poster: null,

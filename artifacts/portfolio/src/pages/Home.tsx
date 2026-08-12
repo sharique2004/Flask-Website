@@ -170,22 +170,28 @@ export default function Home() {
                   )}
                 </div>
                 <h3>
-                  <a href={f.page} target="_blank" rel="noopener">
-                    {f.name}
-                  </a>
+                  {f.page ? (
+                    <a href={f.page} target="_blank" rel="noopener">
+                      {f.name}
+                    </a>
+                  ) : (
+                    f.name
+                  )}
                 </h3>
                 <div className="stack">
                   <Pills stack={f.stack} />
                 </div>
                 <div className="lk">
-                  <a
-                    className="lk-demo"
-                    href={f.page}
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    View ↗
-                  </a>
+                  {f.page && (
+                    <a
+                      className="lk-demo"
+                      href={f.page}
+                      target="_blank"
+                      rel="noopener"
+                    >
+                      View ↗
+                    </a>
+                  )}
                   {f.repo && (
                     <a className="lk-src" href={f.repo} target="_blank" rel="noopener">
                       Source
