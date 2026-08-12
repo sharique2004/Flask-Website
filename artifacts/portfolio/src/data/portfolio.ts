@@ -121,7 +121,7 @@ export const FEATURED: Featured[] = [
     kicker: "autonomous SDR · AI employee · live demo",
     line: "Detects a funding raise the moment it is filed, researches the company, and lands a personalized email the same day.",
     accent: "cyan",
-    poster: "/frontrun-shot.jpg",
+    poster: null,
     title_html: "By the time the press releases, it is too late.",
     summary:
       "An autonomous SDR built as an AI employee, not a chatbot. It watches SEC Form D filings, researches each raise, finds the right contact, and runs the entire outreach conversation: send, reply triage, follow up, and booking. A human watches a funnel dashboard, not a prompt box. Built in under 8 hours at the Build Your Own AI Company hackathon.",
@@ -144,7 +144,7 @@ export const FEATURED: Featured[] = [
     kicker: "won the Pizza Hackathon · fully local dictation · macOS",
     line: "Hold a key, speak, release. Words appear at the cursor, cleaned up entirely on this machine.",
     accent: "orange",
-    poster: "/wisprit-shot.jpg",
+    poster: null,
     title_html: "Dictation that never leaves your Mac.",
     summary:
       "A native Swift menu bar app. Hold the Fn key and words stream into the focused field while you are still speaking, through the same input method machinery Apple's own Dictation uses. Apple's on device speech engine transcribes on the Neural Engine with 69 to 108 ms from release to final text, on device Apple Intelligence fixes what the recognizer misheard inside a validation cage, and every failure path returns the verbatim transcript. No cloud, no account, no network calls anywhere in the app.",

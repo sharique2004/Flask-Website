@@ -11,7 +11,7 @@
   /* base canvas + aurora (light) — near-pure white so aurora colours show through glass */
   --bg:#f3f3f9;
   --aurora-1:#7aaeff; --aurora-2:#c490ff; --aurora-3:#ff9f8a; --aurora-4:#6ee8ca;
-  --aurora-op:0.72;
+  --aurora-op:0.52;
 
   /* ink */
   --ink:#191922;
@@ -27,10 +27,10 @@
   --glass-brd:rgba(255,255,255,0.78);
   --glass-brd-2:rgba(120,120,150,0.12);
   --glass-shine:rgba(255,255,255,0.65);
-  --fringe-1:rgba(100,160,255,0.55);
-  --fringe-2:rgba(255,130,200,0.45);
-  --fringe-3:rgba(130,255,210,0.35);
-  --glass-blur:26px; --glass-sat:200%;
+  --fringe-1:rgba(100,160,255,0.32);
+  --fringe-2:rgba(255,130,200,0.26);
+  --fringe-3:rgba(130,255,210,0.20);
+  --glass-blur:26px; --glass-sat:135%;
   --glass-shadow:0 12px 36px -14px rgba(40,40,80,0.30), 0 2px 8px -4px rgba(40,40,80,0.16);
   /* chromatic aberration — subtle RGB halo at glass edges */
   --chroma-r:rgba(255,80,100,0.10);
@@ -73,16 +73,16 @@
   :root:not([data-theme="light"]){
     --bg:#050509;
     --aurora-1:#4a5cff; --aurora-2:#9b4dff; --aurora-3:#ff5a86; --aurora-4:#18d3c8;
-    --aurora-op:0.62;
+    --aurora-op:0.42;
     --ink:#f3f3f8; --ink-2:#c4c4d0; --ink-3:#9a9aa8; --faint:#74747f;
     --glass:rgba(255,255,255,0.06); --glass-2:rgba(255,255,255,0.10);
     --glass-hi:rgba(255,255,255,0.58); --glass-lo:rgba(255,255,255,0.03);
     --glass-brd:rgba(255,255,255,0.18); --glass-brd-2:rgba(255,255,255,0.05);
     --glass-shine:rgba(255,255,255,0.28);
-    --fringe-1:rgba(130,160,255,0.45);
-    --fringe-2:rgba(255,120,170,0.38);
-    --fringe-3:rgba(80,255,200,0.30);
-    --glass-blur:28px; --glass-sat:180%;
+    --fringe-1:rgba(130,160,255,0.26);
+    --fringe-2:rgba(255,120,170,0.22);
+    --fringe-3:rgba(80,255,200,0.17);
+    --glass-blur:28px; --glass-sat:130%;
     --glass-shadow:0 18px 48px -14px rgba(0,0,0,0.75), 0 2px 10px -4px rgba(0,0,0,0.55);
     --chroma-r:rgba(255,60,80,0.14);
     --chroma-b:rgba(60,120,255,0.16);
@@ -106,16 +106,16 @@
 :root[data-theme="dark"]{
   --bg:#050509;
   --aurora-1:#4a5cff; --aurora-2:#9b4dff; --aurora-3:#ff5a86; --aurora-4:#18d3c8;
-  --aurora-op:0.62;
+  --aurora-op:0.42;
   --ink:#f3f3f8; --ink-2:#c4c4d0; --ink-3:#9a9aa8; --faint:#74747f;
   --glass:rgba(255,255,255,0.06); --glass-2:rgba(255,255,255,0.10);
   --glass-hi:rgba(255,255,255,0.58); --glass-lo:rgba(255,255,255,0.03);
   --glass-brd:rgba(255,255,255,0.18); --glass-brd-2:rgba(255,255,255,0.05);
   --glass-shine:rgba(255,255,255,0.28);
-  --fringe-1:rgba(130,160,255,0.45);
-  --fringe-2:rgba(255,120,170,0.38);
-  --fringe-3:rgba(80,255,200,0.30);
-  --glass-blur:28px; --glass-sat:180%;
+  --fringe-1:rgba(130,160,255,0.26);
+  --fringe-2:rgba(255,120,170,0.22);
+  --fringe-3:rgba(80,255,200,0.17);
+  --glass-blur:28px; --glass-sat:130%;
   --glass-shadow:0 18px 48px -14px rgba(0,0,0,0.75), 0 2px 10px -4px rgba(0,0,0,0.55);
   --chroma-r:rgba(255,60,80,0.14);
   --chroma-b:rgba(60,120,255,0.16);
@@ -385,7 +385,7 @@ h1 .a{
   font-family:var(--sans);font-size:14px;color:var(--ink);
   white-space:nowrap;flex:0 0 auto;
   background:var(--glass-2);
-  -webkit-backdrop-filter:blur(12px) saturate(160%);backdrop-filter:blur(12px) saturate(160%);
+  -webkit-backdrop-filter:blur(12px) saturate(125%);backdrop-filter:blur(12px) saturate(125%);
   border:1px solid var(--glass-brd);
   box-shadow:var(--glass-shadow),inset 0 1px 0 var(--glass-hi);
   transform:translate(var(--magx,0px),calc(var(--magy,0px) + var(--lift,0px))) scale(var(--pscale,1));
